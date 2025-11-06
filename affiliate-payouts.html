@@ -122,9 +122,8 @@
         #qr-code-container {
             @apply w-64 h-64 mx-auto my-4 bg-gray-100 rounded-lg flex items-center justify-center border;
         }
-        /* Canvas eka hinda img tag eka ona na */
-        #qr-code-container canvas {
-            @apply rounded-lg;
+        #qr-code-container img {
+            @apply w-full h-full p-2;
         }
     </style>
 </head>
@@ -445,7 +444,7 @@
             measurementId: "G-GC1CP1LRFD"
         };
         
-        // --- ALUTH: ImgBB Key (Meka oyage seller-profile eken gaththe) ---
+        // ImgBB Key (seller-profile.html eken gaththa)
         const imgbbApiKey = 'f068295c19803c448665a0ea48bcc2fc'; 
 
         const app = initializeApp(firebaseConfig);
@@ -463,7 +462,7 @@
         let currentUserDocRef = null;
         let wishlistUnsubscribe = null;
         
-        // --- ALUTH: Payout Page State ---
+        // Payout Page State
         let webcamStream = null;
         let idFile = null;
         let selfieListenerUnsubscribe = null; // <-- ALUTH: Real-time listener eka stop karanna
@@ -506,7 +505,6 @@
                         attachCartDrawerListener(user.uid);
                         attachWishlistBadgeListener(user.uid);
                         
-                        // --- ALUTH: Payout Page eka Initialize karanna ---
                         initializePayoutsPage();
                         
                         authLoader.classList.add('hidden');
@@ -538,13 +536,11 @@
             }
         });
         
-        // --- ALUTH: Payout Page Initialization ---
         function initializePayoutsPage() {
             setupStep1_ID();
             setupStep2_Selfie();
             setupStep4_Bank();
             
-            // Current status eka check karala adala step eka pennanna
             const userData = currentUserData;
             
             if (userData.payoutsVerified === true) {
@@ -568,7 +564,6 @@
             }
         }
         
-        // --- ALUTH: Step 1: ID Upload Logic ---
         function setupStep1_ID() {
             const input = document.getElementById('id-upload-input');
             const preview = document.getElementById('id-preview');
@@ -600,7 +595,6 @@
                     const imageUrl = await uploadImageToImgBB(idFile);
                     if (!imageUrl) throw new Error('Image upload failed.');
                     
-                    // Firestore update karanawa
                     await updateDoc(currentUserDocRef, {
                         idUrl: imageUrl,
                         idUploadedAt: serverTimestamp()
@@ -608,9 +602,8 @@
                     
                     statusEl.textContent = 'ID Uploaded Successfully!';
                     
-                    // Adala step ekata yanawa
                     showStep(2);
-                    startWebcam(); // Camera eka on karanawa
+                    startWebcam();
                     generateAndShowQRCode(); // <-- ALUTH: QR code eka pennanna
                     listenForSelfieUpload(); // <-- ALUTH: Phone eken upload karana kam balan inna
 
@@ -623,7 +616,6 @@
             });
         }
 
-        // --- ALUTH: Step 2: Selfie Upload Logic ---
         function setupStep2_Selfie() {
             const video = document.getElementById('selfie-video');
             const canvas = document.getElementById('selfie-canvas');
@@ -644,23 +636,18 @@
             // --- End QR Code Logic ---
 
             takeBtn.addEventListener('click', () => {
-                // Canvas eka video eke size ekata hadanawa
                 canvas.width = video.videoWidth;
                 canvas.height = video.videoHeight;
-                // Video eken photo ekak canvas ekata adinawa
                 canvas.getContext('2d').drawImage(video, 0, 0, canvas.width, canvas.height);
                 
-                // Photo eka preview eke pennanawa
                 const dataUrl = canvas.toDataURL('image/jpeg');
                 preview.src = dataUrl;
                 
-                // Elementu hide/show karanawa
                 video.classList.add('hidden');
                 preview.classList.remove('hidden');
                 takeBtn.classList.add('hidden');
                 controls.classList.remove('hidden');
                 
-                // Camera eka off karanawa
                 stopWebcam();
             });
 
@@ -670,7 +657,7 @@
                 takeBtn.classList.remove('hidden');
                 controls.classList.add('hidden');
                 statusEl.textContent = '';
-                startWebcam(); // Camera eka ayeth on karanawa
+                startWebcam(); 
             });
             
             uploadBtn.addEventListener('click', async () => {
@@ -680,14 +667,12 @@
                 statusEl.textContent = 'Uploading selfie...';
 
                 try {
-                    // Canvas eken 'blob' ekak hadanawa
                     canvas.toBlob(async (blob) => {
                         if (!blob) throw new Error("Could not create image blob.");
 
                         const imageUrl = await uploadImageToImgBB(blob);
                         if (!imageUrl) throw new Error('Selfie upload failed.');
 
-                        // Firestore update karanawa
                         await updateDoc(currentUserDocRef, {
                             selfieUrl: imageUrl,
                             selfieUploadedAt: serverTimestamp()
@@ -701,11 +686,10 @@
                         // E nisa listener eka nikanma stop karala, manually call karamu
                         if (selfieListenerUnsubscribe) {
                             selfieListenerUnsubscribe();
-                            selfieListenerUnsubscribe = null;
                         }
                         showStep(4);
                         
-                    }, 'image/jpeg', 0.9); // 90% quality JPEG
+                    }, 'image/jpeg', 0.9); 
 
                 } catch (err) {
                     console.error("Selfie Upload Error: ", err);
@@ -717,47 +701,59 @@
             });
         }
         
-        // --- ALUTH: Generate QR Code Function (Logo ekath ekka) ---
-        async function generateAndShowQRCode() {
+        // --- ALUTH: Generate QR Code Function ---
+    async function generateAndShowQRCode() {
             const container = document.getElementById('qr-code-container');
             container.innerHTML = '<div class="loading-spinner mx-auto"></div>'; // Show loader
             
-            // 2. Aluth file ekata link eka hadanawa, userge ID ekath ekka
-            const phoneUploadUrl = `${window.location.origin}/selfie-upload.html?uid=${currentUser.uid}`;
+            // --- ME THAMAI WENAS KAMA ---
+            const currentHref = window.location.href; // http://.../affiliate-payouts.html
+            const basePath = currentHref.substring(0, currentHref.lastIndexOf('/')); // http://.../
+            const phoneUploadUrl = `${basePath}/selfie-upload.html?uid=${currentUser.uid}`;
+            // --- WENASA IWARAI ---
+
             const logoUrl = 'https://i.ibb.co/1tCywvyP/logo.png'; // Ape logo eka
-            const qrSize = 256; // QR code eke size eka (pixels)
-            const logoSize = 60; // Logo eke size eka
+            const logoSize = 50; // Logo eke size eka
             const logoMargin = 4; // Logo eka wate thiyena sudu border eka
+            const qrCellSize = 6; // QR code eke module ekaka size eka (pixels)
+            const qrMargin = 16; // QR code eka wate thiyena sudu border eka (pixels)
 
             try {
-                // 1. QR code eka generate karanawa (img tag ekak widiyata nemei)
-                const qr = qrcode(0, 'H'); // 'H' (High) error correction logo ekata hoda
+                // 1. QR code eka generate karanawa (library eke margin NETHUWA)
+                const qr = qrcode(0, 'H'); // 'H' (High) error correction
                 qr.addData(phoneUploadUrl);
                 qr.make();
                 
-                // 2. Data URL eka gannawa
-                const qrDataUrl = qr.createDataURL(6, 8); // 6px per module, 8px margin
+                // 2. Data URL eka gannawa (margin = 0)
+                const qrDataUrl = qr.createDataURL(qrCellSize, 0); 
                 
-                // 3. Canvas ekak hadanawa
+                // 3. Canvas size eka calculate karanawa
+                const moduleCount = qr.getModuleCount();
+                const rawQrSize = moduleCount * qrCellSize; // QR code eke niyamitha size eka
+                const canvasSize = rawQrSize + (qrMargin * 2); // Sudu border ekath ekka size eka
+
+                // 4. Canvas ekak hadanawa
                 const canvas = document.createElement('canvas');
-                canvas.width = qrSize;
-                canvas.height = qrSize;
+                canvas.width = canvasSize;
+                canvas.height = canvasSize;
                 const ctx = canvas.getContext('2d');
                 
-                // 4. Aluth Image object ekak hadala QR eka load karanawa
+                // 5. Canvas eke sudu background eka purawanawa
+                ctx.fillStyle = '#FFFFFF';
+                ctx.fillRect(0, 0, canvasSize, canvasSize);
+
+                // 6. QR eka load karaganna image object ekak
                 const qrImg = new Image();
-                
-                // Async/await walata promise ekak use karamu
                 await new Promise((resolve, reject) => {
                     qrImg.onload = () => resolve();
                     qrImg.onerror = reject;
                     qrImg.src = qrDataUrl;
                 });
                 
-                // 5. QR eka canvas eke andinawa
-                ctx.drawImage(qrImg, 0, 0, qrSize, qrSize);
+                // 7. QR eka canvas eke meda (sudu margin eka athule) andinawa
+                ctx.drawImage(qrImg, qrMargin, qrMargin, rawQrSize, rawQrSize);
 
-                // 6. Aluth Image object ekak hadala Logo eka load karanawa
+                // 8. Logo eka load karaganna image object ekak
                 const logoImg = new Image();
                 logoImg.crossOrigin = "Anonymous"; // CORS policy ekata
                 
@@ -767,11 +763,11 @@
                     logoImg.src = logoUrl;
                 });
 
-                // 7. Logo eka meda andinawa
-                const centerX = (qrSize - logoSize) / 2;
-                const centerY = (qrSize - logoSize) / 2;
+                // 9. Logo eka meda andinawa
+                const centerX = (canvasSize - logoSize) / 2;
+                const centerY = (canvasSize - logoSize) / 2;
 
-                // 7a. Logo eka wate sudu background eka andinawa
+                // 9a. Logo eka wate sudu background eka (border eka)
                 ctx.fillStyle = '#FFFFFF';
                 ctx.fillRect(
                     centerX - logoMargin, 
@@ -780,13 +776,13 @@
                     logoSize + (logoMargin * 2)
                 );
                 
-                // 7b. Logo eka andinawa
+                // 9b. Logo eka andinawa
                 ctx.drawImage(logoImg, centerX, centerY, logoSize, logoSize);
                 
-                // 8. Canvas eka page ekata add karanawa
+                // 10. Canvas eka page ekata add karanawa
                 container.innerHTML = ''; // Loader eka ain karanawa
-                canvas.style.width = '100%';
-                canvas.style.height = '100%';
+                canvas.style.width = '100%'; // w-64
+                canvas.style.height = '100%'; // h-64
                 container.appendChild(canvas);
 
             } catch (err) {
@@ -805,27 +801,21 @@
             console.log("Listening for selfie upload...");
             
             selfieListenerUnsubscribe = onSnapshot(currentUserDocRef, (doc) => {
-                if (doc.exists()) { // <-- Check karanna doc eka thiyenawada kiyala
-                    const data = doc.data();
-                    // Check karanna selfie eka upload welada, eth thama bank details verify welada kiyala
-                    if (data.selfieUrl && !data.payoutsVerified) {
-                        // Selfie eka phone eken upload wela!
-                        console.log("Selfie URL detected! Moving to next step.");
-                        
-                        // Listener eka ain karanawa
-                        if(selfieListenerUnsubscribe) {
-                            selfieListenerUnsubscribe(); 
-                            selfieListenerUnsubscribe = null;
-                        }
-                        
-                        // Webcam eka off karanawa
-                        stopWebcam();
-                        
-                        // --- OYAGE TEST MODE ILLEEMA ---
-                        // Bank details step ekata yanawa
-                        showStep(4);
-                        // ---------------------------------
-                    }
+                const data = doc.data();
+                if (data.selfieUrl && !data.payoutsVerified) {
+                    // Selfie eka phone eken upload wela!
+                    console.log("Selfie URL detected! Moving to next step.");
+                    
+                    // Listener eka ain karanawa
+                    selfieListenerUnsubscribe(); 
+                    
+                    // Webcam eka off karanawa
+                    stopWebcam();
+                    
+                    // --- OYAGE TEST MODE ILLEEMA ---
+                    // Bank details step ekata yanawa
+                    showStep(4);
+                    // ---------------------------------
                 }
             });
         }
@@ -903,6 +893,7 @@
             }
         }
         
+      // --- ALUTH: Step Controller (FIXED) ---
         function showStep(stepNumber) {
             document.querySelectorAll('.payout-step-view').forEach(step => {
                 step.classList.add('hidden');
@@ -923,7 +914,6 @@
                 document.getElementById(stepId).classList.remove('hidden');
             } else {
                 console.error(`Could not find step view for step number: ${stepNumber}`);
-                document.getElementById('payout-step-1-id').classList.remove('hidden'); // Fallback
             }
             
             // Webcam eka stop karanawa 2weni step eken giyoth
@@ -958,7 +948,6 @@
         }
 
         // --- ANITH OKKOMA STANDARD FUNCTIONS ---
-        // (Headers, Footers, Drawers, Cart, Wishlist, etc.)
 
         async function loadSiteConfig() {
             try {
@@ -1227,5 +1216,5 @@
 
     </script>
 
-</html>
 </body>
+</html>
