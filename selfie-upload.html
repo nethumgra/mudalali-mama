@@ -1,0 +1,229 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Upload Selfie</title>
+    <script src="https://cdn.tailwindcss.com"></script>
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.2/css/all.min.css">
+    <script>
+        tailwind.config = {
+            theme: {
+                extend: {
+                    colors: {
+                        'mudalali-green': { DEFAULT: '#3a6a4a', dark: '#2c5234' },
+                    }
+                }
+            }
+        }
+    </script>
+    <style>
+        .btn-primary { @apply w-full bg-mudalali-green text-white p-3 rounded-md hover:bg-mudalali-green-dark font-bold text-lg; }
+        .btn-secondary { @apply w-full bg-gray-100 text-gray-700 p-3 rounded-md hover:bg-gray-200 font-bold; }
+    </style>
+</head>
+<body class="bg-gray-100 flex items-center justify-center min-h-screen p-4">
+
+    <div class="w-full max-w-md bg-white rounded-lg shadow-xl p-6">
+        
+        <div id="selfie-view">
+            <h2 class="text-2xl font-bold text-gray-800 text-center mb-4">Take a Selfie</h2>
+            <div id="camera-error" class="hidden bg-red-100 text-red-700 p-3 rounded-md mb-4">
+                <p><strong>Error:</strong> Could not access camera. Please check your phone's permissions.</p>
+            </div>
+            
+            <video id="selfie-video" autoplay playsinline class="w-full h-auto rounded-lg border bg-gray-200"></video>
+            <canvas id="selfie-canvas" class="hidden"></canvas>
+            <img id="selfie-preview" class="hidden w-full h-auto rounded-lg border">
+            
+            <div class="space-y-3 mt-4">
+                <button id="take-selfie-btn" class="btn-primary">
+                    <i class="fa fa-camera mr-2"></i> Take Photo
+                </button>
+                <div class="flex gap-4 hidden" id="selfie-controls">
+                    <button id="retake-selfie-btn" class="btn-secondary">Retake</button>
+                    <button id="selfie-upload-btn" class="btn-primary">Upload</button>
+                </div>
+                <p id="selfie-upload-status" class="text-sm text-center"></p>
+            </div>
+        </div>
+
+        <div id="success-view" class="hidden text-center">
+            <i class="fa fa-check-circle text-6xl text-mudalali-green mb-4"></i>
+            <h2 class="text-2xl font-bold text-gray-800 mb-2">Upload Successful!</h2>
+            <p class="text-gray-600">Your selfie has been uploaded. You can now close this window and return to your computer.</p>
+        </div>
+
+    </div>
+
+    <script type="module">
+        import { initializeApp } from "https://www.gstatic.com/firebasejs/11.6.1/firebase-app.js";
+        import { 
+            getFirestore, 
+            doc, 
+            updateDoc, 
+            serverTimestamp
+        } from "https://www.gstatic.com/firebasejs/11.6.1/firebase-firestore.js";
+
+        // --- ME DEKA ANIVARYEN DAAANNA ---
+        const firebaseConfig = {
+            apiKey: "AIzaSyDIbu2qT53iGPqMCx5UdU6XY8wvXkb3ZF4",
+            authDomain: "mudalali-mama.firebaseapp.com",
+            projectId: "mudalali-mama",
+            storageBucket: "mudalali-mama.firebasestorage.app",
+            messagingSenderId: "296597428969",
+            appId: "1:296597428969:web:684668be9c0eaeecb4ae78",
+            measurementId: "G-GC1CP1LRFD"
+        };
+        // Me API key eka oyage seller-profile.html eke thibba eka
+        const imgbbApiKey = 'f068295c19803c448665a0ea48bcc2fc';
+        // ------------------------------------
+
+        const app = initializeApp(firebaseConfig);
+        const db = getFirestore(app);
+        
+        const appId = typeof __app_id !== 'undefined' ? __app_id : 'default-app-id';
+        const usersPath = `/users`; 
+        
+        let webcamStream = null;
+        let currentUid = null;
+        let currentUserDocRef = null;
+        
+        const video = document.getElementById('selfie-video');
+        const canvas = document.getElementById('selfie-canvas');
+        const preview = document.getElementById('selfie-preview');
+        const takeBtn = document.getElementById('take-selfie-btn');
+        const retakeBtn = document.getElementById('retake-selfie-btn');
+        const uploadBtn = document.getElementById('selfie-upload-btn');
+        const controls = document.getElementById('selfie-controls');
+        const statusEl = document.getElementById('selfie-upload-status');
+        const cameraError = document.getElementById('camera-error');
+
+        document.addEventListener('DOMContentLoaded', () => {
+            // 1. URL eken User ID eka gannawa
+            const urlParams = new URLSearchParams(window.location.search);
+            currentUid = urlParams.get('uid');
+            
+            if (!currentUid) {
+                document.getElementById('selfie-view').innerHTML = '<h2 class="text-red-500 text-center font-bold">Error: No User ID found. Please scan the QR code again.</h2>';
+                return;
+            }
+            
+            currentUserDocRef = doc(db, usersPath, currentUid);
+            
+            // 2. Camera eka on karanawa
+            startWebcam();
+            
+            // 3. Button listeners set karanawa
+            takeBtn.addEventListener('click', takePhoto);
+            retakeBtn.addEventListener('click', retakePhoto);
+            uploadBtn.addEventListener('click', uploadPhoto);
+        });
+
+        async function startWebcam() {
+            if (webcamStream) {
+                webcamStream.getTracks().forEach(track => track.stop());
+            }
+            try {
+                // 'facingMode: "user"' kiyanne selfie cam eka
+                const constraints = { video: { facingMode: "user" }, audio: false };
+                webcamStream = await navigator.mediaDevices.getUserMedia(constraints);
+                video.srcObject = webcamStream;
+                cameraError.classList.add('hidden');
+            } catch (err) {
+                console.error("Error accessing webcam: ", err);
+                cameraError.classList.remove('hidden');
+                takeBtn.disabled = true;
+            }
+        }
+
+        function stopWebcam() {
+            if (webcamStream) {
+                webcamStream.getTracks().forEach(track => track.stop());
+                webcamStream = null;
+            }
+        }
+
+        function takePhoto() {
+            canvas.width = video.videoWidth;
+            canvas.height = video.videoHeight;
+            canvas.getContext('2d').drawImage(video, 0, 0, canvas.width, canvas.height);
+            
+            preview.src = canvas.toDataURL('image/jpeg');
+            
+            video.classList.add('hidden');
+            preview.classList.remove('hidden');
+            takeBtn.classList.add('hidden');
+            controls.classList.remove('hidden');
+            
+            stopWebcam();
+        }
+
+        function retakePhoto() {
+            video.classList.remove('hidden');
+            preview.classList.add('hidden');
+            takeBtn.classList.remove('hidden');
+            controls.classList.add('hidden');
+            statusEl.textContent = '';
+            startWebcam(); 
+        }
+
+        async function uploadPhoto() {
+            uploadBtn.disabled = true;
+            retakeBtn.disabled = true;
+            uploadBtn.innerHTML = '<i class="fa fa-spinner fa-spin mr-2"></i> Uploading...';
+            statusEl.textContent = 'Uploading selfie...';
+
+            try {
+                canvas.toBlob(async (blob) => {
+                    if (!blob) throw new Error("Could not create image blob.");
+
+                    const imageUrl = await uploadImageToImgBB(blob);
+                    if (!imageUrl) throw new Error('Selfie upload failed.');
+
+                    // Firestore update karanawa
+                    await updateDoc(currentUserDocRef, {
+                        selfieUrl: imageUrl,
+                        selfieUploadedAt: serverTimestamp()
+                    });
+                    
+                    statusEl.textContent = 'Selfie Uploaded!';
+                    
+                    // Success message eka pennanawa
+                    document.getElementById('selfie-view').classList.add('hidden');
+                    document.getElementById('success-view').classList.remove('hidden');
+                    
+                }, 'image/jpeg', 0.9); // 90% quality JPEG
+
+            } catch (err) {
+                console.error("Selfie Upload Error: ", err);
+                statusEl.textContent = `Error: ${err.message}`;
+                uploadBtn.disabled = false;
+                retakeBtn.disabled = false;
+                uploadBtn.innerHTML = 'Upload Selfie';
+            }
+        }
+        
+        async function uploadImageToImgBB(imageFile) {
+            const formData = new FormData();
+            formData.append('image', imageFile);
+            try {
+                const response = await fetch(`https://api.imgbb.com/1/upload?key=${imgbbApiKey}`, {
+                    method: 'POST',
+                    body: formData
+                });
+                const data = await response.json();
+                if (data.success) {
+                    return data.data.url; 
+                } else {
+                    throw new Error(data.error.message);
+                }
+            } catch (error) {
+                console.error('ImgBB Upload Error:', error);
+                return null; 
+            }
+        }
+
+    </script>
+</body>
+</html>
