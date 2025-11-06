@@ -246,6 +246,9 @@
         }
         // --- END Animation Function ---
 
+        // =============================================
+        // ===== STARTWEBCAM FUNCTION EKA FIX KALA =====
+        // =============================================
         async function startWebcam() {
             if (webcamStream) {
                 webcamStream.getTracks().forEach(track => track.stop());
@@ -260,12 +263,19 @@
                 video.srcObject = webcamStream;
                 cameraError.classList.add('hidden');
                 
-                // --- ALUTH: Animation eka start karanna ---
+                // --- ALUTH: Animation eka start karanna (FIXED) ---
                 video.onloadedmetadata = () => {
-                    overlayCanvas.width = video.videoWidth;
-                    overlayCanvas.height = video.videoHeight;
-                    // Container eke size eka video ekata match karanawa
-                    videoContainer.style.aspectRatio = `${video.videoWidth} / ${video.videoHeight}`;
+                    // Canvas resolution eka container eke display size ekata set karanawa
+                    // CSS eken `w-full` nisa, container eke `offsetWidth` eka gannawa
+                    const displayWidth = videoContainer.offsetWidth;
+                    // CSS eken `aspect-ratio: 4/5` nisa, height eka calculate karanawa
+                    const displayHeight = videoContainer.offsetHeight; 
+                    
+                    overlayCanvas.width = displayWidth;
+                    overlayCanvas.height = displayHeight;
+                    
+                    // videoContainer.style.aspectRatio = ... <-- Me line eka ain kara
+                    
                     drawOverlay(); // Start animation
                 };
                 // ------------------------------------
@@ -276,6 +286,8 @@
                 takeBtn.disabled = true;
             }
         }
+        // =============================================
+        // =============================================
 
         function stopWebcam() {
             if (animationFrameId) { // --- ALUTH
