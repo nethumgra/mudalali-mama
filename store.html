@@ -1,0 +1,1760 @@
+<!DOCTYPE html>
+<html lang="si">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Seller Store - මුදලාලි මාමා</title>
+    
+    <script src="https://cdn.tailwindcss.com"></script>
+    
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.2/css/all.min.css">
+
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+    <link href="https://fonts.googleapis.com/css2?family=Poppins:wght@300;400;500;600;700&display=swap" rel="stylesheet">
+
+    <script>
+        tailwind.config = {
+            theme: {
+                extend: {
+                    fontFamily: {
+                        sans: ['Poppins', 'sans-serif'],
+                    },
+                    colors: {
+                        'mudalali-green': {
+                            light: '#76b852',       
+                            DEFAULT: '#3a6a4a',      
+                            dark: '#2c5234',        
+                        },
+                        'mudalali-gold': '#bda26b',
+                        'mudalali-red': '#d93a3e',
+                        'mudalali-bg': '#f5f5f4',
+                        'mm-gray': { 
+                            light: '#f8f8f8',
+                            DEFAULT: '#e5e5e5',
+                        }
+                    }
+                }
+            }
+        }
+    </script>
+    <style type="text/tailwindcss">
+        body {
+            @apply font-sans text-gray-800;
+        }
+        .drawer-overlay {
+            @apply fixed inset-0 bg-black bg-opacity-50 z-50 transition-opacity opacity-0 pointer-events-none;
+        }
+        .drawer-content {
+            @apply fixed top-0 right-0 h-full bg-white shadow-xl z-50 transform translate-x-full transition-transform duration-300 ease-in-out;
+            width: 90%;
+            max-width: 400px;
+        }
+        .drawer-content.left {
+            @apply left-0 right-auto transform -translate-x-full;
+        }
+        .drawer.open .drawer-overlay {
+            @apply opacity-100 pointer-events-auto;
+        }
+        .drawer.open .drawer-content {
+            @apply transform translate-x-0;
+        }
+        .mobile-nav-link.active {
+            @apply text-mudalali-green;
+        }
+        .no-scrollbar::-webkit-scrollbar {
+            display: none;
+        }
+        .no-scrollbar {
+            scrollbar-width: none;
+        }
+        .tab-button.active { 
+            border-color: #3a6a4a; 
+            color: #3a6a4a; 
+        }
+        .menu-tab-btn.active {
+            @apply border-mudalali-green text-mudalali-green;
+        }
+        @keyframes pop { 0% { transform: scale(1); } 50% { transform: scale(1.3); } 100% { transform: scale(1); } }
+        .pop { animation: pop 0.2s ease-out; }
+        .line-clamp-2 {
+            display: -webkit-box;
+            -webkit-line-clamp: 2;
+            -webkit-box-orient: vertical;  
+            overflow: hidden;
+        }
+        .line-clamp-3 {
+            display: -webkit-box;
+            -webkit-line-clamp: 3;
+            -webkit-box-orient: vertical;  
+            overflow: hidden;
+        }
+        /* --- LIKE BUTTON (RED) CSS --- */
+        .like-button.liked {
+            @apply text-mudalali-red font-bold;
+        }
+
+        /* --- New CSS for PC Comment Section --- */
+        @media (min-width: 768px) {
+            .comments-section {
+                @apply bg-white rounded-lg shadow-lg p-6 mt-6;
+            }
+            .comments-section.hidden {
+                display: none;
+            }
+        }
+    </style>
+</head>
+<body class="pb-20 md:pb-0" style="background-color: #f5f5f4;"> 
+    
+    <div id="page-loader" class="fixed top-0 left-0 w-0 h-1 bg-mudalali-green z-[9999] transition-all duration-300 ease-linear"></div>
+    
+    <header class="bg-white shadow-md sticky top-0 z-40 hidden md:block">
+        <div class="container mx-auto px-4 py-3 flex justify-between items-center">
+            <a href="index.html" id="logo-link" class="flex items-center gap-2">
+                <img id="logo-img" src="https://i.ibb.co/1tCywvyP/logo.png" class="h-10" alt="Logo">
+            </a>
+            <div class="flex-grow max-w-xl mx-4">
+                <form class="flex">
+                    <input type="text" placeholder="Search..." class="w-full px-4 py-2 border border-mm-gray-DEFAULT rounded-l-md focus:outline-none focus:ring-2 focus:ring-mudalali-green">
+                    <button type="submit" class="bg-mudalali-green text-white px-4 py-2 rounded-r-md hover:bg-mudalali-green-dark">
+                        <i class="fa fa-search"></i>
+                    </button>
+                </form>
+            </div>
+            <div class="flex items-center space-x-6">
+                <a href="account.html" id="desktop-account-btn" class="flex flex-col items-center text-gray-600 hover:text-mudalali-green">
+                    <i class="fa fa-user text-xl"></i>
+                    <span class="text-xs">Account</span>
+                </a>
+                <a href="wishlist.html" class="relative flex flex-col items-center text-gray-600 hover:text-mudalali-green">
+                    <i class="fa fa-heart text-xl"></i>
+                    <span id="wishlist-count-badge" class="absolute -top-2 -right-2 bg-mudalali-red text-white text-xs rounded-full px-1.5 py-0.5">0</span>
+                    <span class="text-xs">Wishlist</span>
+                </a>
+                <button id="desktop-cart-btn" class="flex flex-col items-center text-gray-600 hover:text-mudalali-green relative">
+                    <i class="fa fa-shopping-cart text-xl"></i>
+                    <span id="cart-count-badge" class="absolute -top-2 -right-2 bg-mudalali-red text-white text-xs rounded-full px-1.5 py-0.5">0</span>
+                    <span class="text-xs">Cart</span>
+                </button>
+            </div>
+        </div>
+    </header>
+    <nav class="bg-mudalali-bg shadow-sm hidden md:block" style="border-bottom: 1px solid #e5e5e5;">
+        <div class="container mx-auto px-4 flex justify-between items-center">
+            <div class="flex space-x-6">
+                <a href="index.html" class="font-semibold text-gray-700 hover:text-mudalali-green-dark px-3 py-2.5">Home</a>
+                <a href="stories.html" class="font-semibold text-gray-700 hover:text-mudalali-green-dark px-3 py-2.5">Stories</a>
+                <a href="shop.html" class="font-semibold text-mudalali-green-dark border-b-2 border-mudalali-green px-3 py-2.5">Shop</a>
+            </div>
+        </div>
+    </nav>
+    <header class="bg-white shadow-md sticky top-0 z-40 flex md:hidden items-center justify-between p-4">
+        <button id="mobile-menu-btn" class="text-2xl text-gray-700">
+            <i class="fa fa-bars"></i>
+        </button>
+        <a href="index.html" id="mobile-logo-link" class="text-2xl font-bold text-mudalali-green-dark">
+            <img id="mobile-logo-img" src="https://i.ibb.co/1tCywvyP/logo.png" class="h-8" alt="Mudalali Mama Logo">
+        </a>
+        <div class="w-8"></div> 
+    </header>
+
+    <main class="container mx-auto p-4 md:p-8" style="min-height: calc(100vh - 200px);">
+        
+        <section id="store-header-container" class="bg-white rounded-lg shadow-lg overflow-hidden mb-8">
+            <div id="store-banner-img" class="h-40 md:h-64 bg-gray-200 bg-cover bg-center">
+                </div>
+            <div class="p-4 md:p-6 relative">
+                <div class="md:flex md:gap-6">
+                    <div class="absolute md:relative -top-16 md:top-0 left-4 md:left-0 w-28 h-28 md:w-32 md:h-32 rounded-full border-4 border-white bg-gray-300 overflow-hidden flex-shrink-0">
+                        <img id="store-profile-img" src="https://placehold.co/128x128/e2e8f0/94a3b8?text=Store" class="w-full h-full object-cover">
+                    </div>
+                    <div class="mt-12 md:mt-0 md:flex-grow">
+                        <div class="flex justify-between items-start">
+                            <div>
+                                <h1 id="store-name" class="text-2xl md:text-3xl font-bold text-gray-800">Loading Store...</h1>
+                                <p id="store-location" class="text-sm text-gray-500 mt-1"><i class="fa fa-map-marker-alt mr-1"></i>Loading...</p>
+                            </div>
+                            <button id="share-store-btn" class="flex-shrink-0 ml-4 px-4 py-2 bg-gray-100 text-gray-700 rounded-lg font-semibold text-sm hover:bg-gray-200">
+                                <i class="fa fa-share-alt mr-2"></i> Share Store
+                            </button>
+                        </div>
+                        <p id="store-description" class="text-gray-600 mt-3 text-sm md:text-base">Loading description...</p>
+                    </div>
+                    </div>
+            </div>
+        </section>
+
+        <div class="flex border-b border-gray-300 mb-6">
+            <button id="tab-btn-products" class="tab-button active flex-1 md:flex-none md:px-8 py-3 font-semibold text-lg border-b-2">
+                <i class="fa fa-box mr-2"></i> Products
+            </button>
+            <button id="tab-btn-stories" class="tab-button flex-1 md:flex-none md:px-8 py-3 font-semibold text-lg text-gray-500 border-b-2 border-transparent">
+                <i class="fa fa-book-open mr-2"></i> Stories
+            </button>
+        </div>
+
+        <div>
+            <div id="view-products" class="dashboard-view">
+                <div id="product-list-container" class="grid grid-cols-2 sm:grid-cols-3 md:grid-cols-4 lg:grid-cols-5 gap-4 md:gap-6">
+                    <div class="col-span-full w-full text-center py-10">
+                        <svg class="animate-spin h-8 w-8 text-mudalali-green mx-auto" xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24">
+                            <circle class="opacity-25" cx="12" cy="12" r="10" stroke="currentColor" stroke-width="4"></circle>
+                            <path class="opacity-75" fill="currentColor" d="M4 12a8 8 0 018-8V0C5.373 0 0 5.373 0 12h4zm2 5.291A7.962 7.962 0 014 12H0c0 3.042 1.135 5.824 3 7.938l3-2.647z"></path>
+                        </svg>
+                        <p class="mt-2 text-gray-500 font-semibold">Loading Products...</p>
+                    </div>
+                </div>
+            </div>
+
+            <div id="view-stories" class="dashboard-view hidden">
+                <div id="stories-feed-container" class="space-y-6 max-w-2xl mx-auto">
+                    <div class="col-span-full w-full text-center py-10">
+                        <svg class="animate-spin h-8 w-8 text-mudalali-green mx-auto" xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24">
+                            <circle class="opacity-25" cx="12" cy="12" r="10" stroke="currentColor" stroke-width="4"></circle>
+                            <path class="opacity-75" fill="currentColor" d="M4 12a8 8 0 018-8V0C5.373 0 0 5.373 0 12h4zm2 5.291A7.962 7.962 0 014 12H0c0 3.042 1.135 5.824 3 7.938l3-2.647z"></path>
+                        </svg>
+                        <p class="mt-2 text-gray-500 font-semibold">Loading Stories...</p>
+                    </div>
+                </div>
+            </div>
+        </div>
+
+    </main>
+
+    <div id="comments-drawer" class="drawer md:hidden">
+        <div class="drawer-overlay" id="comments-drawer-overlay-mobile"></div>
+        <div class="drawer-content flex flex-col">
+            <div class="flex justify-between items-center p-4 border-b">
+                <h2 class="text-xl font-bold">Comments</h2>
+                <button id="comments-drawer-close-mobile" class="text-xl">&times;</button>
+            </div>
+            <div id="comments-list-container-mobile" class="flex-grow p-4 overflow-y-auto space-y-4">
+                <p class="text-gray-500 text-center">Loading comments...</p>
+            </div>
+            <div class="p-4 border-t bg-gray-50">
+                <div class="flex gap-2">
+                    <input type="text" id="new-comment-input-mobile" placeholder="Write a comment..." class="flex-grow p-2 border rounded-lg focus:ring-mudalali-green focus:border-mudalali-green" disabled>
+                    <button id="submit-comment-btn-mobile" class="bg-mudalali-green text-white px-4 rounded-lg font-semibold hover:bg-mudalali-green-dark" disabled>
+                        <i class="fa fa-paper-plane"></i>
+                    </button>
+                </div>
+                <p id="comment-login-prompt-mobile" class="text-xs text-gray-500 mt-2 text-center hidden">Please <a href="#" id="comment-login-link-mobile" class="text-mudalali-green font-semibold">log in</a> to comment.</p>
+            </div>
+        </div>
+    </div>
+
+    <div id="comments-section-pc" class="comments-section hidden max-w-2xl mx-auto">
+        <h2 class="text-2xl font-bold mb-4">Comments</h2>
+        <div id="comments-list-container-pc" class="space-y-4">
+            <p class="text-gray-500 text-center">Loading comments...</p>
+        </div>
+        <button id="load-more-comments-btn-pc" class="w-full bg-gray-100 text-gray-700 py-2 rounded-lg mt-4 hidden hover:bg-gray-200">Load more comments</button>
+        <div class="mt-6 border-t pt-4">
+            <div class="flex gap-2">
+                <input type="text" id="new-comment-input-pc" placeholder="Write a comment..." class="flex-grow p-2 border rounded-lg focus:ring-mudalali-green focus:border-mudalali-green" disabled>
+                <button id="submit-comment-btn-pc" class="bg-mudalali-green text-white px-4 rounded-lg font-semibold hover:bg-mudalali-green-dark" disabled>
+                    <i class="fa fa-paper-plane"></i>
+                </button>
+            </div>
+            <p id="comment-login-prompt-pc" class="text-xs text-gray-500 mt-2 text-center hidden">Please <a href="#" id="comment-login-link-pc" class="text-mudalali-green font-semibold">log in</a> to comment.</p>
+        </div>
+    </div>
+
+
+    <footer class="bg-gray-800 text-gray-300 pt-16 pb-8 hidden md:block">
+        <div id="footer-container" class="container mx-auto px-4">
+            
+            <div class="bg-gray-700 p-8 rounded-lg -mt-28 mb-16 relative z-10 shadow-xl flex items-center justify-between">
+                <div>
+                    <h3 class="text-2xl font-bold text-white mb-2">SUBSCRIBE TO US</h3>
+                    <p class="text-gray-300">Get the first look at exclusive offers, promotions, and more.</p>
+                </div>
+                <form class="flex w-full max-w-md">
+                    <input type="email" placeholder="Email Address" class="w-full px-4 py-3 rounded-l-md text-gray-800 focus:outline-none focus:ring-2 focus:ring-mudalali-green">
+                    <button type="submit" class="bg-mudalali-green text-white px-6 py-3 rounded-r-md font-bold hover:bg-mudalali-green-dark">
+                        SUBSCRIBE
+                    </button>
+                </form>
+            </div>
+
+            <div class="grid grid-cols-2 md:grid-cols-5 gap-8 mb-8">
+                <div>
+                    <h4 class="font-bold text-white mb-4">මුදලාලි මාමා</h4>
+                    <ul id="footer-col-tsmgroup" class="space-y-2"><li>Loading...</li></ul>
+                </div>
+                <div>
+                    <h4 class="font-bold text-white mb-4">INFO</h4>
+                    <ul id="footer-col-info" class="space-y-2"><li>Loading...</li></ul>
+                </div>
+                <div>
+                    <h4 class="font-bold text-white mb-4">QUICK LINKS</h4>
+                    <ul id="footer-col-quicklinks" class="space-y-2"><li>Loading...</li></ul>
+                </div>
+                <div class="col-span-2 md:col-span-1">
+                    <h4 class="font-bold text-white mb-4">COLOMBO HEAD OFFICE</h4>
+                    <address id="footer-address" class="not-italic">Loading...</address>
+                    <p class="mt-2">Email: <a id="footer-email" href="#" class="hover:text-white">...</a></p>
+                    <p>Hotline: <a id="footer-hotline" href="#" class="hover:text-white">...</a></p>
+                </div>
+                <div class="col-span-2 md:col-span-1">
+                    <h4 class="font-bold text-white mb-4">KEEP IN TOUCH</h4>
+                    <div id="footer-socials" class="flex space-x-4 mb-4">
+                    </div>
+                    <h4 class="font-bold text-white mb-4 mt-6">PAYMENTS</h4>
+                    <div class="flex space-x-2">
+                        <img src="https://i.ibb.co/fDYrL3g/visa.png" alt="Visa" class="h-6">
+                        <img src="https://i.ibb.co/7rmXz4F/mastercard.png" alt="Mastercard" class="h-6">
+                        <img src="https://i.ibb.co/C0W2LFr/amex.png" alt="Amex" class="h-6">
+                    </div>
+                </div>
+            </div>
+
+            <div class="border-t border-gray-700 pt-6 text-sm text-center md:flex justify-between">
+                <p>&copy; 2025 Mudalali Mama. All Rights reserved.</p>
+                <div class="space-x-4 mt-4 md:mt-0">
+                    <a href="#" class="hover:text-white">TERMS & CONDITIONS</a>
+                    <span>|</span>
+                    <a href="#" class="hover:text-white">PRIVACY POLICY</a>
+                </div>
+            </div>
+        </div>
+    </footer>
+
+    <nav id="mobile-nav-bar" class="fixed bottom-0 left-0 right-0 h-16 bg-white border-t border-gray-200 shadow-lg flex justify-around items-center z-40 md:hidden">
+        </nav>
+
+    <div id="add-new-modal" class="hidden fixed inset-0 z-50 flex items-end justify-center p-4">
+        <div class="modal-overlay absolute inset-0 bg-black bg-opacity-50"></div>
+        <div class="modal-content relative bg-white rounded-lg shadow-xl p-6 w-full" style="max-width: 400px; z-index: 51;">
+            <h2 class="text-xl font-bold text-gray-800 text-center mb-4">Create New...</h2>
+            <div class="flex flex-col gap-3">
+                <a href="seller-profile.html#products" id="add-modal-product-btn" class="w-full text-center bg-mudalali-green text-white p-3 rounded-lg hover:bg-mudalali-green-dark font-bold text-base">
+                    <i class="fa fa-box mr-2"></i> Add New Product
+                </a>
+                <a href="seller-profile.html#stories" id="add-modal-story-btn" class="w-full text-center bg-mudalali-green text-white p-3 rounded-lg hover:bg-mudalali-green-dark font-bold text-base">
+                    <i class="fa fa-book-open mr-2"></i> Write New Story
+                </a>
+                <button id="add-modal-cancel-btn" class="w-full text-center bg-gray-100 text-gray-700 p-2 rounded-lg hover:bg-gray-200 font-bold text-sm mt-2">
+                    Cancel
+                </button>
+            </div>
+        </div>
+    </div>
+
+    <div id="account-drawer-modal" class="drawer drawer-modal fixed inset-0 z-50 hidden">
+        <div id="account-drawer-bg" class="drawer-bg fixed inset-0 bg-black bg-opacity-50 opacity-0 transition-opacity"></div>
+        <div id="account-drawer" class="drawer-content fixed top-0 right-0 h-full bg-white shadow-xl w-full max-w-md flex flex-col">
+            
+            <div id="account-drawer-logged-in" class="hidden flex flex-col h-full">
+                <div class="p-4 flex justify-between items-center border-b flex-shrink-0">
+                    <h2 class="text-xl font-semibold text-gray-800">My Account</h2>
+                    <button id="close-account-drawer-btn-logged-in" class="text-gray-500 hover:text-gray-800 text-sm flex items-center gap-1"><i class="fas fa-times"></i> Close</button>
+                </div>
+                <div class="flex-grow p-6 overflow-y-auto">
+                    <p class="text-gray-600 mb-2">Welcome back,</p>
+                    <h3 id="account-drawer-user-email" class="text-lg font-semibold text-gray-800 mb-6 break-words"></h3>
+                    <a href="account.html" class="w-full text-center bg-mudalali-green text-white p-3 rounded-lg hover:bg-mudalali-green-dark font-bold text-base">Go to My Account</a>
+                    <button id="drawer-logout-btn" class="w-full text-center bg-gray-100 text-gray-700 p-3 rounded-lg hover:bg-gray-200 font-bold text-base mt-4">Logout</button>
+                </div>
+            </div>
+            
+            <div id="account-drawer-logged-out" class="hidden flex flex-col h-full">
+                <div class="p-4 border-b">
+                    <div class="flex justify-between items-center">
+                        <h2 class="text-xl font-bold text-gray-700">Welcome!</h2>
+                        <button id="close-account-drawer-btn-logged-out" class="text-gray-500 hover:text-gray-800 text-sm flex items-center gap-1"><i class="fas fa-times"></i> Close</button>
+                    </div>
+                </div>
+                <div class="p-2 bg-gray-100 flex gap-2">
+                    <button id="drawer-login-tab-btn" class="tab-button active flex-1 bg-white p-2 rounded-md font-semibold border-b-2">Login</button>
+                    <button id="drawer-signup-tab-btn" class="tab-button flex-1 bg-white p-2 rounded-md font-semibold text-gray-500 border-b-2 border-transparent">Sign Up</button>
+                </div>
+                <div class="p-6" style="max-height: 80vh; overflow-y: auto;">
+                    <form id="drawer-login-form" class="space-y-4">
+                        <input type="email" id="drawer-login-email" placeholder="Email" required class="w-full p-3 border rounded-md focus:ring-mudalali-green focus:border-mudalali-green">
+                        <input type="password" id="drawer-login-password" placeholder="Password" required class="w-full p-3 border rounded-md focus:ring-mudalali-green focus:border-mudalali-green">
+                        <button type="submit" class="w-full bg-mudalali-green text-white p-3 rounded-md hover:bg-mudalali-green-dark font-bold">Login</button>
+                        <p id="drawer-login-error" class="text-red-500 text-sm text-center"></p>
+                    </form>
+                    <form id="drawer-signup-form" class="space-y-4 hidden">
+                        <div class="flex items-center">
+                            <input id="drawer-signup-is-seller" type="checkbox" class="h-4 w-4 text-mudalali-green focus:ring-mudalali-green border-gray-300 rounded">
+                            <label for="drawer-signup-is-seller" class="ml-2 block text-sm text-gray-900">I want to register as a Seller</label>
+                        </div>
+                        <input type="text" id="drawer-signup-name" placeholder="Full Name or Store Name" required class="w-full p-3 border rounded-md focus:ring-mudalali-green focus:border-mudalali-green">
+                        <input type="email" id="drawer-signup-email" placeholder="Email" required class="w-full p-3 border rounded-md focus:ring-mudalali-green focus:border-mudalali-green">
+                        <input type="password" id="drawer-signup-password" placeholder="Password" required class="w-full p-3 border rounded-md focus:ring-mudalali-green focus:border-mudalali-green">
+                        <button type="submit" class="w-full bg-mudalali-green text-white p-3 rounded-md hover:bg-mudalali-green-dark font-bold">Create Account</button>
+                        <p id="drawer-signup-error" class="text-red-500 text-sm text-center"></p>
+                    </form>
+                </div>
+            </div>
+        </div>
+    </div>
+
+
+    <div id="menu-drawer" class="drawer">
+        <div class="drawer-overlay" id="menu-drawer-overlay"></div>
+        <div class="drawer-content left flex flex-col">
+            <div class="flex justify-between items-center p-4 border-b">
+                <h2 class="text-xl font-bold">MENU</h2>
+                <button id="menu-drawer-close" class="text-xl">&times;</button>
+            </div>
+            <div class="p-4 border-b">
+                <form class="flex">
+                    <input type="text" placeholder="Search for products" class="w-full px-4 py-2 border border-r-0 border-gray-300 rounded-l-md focus:outline-none">
+                    <button type="submit" class="bg-gray-100 border border-gray-300 px-4 rounded-r-md text-gray-600">
+                        <i class="fa fa-search"></i>
+                    </button>
+                </form>
+            </div>
+            <div class="flex border-b">
+                <button id="menu-tab-menu" class="menu-tab-btn active flex-1 py-3 font-semibold border-b-2">MENU</button>
+                <button id="menu-tab-categories" class="menu-tab-btn flex-1 py-3 font-semibold text-gray-500 border-b-2 border-transparent">CATEGORIES</button>
+            </div>
+            <div id="menu-tab-menu-content" class="flex-col flex-grow overflow-y-auto">
+                <a href="index.html" class="block p-4 border-b text-gray-700">HOME</a>
+                <a href="stories.html" class="block p-4 border-b text-gray-700">SELLER STORIES</a>
+                <a href="shop.html" class="block p-4 border-b font-semibold text-mudalali-green">SHOP</a>
+                <a href="#" class="block p-4 border-b text-gray-700">ABOUT US</a>
+                <a href="#" class="block p-4 border-b text-gray-700">CONTACT US</a>
+                <div class="p-4 bg-gray-100 font-bold text-gray-600">MY ACCOUNT</div>
+                <a href="wishlist.html" class="block p-4 border-b text-gray-700"><i class="fa fa-heart w-6 mr-1"></i> WISHLIST</a>
+                <a href="account.html" id="drawer-my-account-btn" class="block w-full text-left p-4 border-b text-gray-700"><i class="fa fa-user w-6 mr-1"></i> MY ACCOUNT</a>
+            </div>
+            <div id="menu-tab-categories-content" class="hidden flex-col flex-grow overflow-y-auto">
+            </div>
+        </div>
+    </div>
+
+    <div id="cart-drawer" class="drawer">
+        <div class="drawer-overlay" id="cart-drawer-overlay"></div>
+        <div class="drawer-content flex flex-col">
+            <div class="flex justify-between items-center p-4 border-b">
+                <h2 class="text-xl font-bold">Shopping cart</h2>
+                <button id="cart-drawer-close" class="text-xl">&times;</button>
+            </div>
+            <div id="cart-drawer-items-container" class="flex-grow p-6 overflow-y-auto text-center">
+                <p class="text-gray-500">Your cart is empty.</p>
+            </div>
+            <div class="p-6 border-t bg-gray-50">
+                <div class="flex justify-between items-center mb-2">
+                    <span class="text-lg font-medium text-gray-600">Subtotal:</span>
+                    <span id="cart-drawer-total" class="text-xl font-bold text-mudalali-green-dark">Rs. 0.00</span>
+                </div>
+                <div class="flex flex-col gap-3">
+                    <a href="cart.html" class="w-full text-center bg-white border-2 border-mudalali-green text-mudalali-green p-3 rounded-lg hover:bg-gray-50 font-bold text-base">
+                        VIEW CART
+                    </a>
+                    <a href="checkout.html" class="w-full text-center bg-mudalali-green text-white p-3 rounded-lg hover:bg-mudalali-green-dark font-bold text-base">
+                        CHECKOUT
+                    </a>
+                </div>
+            </div>
+        </div>
+    </div>
+    
+    <script type="module">
+        import { initializeApp } from "https://www.gstatic.com/firebasejs/11.6.1/firebase-app.js";
+        import { 
+            getAuth, 
+            createUserWithEmailAndPassword, 
+            signInWithEmailAndPassword, 
+            onAuthStateChanged, 
+            signOut 
+        } from "https://www.gstatic.com/firebasejs/11.6.1/firebase-auth.js";
+        import { 
+            getFirestore, 
+            runTransaction, 
+            addDoc,         
+            doc, 
+            getDoc,
+            getDocs,
+            collection, 
+            onSnapshot,
+            query,
+            where,
+            orderBy,
+            limit, // --- NEW IMPORT ---
+            startAfter, // --- NEW IMPORT ---
+            setDoc,
+            updateDoc, 
+            deleteDoc, 
+            increment, 
+            serverTimestamp 
+        } from "https://www.gstatic.com/firebasejs/11.6.1/firebase-firestore.js";
+
+        const firebaseConfig = {
+            apiKey: "AIzaSyDIbu2qT53iGPqMCx5UdU6XY8wvXkb3ZF4",
+            authDomain: "mudalali-mama.firebaseapp.com",
+            projectId: "mudalali-mama",
+            storageBucket: "mudalali-mama.firebasestorage.app",
+            messagingSenderId: "296597428969",
+            appId: "1:296597428969:web:684668be9c0eaeecb4ae78",
+            measurementId: "G-GC1CP1LRFD"
+        };
+
+        const app = initializeApp(firebaseConfig);
+        const db = getFirestore(app);
+        const auth = getAuth(app); 
+        
+        const appId = typeof __app_id !== 'undefined' ? __app_id : 'default-app-id';
+        const publicDataPath = `/artifacts/${appId}/public/data`;
+        const usersPath = `/users`; 
+
+        let currentUser = null;
+        let currentUserData = null; // --- NEW VAR ---
+        let currentStoreData = null;
+        const pageLoader = document.getElementById('page-loader');
+        
+        let currentStoryIdForComment = null;
+        let unsubscribeCommentsListener = null;
+        let lastVisibleComment = null; // For pagination
+        const COMMENTS_PER_LOAD = 4; // Number of comments to load at once
+
+        let storeIdForShare = null; 
+
+        document.addEventListener('DOMContentLoaded', () => {
+            console.log("Mudalali Mama Store Page Initialized");
+            if (pageLoader) pageLoader.style.width = '30%';
+            
+            localStorage.setItem('selectedCurrency', 'LKR');
+
+            loadSiteConfig();
+            loadDesktopNavCategories();
+            loadFooter();
+            setupMobileDrawers(); 
+            updateWishlistCountBadge();
+            setupPageSpecificLogic();
+        });
+
+        // --- UPDATED onAuthStateChanged ---
+        onAuthStateChanged(auth, async (user) => {
+            currentUser = user;
+            const loggedInView = document.getElementById('account-drawer-logged-in');
+            const loggedOutView = document.getElementById('account-drawer-logged-out');
+            
+            const urlParams = new URLSearchParams(window.location.search);
+            const storeId = urlParams.get('id');
+
+            if (user) {
+                const userDocRef = doc(db, usersPath, user.uid);
+                const userDocSnap = await getDoc(userDocRef);
+                if (userDocSnap.exists()) {
+                    currentUserData = userDocSnap.data();
+                }
+
+                loggedInView.classList.remove('hidden');
+                loggedInView.classList.add('flex');
+                loggedOutView.classList.add('hidden');
+                loggedOutView.classList.remove('flex');
+                document.getElementById('account-drawer-user-email').textContent = user.email;
+                attachCartDrawerListener(user.uid);
+                
+                // --- NEW NAV LOGIC ---
+                if (currentUserData && currentUserData.isSeller && user.uid === storeId) {
+                    // This is the store owner
+                    buildSellerMobileNav();
+                } else {
+                    // This is a normal user or a different seller
+                    buildUserMobileNav();
+                }
+
+                // Enable comment inputs
+                document.getElementById('new-comment-input-mobile').disabled = false;
+                document.getElementById('submit-comment-btn-mobile').disabled = false;
+                document.getElementById('comment-login-prompt-mobile').classList.add('hidden');
+                document.getElementById('new-comment-input-pc').disabled = false;
+                document.getElementById('submit-comment-btn-pc').disabled = false;
+                document.getElementById('comment-login-prompt-pc').classList.add('hidden');
+
+            } else {
+                currentUserData = null;
+                loggedInView.classList.add('hidden');
+                loggedInView.classList.remove('flex');
+                loggedOutView.classList.remove('hidden');
+                loggedOutView.classList.add('flex');
+                attachCartDrawerListener(null); 
+                
+                // --- NEW NAV LOGIC ---
+                buildUserMobileNav(); // Show user nav when logged out
+
+                // Disable comment inputs
+                document.getElementById('new-comment-input-mobile').disabled = true;
+                document.getElementById('submit-comment-btn-mobile').disabled = true;
+                document.getElementById('comment-login-prompt-mobile').classList.remove('hidden');
+                document.getElementById('new-comment-input-pc').disabled = true;
+                document.getElementById('submit-comment-btn-pc').disabled = true;
+                document.getElementById('comment-login-prompt-pc').classList.remove('hidden');
+            }
+            
+            // --- NEW ---
+            // Setup login links for comment sections
+            document.getElementById('comment-login-link-mobile')?.addEventListener('click', (e) => { 
+                e.preventDefault(); 
+                document.getElementById('account-drawer-modal')?.classList.remove('hidden'); 
+            });
+            document.getElementById('comment-login-link-pc')?.addEventListener('click', (e) => { 
+                e.preventDefault(); 
+                document.getElementById('account-drawer-modal')?.classList.remove('hidden'); 
+            });
+        });
+
+        // --- NEW FUNCTION: Build User Mobile Nav ---
+        function buildUserMobileNav() {
+            const navBar = document.getElementById('mobile-nav-bar');
+            navBar.innerHTML = `
+                <a href="index.html" class="mobile-nav-link flex-1 flex flex-col items-center justify-center text-mudalali-green text-xs">
+                    <i class="fa fa-home text-xl"></i>
+                    <span class="mt-1">Home</span>
+                </a>
+                <a href="stories.html" class="mobile-nav-link flex-1 flex flex-col items-center justify-center text-gray-600 hover:text-mudalali-green text-xs">
+                    <i class="fa fa-book-open text-xl"></i>
+                    <span class="mt-1">Stories</span>
+                </a>
+                <button id="mobile-cart-btn-nav" class="mobile-nav-link flex-1 flex flex-col items-center justify-center text-gray-600 hover:text-mudalali-green text-xs relative">
+                    <div class="relative">
+                        <i class="fa fa-shopping-bag text-xl"></i>
+                        <span id="mobile-cart-badge-nav" class="absolute -top-1 -right-2.5 bg-mudalali-red text-white text-xs font-semibold rounded-full h-4 w-4 flex items-center justify-center">0</span>
+                    </div>
+                    <span class="mt-1">Cart</span>
+                </button>
+                <a href="account.html" id="mobile-account-btn-nav" class="mobile-nav-link flex-1 flex flex-col items-center justify-center text-gray-600 hover:text-mudalali-green text-xs">
+                    <i class="fa fa-user text-xl"></i>
+                    <span class="mt-1">My account</span>
+                </a>
+            `;
+            
+            // Re-attach listeners for cart and account
+            document.getElementById('mobile-cart-btn-nav')?.addEventListener('click', () => {
+                document.getElementById('cart-drawer')?.classList.add('open');
+            });
+            document.getElementById('mobile-account-btn-nav')?.addEventListener('click', (e) => {
+                e.preventDefault();
+                document.getElementById('account-drawer-modal')?.classList.remove('hidden');
+            });
+            // Update cart badge
+            const badge = document.getElementById('cart-count-badge')?.textContent || '0';
+            const navBadge = document.getElementById('mobile-cart-badge-nav');
+            if (navBadge) navBadge.textContent = badge;
+        }
+
+        // --- NEW FUNCTION: Build Seller Mobile Nav ---
+        function buildSellerMobileNav() {
+            const navBar = document.getElementById('mobile-nav-bar');
+            navBar.innerHTML = `
+                <a href="index.html" class="mobile-nav-link flex-1 flex flex-col items-center justify-center text-gray-600 hover:text-mudalali-green text-xs">
+                    <i class="fa fa-home text-xl"></i>
+                    <span class="mt-1">Home</span>
+                </a>
+                <div class="flex-1"></div> <button id="nav-btn-add" class="text-white">
+                    <div class="w-14 h-14 rounded-full bg-mudalali-green flex items-center justify-center -mt-6 shadow-lg">
+                        <i class="fa fa-plus text-2xl"></i>
+                    </div>
+                </button>
+                <div class="flex-1"></div> <a href="seller-profile.html" class="mobile-nav-link flex-1 flex flex-col items-center justify-center text-gray-600 hover:text-mudalali-green text-xs">
+                    <i class="fa fa-user-circle text-xl"></i>
+                    <span class="mt-1">Dashboard</span>
+                </a>
+            `;
+
+            // Add listeners for the '+' modal
+            const addModal = document.getElementById('add-new-modal');
+            document.getElementById('nav-btn-add').addEventListener('click', () => addModal.classList.remove('hidden'));
+            addModal.querySelector('.modal-overlay').addEventListener('click', () => addModal.classList.add('hidden'));
+            document.getElementById('add-modal-cancel-btn').addEventListener('click', () => addModal.classList.add('hidden'));
+        }
+
+        function setupPageSpecificLogic() {
+            const urlParams = new URLSearchParams(window.location.search);
+            storeIdForShare = urlParams.get('id'); 
+            const storeId = storeIdForShare;
+
+            if (!storeId) {
+                document.getElementById('store-header-container').innerHTML = '<p class="text-center text-red-500 p-10">Store ID not provided. Please check the URL.</p>';
+                document.getElementById('view-products').innerHTML = '';
+                return;
+            }
+
+            const tabBtnProducts = document.getElementById('tab-btn-products');
+            const tabBtnStories = document.getElementById('tab-btn-stories');
+            const viewProducts = document.getElementById('view-products');
+            const viewStories = document.getElementById('view-stories');
+
+            tabBtnProducts.addEventListener('click', () => {
+                tabBtnProducts.classList.add('active');
+                tabBtnStories.classList.remove('active');
+                viewProducts.classList.remove('hidden');
+                viewStories.classList.add('hidden');
+            });
+
+            tabBtnStories.addEventListener('click', () => {
+                tabBtnStories.classList.add('active');
+                tabBtnProducts.classList.remove('active');
+                viewStories.classList.remove('hidden');
+                viewProducts.classList.add('hidden');
+            });
+            
+            document.getElementById('share-store-btn').addEventListener('click', (e) => shareStore(e.currentTarget));
+            
+            loadStoreInfo(storeId);
+            loadStoreProducts(storeId);
+            loadStoreStories(storeId);
+            
+            if (pageLoader) {
+                pageLoader.style.width = '100%';
+                setTimeout(() => { pageLoader.style.display = 'none'; }, 500);
+            }
+        }
+
+        async function loadStoreInfo(storeId) {
+            const storeRef = doc(db, publicDataPath, 'stores', storeId);
+            try {
+                const storeSnap = await getDoc(storeRef);
+                if (!storeSnap.exists()) {
+                    document.getElementById('store-name').textContent = 'Store Not Found';
+                    document.getElementById('store-location').textContent = '';
+                    document.getElementById('store-description').textContent = 'This store does not seem to exist.';
+                    return;
+                }
+                
+                currentStoreData = storeSnap.data();
+                
+                document.title = `${currentStoreData.storeName} - මුදලාලි මාමා`;
+                document.getElementById('store-name').textContent = currentStoreData.storeName;
+                document.getElementById('store-location').innerHTML = `<i class="fa fa-map-marker-alt mr-1 text-gray-400"></i> ${currentStoreData.location || 'No location set'}`;
+                document.getElementById('store-description').textContent = currentStoreData.description || 'No description provided.';
+                
+                if (currentStoreData.bannerUrl) {
+                    document.getElementById('store-banner-img').style.backgroundImage = `url(${currentStoreData.bannerUrl})`;
+                }
+                if (currentStoreData.profileUrl) {
+                    document.getElementById('store-profile-img').src = currentStoreData.profileUrl;
+                }
+
+            } catch (e) {
+                console.error("Error loading store info: ", e);
+                document.getElementById('store-name').textContent = 'Error Loading Store';
+            }
+        }
+
+        async function loadStoreProducts(storeId) {
+            const container = document.getElementById('product-list-container');
+            const productsRef = collection(db, publicDataPath, 'products');
+            const q = query(productsRef, where("sellerUid", "==", storeId), orderBy("createdAt", "desc"));
+
+            try {
+                const querySnapshot = await getDocs(q);
+                container.innerHTML = ''; 
+                
+                if (querySnapshot.empty) {
+                    container.innerHTML = '<p class="col-span-full text-center text-gray-500 py-10">This seller has not added any products yet.</p>';
+                    return;
+                }
+
+                querySnapshot.forEach((doc) => {
+                    const product = doc.data();
+                    const productId = doc.id;
+                    
+                    let badgeHtml = product.saleTag 
+                        ? `<div class="absolute top-4 left-4 z-10 rounded-full bg-red-600 px-3 py-1 text-xs font-bold text-white">${product.saleTag}</div>`
+                        : `<div class="absolute top-4 left-4 z-10 rounded-full bg-mudalali-green px-3 py-1 text-xs font-bold text-white">NEW</div>`;
+                    
+                    let priceHtml = formatPrice(product); 
+                    const imageUrl = product.imageUrl || 'https://placehold.co/400x400';
+                    const imageHtml = `
+                        <img src="${imageUrl}" alt="${product.name}" class="absolute h-full w-full object-cover transition-opacity duration-500 ease-in-out opacity-100 group-hover:opacity-0" />
+                        <img src="${imageUrl}" alt="${product.name} hover" class="absolute h-full w-full object-cover transition-opacity duration-500 ease-in-out opacity-0 group-hover:opacity-100" />
+                    `;
+                    
+                    const productEl = document.createElement('div');
+                    productEl.className = "group relative overflow-hidden rounded-lg bg-white shadow-md transition-all duration-300 ease-in-out hover:shadow-xl";
+                    
+                    // --- Product card links to product.html, no add to cart button ---
+                    productEl.innerHTML = `
+                        <a href="product.html?id=${productId}" class="block product-link">
+                            <div class="relative h-48 md:h-64 overflow-hidden">
+                                ${imageHtml} ${badgeHtml}
+                            </div>
+                        </a>
+                        <div class="p-4 text-center">
+                            <p class="text-sm text-gray-500 truncate hidden md:block">${product.categories || 'Mudalali Mama'}</p>
+                            <a href="product.html?id=${productId}" class="block product-link">
+                                <h3 class="my-1 text-sm font-semibold text-gray-800 hover:text-mudalali-green md:text-lg line-clamp-2">${product.name}</h3>
+                            </a>
+                            ${priceHtml}
+                        </div>
+                    `;
+                    
+                    container.appendChild(productEl);
+                });
+
+            } catch (e) {
+                console.error("Error loading store products: ", e);
+                container.innerHTML = '<p class="col-span-full text-center text-red-500 py-10">Error loading products.</p>';
+            }
+        }
+        
+        async function loadStoreStories(storeId) {
+            const container = document.getElementById('stories-feed-container');
+            const storiesRef = collection(db, publicDataPath, 'stories'); 
+            const q = query(storiesRef, where("sellerUid", "==", storeId), orderBy("createdAt", "desc"));
+
+            try {
+                const querySnapshot = await getDocs(q);
+                container.innerHTML = ''; 
+                
+                if (querySnapshot.empty) {
+                    container.innerHTML = '<p class="text-center text-gray-500 py-10">This seller has not posted any stories yet.</p>';
+                    return;
+                }
+
+                if (!currentStoreData) {
+                    await loadStoreInfo(storeId); 
+                }
+                const sellerName = currentStoreData.storeName || 'Mudalali Mama';
+                const sellerProfilePic = currentStoreData.profileUrl || 'https://placehold.co/40x40/3a6a4a/f5f5f4?text=MM';
+                
+                querySnapshot.forEach((storyDoc) => {
+                    const story = storyDoc.data();
+                    const storyId = storyDoc.id;
+                    const likeCount = story.likeCount || 0;
+                    const commentCount = story.commentCount || 0;
+
+                    const storyCard = document.createElement('div');
+                    storyCard.className = "bg-white rounded-lg shadow-lg overflow-hidden transform transition-all duration-300 hover:shadow-xl hover:-translate-y-1 flex flex-col";
+                    
+                    storyCard.innerHTML = `
+                        <div class="p-5">
+                            <div class="flex items-center">
+                                <img class="h-10 w-10 rounded-full object-cover" src="${sellerProfilePic}" alt="${sellerName}">
+                                <div class="ml-3">
+                                    <h4 class="text-sm font-semibold text-gray-800">${sellerName}</h4>
+                                    <p class="text-xs text-gray-500">From our community</p>
+                                </div>
+                            </div>
+                        </div>
+
+                        <div class="px-5 pb-3">
+                            <div class="story-content-wrapper text-gray-600 text-sm leading-relaxed">
+                                <p class="story-content-text ${story.content && story.content.length > 150 ? 'line-clamp-3' : ''}">
+                                    ${story.content ? story.content : 'No content'}
+                                </p>
+                                ${story.content && story.content.length > 150 ? '<button class="read-more-btn font-semibold text-mudalali-green text-sm hover:underline">Read more</button>' : ''}
+                            </div>
+                        </div>
+
+                        <a href="story-detail.html?id=${storyId}" class="block relative h-56 bg-gray-100">
+                            <img class="h-full w-full object-contain" src="${story.imageUrl || 'https://placehold.co/400x300'}" alt="Story Image">
+                        </a>
+
+                        <div class="p-5">
+                            <div class="flex justify-between items-center text-gray-500 text-sm">
+                                <div class="flex gap-4">
+                                    <span class="like-count-text"><i class="fa fa-heart mr-1 text-mudalali-red"></i> ${likeCount}</span>
+                                    <span><i class="fa fa-comment mr-1"></i> ${commentCount}</span>
+                                </div>
+                            </div>
+                        </div>
+                        
+                        <div class="p-2 flex border-t bg-gray-50">
+                            <button class="like-button flex-1 py-2 text-gray-600 font-semibold hover:bg-gray-100 rounded" data-story-id="${storyId}">
+                                <i class="fa fa-heart mr-1"></i> Like
+                            </button>
+                            <button class="comment-btn flex-1 py-2 text-gray-600 font-semibold hover:bg-gray-100 rounded" data-story-id="${storyId}">
+                                <i class="fa fa-comment mr-1"></i> Comment
+                            </button>
+                            <button class="share-story-btn flex-1 py-2 text-gray-600 font-semibold hover:bg-gray-100 rounded" data-story-id="${storyId}">
+                                <i class="fa fa-share mr-1"></i> Share
+                            </button>
+                        </div>
+
+                        <div id="pc-comments-${storyId}" class="comments-section-placeholder hidden md:block"></div>
+                    `;
+                    container.appendChild(storyCard);
+
+                    storyCard.querySelector('.like-button').addEventListener('click', (e) => toggleLike(storyId, e.currentTarget));
+                    storyCard.querySelector('.comment-btn').addEventListener('click', () => {
+                        if (window.innerWidth >= 768) { // PC View
+                            togglePcComments(storyId, storyCard.querySelector(`#pc-comments-${storyId}`));
+                        } else { // Mobile View
+                            openMobileCommentsDrawer(storyId);
+                        }
+                    });
+                    storyCard.querySelector('.share-story-btn').addEventListener('click', (e) => shareStory(storyId, e.currentTarget, story.content));
+
+                    const readMoreBtn = storyCard.querySelector('.read-more-btn');
+                    if (readMoreBtn) {
+                        readMoreBtn.addEventListener('click', (e) => {
+                            const contentP = e.target.previousElementSibling;
+                            contentP.classList.remove('line-clamp-3');
+                            e.target.style.display = 'none';
+                        });
+                    }
+                });
+
+            } catch (e) {
+                console.error("Error loading store stories: ", e);
+                container.innerHTML = '<p class="text-center text-red-500 py-10">Error loading stories.</p>';
+            }
+        }
+        
+        function formatTimestamp(date) {
+            const now = new Date();
+            const seconds = Math.floor((now - date) / 1000);
+            
+            let interval = seconds / 31536000;
+            if (interval > 1) return Math.floor(interval) + "y ago";
+            interval = seconds / 2592000;
+            if (interval > 1) return Math.floor(interval) + "mo ago";
+            interval = seconds / 86400;
+            if (interval > 1) return Math.floor(interval) + "d ago";
+            interval = seconds / 3600;
+            if (interval > 1) return Math.floor(interval) + "h ago";
+            interval = seconds / 60;
+            if (interval > 1) return Math.floor(interval) + "m ago";
+            return Math.floor(seconds) + "s ago";
+        }
+
+        async function shareStore(buttonEl) {
+            const storeUrl = `${window.location.origin}${window.location.pathname}?id=${storeIdForShare}`;
+            const shareData = {
+                title: currentStoreData.storeName || 'Mudalali Mama Store',
+                text: currentStoreData.description || 'Check out this store on Mudalali Mama!',
+                url: storeUrl
+            };
+
+            try {
+                if (navigator.share) {
+                    await navigator.share(shareData);
+                } else {
+                    throw new Error('Web Share not supported');
+                }
+            } catch (err) {
+                try {
+                    await navigator.clipboard.writeText(storeUrl);
+                    const originalText = buttonEl.innerHTML;
+                    buttonEl.innerHTML = '<i class="fa fa-check mr-2"></i> Copied!';
+                    setTimeout(() => {
+                        buttonEl.innerHTML = originalText;
+                    }, 2000);
+                } catch (copyErr) {
+                    console.error('Failed to copy store link: ', copyErr);
+                    alert('Failed to copy link.');
+                }
+            }
+        }
+
+        async function shareStory(storyId, buttonEl, storyContent) {
+            const storyUrl = `${window.location.origin}/story-detail.html?id=${storyId}`; 
+            const shareData = {
+                title: `Story from ${currentStoreData.storeName}`,
+                text: storyContent ? storyContent.substring(0, 100) + '...' : 'Check out this story on Mudalali Mama!',
+                url: storyUrl
+            };
+
+            try {
+                if (navigator.share) {
+                    await navigator.share(shareData);
+                } else {
+                    throw new Error('Web Share not supported');
+                }
+            } catch (err) {
+                try {
+                    await navigator.clipboard.writeText(storyUrl);
+                    const originalText = buttonEl.innerHTML;
+                    buttonEl.innerHTML = '<i class="fa fa-check mr-1"></i> Copied!';
+                    buttonEl.disabled = true;
+                    setTimeout(() => {
+                        buttonEl.innerHTML = originalText;
+                        buttonEl.disabled = false;
+                    }, 2000);
+                } catch (copyErr) {
+                    console.error('Failed to copy story link: ', copyErr);
+                    alert('Failed to copy link.');
+                }
+            }
+        }
+
+        async function toggleLike(storyId, buttonEl) {
+            if (!currentUser) {
+                document.getElementById('account-drawer-modal')?.classList.remove('hidden');
+                return;
+            }
+
+            buttonEl.disabled = true;
+            const storyRef = doc(db, publicDataPath, 'stories', storyId);
+            const likeRef = doc(db, publicDataPath, 'storyInteractions', `${storyId}_${currentUser.uid}`);
+            let newLikeCount = 0; 
+
+            try {
+                await runTransaction(db, async (transaction) => {
+                    const likeSnap = await transaction.get(likeRef);
+                    const storySnap = await transaction.get(storyRef);
+                    
+                    if (!storySnap.exists()) {
+                        throw "Story does not exist!";
+                    }
+                    
+                    newLikeCount = storySnap.data().likeCount || 0; 
+
+                    if (likeSnap.exists()) {
+                        transaction.delete(likeRef);
+                        newLikeCount = Math.max(0, newLikeCount - 1);
+                    } else {
+                        transaction.set(likeRef, {
+                            storyId: storyId,
+                            userId: currentUser.uid,
+                            type: 'like',
+                            createdAt: serverTimestamp()
+                        });
+                        newLikeCount += 1;
+                    }
+                    
+                    transaction.update(storyRef, { likeCount: newLikeCount });
+                });
+                
+                const likeCountSpan = buttonEl.closest('.bg-white').querySelector('.like-count-text');
+                if (likeCountSpan) {
+                    likeCountSpan.innerHTML = `<i class="fa fa-heart mr-1 text-mudalali-red"></i> ${newLikeCount}`;
+                }
+                buttonEl.classList.toggle('liked');
+
+            } catch (e) {
+                console.error("Transaction failed: ", e);
+            } finally {
+                buttonEl.disabled = false;
+            }
+        }
+
+        // --- MOBILE COMMENTS DRAWER FUNCTIONS ---
+        function openMobileCommentsDrawer(storyId) {
+            if (unsubscribeCommentsListener) {
+                unsubscribeCommentsListener();
+            }
+            currentStoryIdForComment = storyId;
+            const drawer = document.getElementById('comments-drawer');
+            const container = document.getElementById('comments-list-container-mobile');
+            container.innerHTML = '<p class="text-gray-500 text-center">Loading comments...</p>';
+            drawer.classList.add('open');
+
+            const commentsRef = collection(db, publicDataPath, 'storyInteractions');
+            const q = query(commentsRef, 
+                where("storyId", "==", storyId), 
+                where("type", "==", "comment"), 
+                orderBy("createdAt", "asc")
+            );
+
+            unsubscribeCommentsListener = onSnapshot(q, async (snapshot) => {
+                container.innerHTML = '';
+                if (snapshot.empty) {
+                    container.innerHTML = '<p class="text-gray-500 text-center">No comments yet. Be the first!</p>';
+                    return;
+                }
+
+                for (const doc of snapshot.docs) {
+                    const comment = doc.data();
+                    let userName = 'User';
+                    let userPic = 'https://placehold.co/40x40/cccccc/969696?text=U';
+                    
+                    try {
+                        const userRef = doc(db, usersPath, comment.userId);
+                        const userSnap = await getDoc(userRef);
+                        if (userSnap.exists()) {
+                            userName = userSnap.data().name || 'User';
+                        }
+                    } catch (e) { console.error("Error getting user for comment", e); }
+                    
+                    const commentDate = comment.createdAt ? formatTimestamp(comment.createdAt.toDate()) : '';
+
+                    container.innerHTML += `
+                    <div class="flex gap-3">
+                        <img src="${userPic}" class="h-10 w-10 rounded-full object-cover flex-shrink-0">
+                        <div class="bg-gray-100 rounded-lg p-3">
+                            <span class="font-semibold text-sm">${userName}</span>
+                            <p class="text-sm text-gray-700">${comment.commentText}</p>
+                            <p class="text-xs text-gray-400 mt-1">${commentDate}</p>
+                        </div>
+                    </div>
+                    `;
+                }
+            });
+        }
+        
+        document.getElementById('submit-comment-btn-mobile').addEventListener('click', async () => {
+            if (!currentUser || !currentStoryIdForComment) return;
+
+            const input = document.getElementById('new-comment-input-mobile');
+            const commentText = input.value.trim();
+            if (!commentText) return;
+
+            const btn = document.getElementById('submit-comment-btn-mobile');
+            btn.disabled = true;
+            input.disabled = true;
+            btn.innerHTML = '<i class="fa fa-spinner fa-spin"></i>'; 
+
+            try {
+                const storyRef = doc(db, publicDataPath, 'stories', currentStoryIdForComment);
+                const interactionRef = collection(db, publicDataPath, 'storyInteractions');
+
+                await addDoc(interactionRef, {
+                    storyId: currentStoryIdForComment,
+                    userId: currentUser.uid,
+                    type: 'comment',
+                    commentText: commentText,
+                    createdAt: serverTimestamp()
+                });
+                
+                await updateDoc(storyRef, {
+                    commentCount: increment(1)
+                });
+
+                input.value = '';
+
+            } catch (e) {
+                console.error("Error adding comment to mobile: ", e);
+                alert('Could not post comment.');
+            } finally {
+                btn.disabled = false;
+                input.disabled = false;
+                btn.innerHTML = '<i class="fa fa-paper-plane"></i>'; 
+            }
+        });
+
+        // --- NEW/UPDATED PC COMMENTS SECTION FUNCTIONS ---
+        async function togglePcComments(storyId, targetElement) {
+            if (unsubscribeCommentsListener) {
+                unsubscribeCommentsListener(); // Stop previous listener
+                unsubscribeCommentsListener = null;
+            }
+            currentStoryIdForComment = storyId;
+            lastVisibleComment = null; // Reset pagination
+
+            const pcCommentsSection = document.getElementById('comments-section-pc');
+            const pcCommentsContainer = document.getElementById('comments-list-container-pc');
+            const loadMoreBtn = document.getElementById('load-more-comments-btn-pc');
+            const newCommentInput = document.getElementById('new-comment-input-pc');
+            const submitCommentBtn = document.getElementById('submit-comment-btn-pc');
+            const loginPromptPc = document.getElementById('comment-login-prompt-pc');
+
+            // Hide/Show the PC comments section
+            if (targetElement.classList.contains('active-comments')) {
+                // If already active for this story, hide it
+                pcCommentsSection.classList.add('hidden');
+                targetElement.classList.remove('active-comments');
+                targetElement.innerHTML = '';
+                // Move the comments section back to the main body to be re-used
+                document.body.appendChild(pcCommentsSection);
+                return;
+            } else {
+                // Hide any other active PC comment sections
+                document.querySelectorAll('.comments-section-placeholder').forEach(el => {
+                    if (el.classList.contains('active-comments')) {
+                        el.classList.remove('active-comments');
+                        el.innerHTML = ''; // Clear previous content
+                    }
+                });
+                
+                // Move the comments section back to the main body before appending it to the new placeholder
+                document.body.appendChild(pcCommentsSection);
+
+                // Show for current story
+                pcCommentsSection.classList.remove('hidden');
+                targetElement.classList.add('active-comments');
+                targetElement.appendChild(pcCommentsSection); // Move the section into the placeholder
+                
+                pcCommentsContainer.innerHTML = '<p class="text-gray-500 text-center">Loading comments...</p>';
+                loadMoreBtn.classList.add('hidden');
+                loadMoreBtn.disabled = false;
+                loadMoreBtn.textContent = 'Load more comments';
+
+
+                // Update input/button states based on login status
+                if (currentUser) {
+                    newCommentInput.disabled = false;
+                    submitCommentBtn.disabled = false;
+                    loginPromptPc.classList.add('hidden');
+                } else {
+                    newCommentInput.disabled = true;
+                    submitCommentBtn.disabled = true;
+                    loginPromptPc.classList.remove('hidden');
+                }
+                
+                // Add listener to the 'Load More' button for THIS story
+                loadMoreBtn.onclick = () => loadPcComments(true); 
+                // Add listener to the 'Submit' button for THIS story
+                document.getElementById('submit-comment-btn-pc').onclick = submitPcComment; 
+
+                // Initial load
+                await loadPcComments(false); 
+            }
+        }
+
+        async function loadPcComments(loadMore = false) {
+            if (!currentStoryIdForComment) return;
+
+            const pcCommentsContainer = document.getElementById('comments-list-container-pc');
+            const loadMoreBtn = document.getElementById('load-more-comments-btn-pc');
+
+            if (!loadMore) {
+                pcCommentsContainer.innerHTML = ''; // Clear for initial load
+            }
+
+            try {
+                const commentsRef = collection(db, publicDataPath, 'storyInteractions');
+                let q;
+
+                if (loadMore && lastVisibleComment) {
+                    q = query(commentsRef, 
+                        where("storyId", "==", currentStoryIdForComment), 
+                        where("type", "==", "comment"), 
+                        orderBy("createdAt", "asc"),
+                        startAfter(lastVisibleComment),
+                        limit(COMMENTS_PER_LOAD)
+                    );
+                } else {
+                    q = query(commentsRef, 
+                        where("storyId", "==", currentStoryIdForComment), 
+                        where("type", "==", "comment"), 
+                        orderBy("createdAt", "asc"),
+                        limit(COMMENTS_PER_LOAD)
+                    );
+                }
+
+                const snapshot = await getDocs(q);
+
+                if (snapshot.empty && !loadMore) {
+                    pcCommentsContainer.innerHTML = '<p class="text-gray-500 text-center">No comments yet. Be the first!</p>';
+                    loadMoreBtn.classList.add('hidden');
+                    return;
+                }
+
+                if (snapshot.empty && loadMore) {
+                    loadMoreBtn.textContent = 'No more comments';
+                    loadMoreBtn.disabled = true;
+                    setTimeout(() => {
+                        loadMoreBtn.classList.add('hidden');
+                        loadMoreBtn.textContent = 'Load more comments';
+                        loadMoreBtn.disabled = false;
+                    }, 2000);
+                    return;
+                }
+
+                for (const doc of snapshot.docs) {
+                    const comment = doc.data();
+                    let userName = 'User';
+                    let userPic = 'https://placehold.co/40x40/cccccc/969696?text=U';
+                    
+                    try {
+                        const userRef = doc(db, usersPath, comment.userId);
+                        const userSnap = await getDoc(userRef);
+                        if (userSnap.exists()) {
+                            userName = userSnap.data().name || 'User';
+                        }
+                    } catch (e) { console.error("Error getting user for comment", e); }
+                    
+                    const commentDate = comment.createdAt ? formatTimestamp(comment.createdAt.toDate()) : '';
+
+                    pcCommentsContainer.innerHTML += `
+                    <div class="flex gap-3">
+                        <img src="${userPic}" class="h-10 w-10 rounded-full object-cover flex-shrink-0">
+                        <div class="bg-gray-100 rounded-lg p-3 flex-grow">
+                            <span class="font-semibold text-sm">${userName}</span>
+                            <p class="text-sm text-gray-700">${comment.commentText}</p>
+                            <p class="text-xs text-gray-400 mt-1">${commentDate}</p>
+                        </div>
+                    </div>
+                    `;
+                }
+
+                // Save the last document for pagination
+                lastVisibleComment = snapshot.docs[snapshot.docs.length - 1];
+
+                // Show or hide 'Load More' button
+                if (snapshot.docs.length < COMMENTS_PER_LOAD) {
+                    loadMoreBtn.classList.add('hidden');
+                } else {
+                    loadMoreBtn.classList.remove('hidden');
+                }
+
+            } catch (e) {
+                console.error("Error loading PC comments: ", e);
+                pcCommentsContainer.innerHTML = '<p class="text-red-500 text-center">Error loading comments.</p>';
+            }
+        }
+
+        async function submitPcComment() {
+            if (!currentUser || !currentStoryIdForComment) return;
+
+            const input = document.getElementById('new-comment-input-pc');
+            const commentText = input.value.trim();
+            if (!commentText) return;
+
+            const btn = document.getElementById('submit-comment-btn-pc');
+            btn.disabled = true;
+            input.disabled = true;
+            btn.innerHTML = '<i class="fa fa-spinner fa-spin"></i>'; 
+
+            try {
+                const storyRef = doc(db, publicDataPath, 'stories', currentStoryIdForComment);
+                const interactionRef = collection(db, publicDataPath, 'storyInteractions');
+
+                const newCommentDoc = await addDoc(interactionRef, {
+                    storyId: currentStoryIdForComment,
+                    userId: currentUser.uid,
+                    type: 'comment',
+                    commentText: commentText,
+                    createdAt: serverTimestamp()
+                });
+                
+                await updateDoc(storyRef, {
+                    commentCount: increment(1)
+                });
+
+                // Add the new comment to the list immediately
+                const pcCommentsContainer = document.getElementById('comments-list-container-pc');
+                let userName = currentUserData.name || 'User';
+                let userPic = 'https://placehold.co/40x40/cccccc/969696?text=U';
+                const commentDate = 'Just now';
+
+                // Remove 'No comments' message if it exists
+                if (pcCommentsContainer.querySelector('p')) {
+                    pcCommentsContainer.innerHTML = '';
+                }
+
+                pcCommentsContainer.innerHTML += `
+                <div class="flex gap-3">
+                    <img src="${userPic}" class="h-10 w-10 rounded-full object-cover flex-shrink-0">
+                    <div class="bg-gray-100 rounded-lg p-3 flex-grow">
+                        <span class="font-semibold text-sm">${userName}</span>
+                        <p class="text-sm text-gray-700">${commentText}</p>
+                        <p class="text-xs text-gray-400 mt-1">${commentDate}</p>
+                    </div>
+                </div>
+                `;
+
+                input.value = '';
+
+            } catch (e) {
+                console.error("Error adding comment to PC: ", e);
+                alert('Could not post comment.');
+            } finally {
+                btn.disabled = false;
+                input.disabled = false;
+                btn.innerHTML = '<i class="fa fa-paper-plane"></i>'; 
+            }
+        }
+
+        // --- COMMON HELPER FUNCTIONS ---
+        
+        function getSelectedCurrency() {
+            return localStorage.getItem('selectedCurrency') || 'LKR';
+        }
+
+        function formatPrice(product) {
+            const currency = getSelectedCurrency();
+            let prices = {
+                price: `Rs. ${parseFloat(product.price).toFixed(2)}`,
+                originalPrice: product.originalPrice ? `Rs. ${parseFloat(product.originalPrice).toFixed(2)}` : null,
+                priceClass: 'text-mudalali-green-dark'
+            };
+
+            if (currency === 'USDT') {
+                if (product.priceUSDT) {
+                    prices.price = `$${parseFloat(product.priceUSDT).toFixed(2)}`;
+                    if (product.originalPriceUSDT) {
+                        prices.originalPrice = `$${parseFloat(product.originalPriceUSDT).toFixed(2)}`;
+                    }
+                } else {
+                    prices.price = 'USDT N/A';
+                }
+            }
+
+            if (prices.originalPrice) {
+                prices.priceClass = 'text-red-600';
+            }
+            
+            const priceHtml = `
+                <p class="text-sm font-bold ${prices.priceClass} md:hidden">${prices.price}</p>
+                <div class="hidden md:flex justify-center items-baseline gap-2">
+                    <p class="text-lg font-bold ${prices.priceClass}">${prices.price}</p>
+                    ${prices.originalPrice ? `<p class="text-sm text-gray-400 line-through">${prices.originalPrice}</p>` : ''}
+                </div>
+            `;
+            
+            return priceHtml;
+        }
+
+    async function loadSiteConfig() {
+            const docRef = doc(db, publicDataPath, 'siteContent', 'config');
+            try {
+                const docSnap = await getDoc(docRef);
+                let config = {};
+                if (docSnap.exists()) config = docSnap.data();
+                
+                const logoText = config.logoText || 'මුදලාලි මාමා';
+                const logoImg = document.getElementById('logo-img');
+                const mobileLogoImg = document.getElementById('mobile-logo-img');
+                const logoLink = document.getElementById('logo-link');
+                const mobileLogoLink = document.getElementById('mobile-logo-link');
+
+                if (config.logoImageUrl && logoImg && mobileLogoImg) {
+                    // Config eken URL eka thiyenawa nam, eka load karanna
+                    logoImg.src = config.logoImageUrl;
+                    mobileLogoImg.src = config.logoImageUrl;
+                } else {
+                    // Config eke URL eka NE.
+                    // HTML eke 'src' attribute ekak thiyenawada balanna
+                    const logoImgHasSrc = logoImg && (logoImg.getAttribute('src') && logoImg.getAttribute('src') !== '');
+                    const mobileLogoImgHasSrc = mobileLogoImg && (mobileLogoImg.getAttribute('src') && mobileLogoImg.getAttribute('src') !== '');
+
+                    // HTML eke 'src' ekak nethnam vitharak text eka danna
+                    if (!logoImgHasSrc && logoLink) {
+                        logoImg?.remove();
+                        logoLink.textContent = logoText;
+                    }
+                    if (!mobileLogoImgHasSrc && mobileLogoLink) {
+                        mobileLogoImg?.remove();
+                        mobileLogoLink.textContent = logoText;
+                    }
+                    // HTML eke 'src' ekak thiyenawa nam, me 'else' block eka mokuth karanne ne, image eka ithuru wenawa.
+                }
+            } catch (e) {
+                console.error("Error loading site config: ", e);
+                // Error ekak unoth, HTML eke image ekak nethnam vitharak text eka danna
+                const logoImg = document.getElementById('logo-img');
+                const mobileLogoImg = document.getElementById('mobile-logo-img');
+                const logoLink = document.getElementById('logo-link');
+                const mobileLogoLink = document.getElementById('mobile-logo-link');
+
+                if ((!logoImg || !logoImg.getAttribute('src') || logoImg.getAttribute('src') === '') && logoLink) {
+                    logoImg?.remove();
+                    logoLink.textContent = 'මුදලාලි මාමා';
+                }
+                if ((!mobileLogoImg || !mobileLogoImg.getAttribute('src') || mobileLogoImg.getAttribute('src') === '') && mobileLogoLink) {
+                    mobileLogoImg?.remove();
+                    mobileLogoLink.textContent = 'මුදලාලි මාමා';
+                }
+            }
+        }
+
+        async function loadDesktopNavCategories() {
+            // This function is for the top nav, not part of the core request but good to keep
+        }
+
+        async function loadFooter() {
+            try {
+                const contactRef = doc(db, publicDataPath, 'siteContent', 'footerContact');
+                const contactSnap = await getDoc(contactRef);
+                if (contactSnap.exists()) {
+                    const data = contactSnap.data();
+                    document.getElementById('footer-address').textContent = data.address || '...';
+                    const emailEl = document.getElementById('footer-email');
+                    emailEl.textContent = data.email || '...';
+                    emailEl.href = `mailto:${data.email}`;
+                    const hotlineEl = document.getElementById('footer-hotline');
+                    hotlineEl.textContent = data.hotline || '...';
+                    hotlineEl.href = `tel:${data.hotline}`;
+                    
+                    const socialsContainer = document.getElementById('footer-socials');
+                    socialsContainer.innerHTML = '';
+                    if (data.facebookUrl) socialsContainer.innerHTML += `<a href="${data.facebookUrl}" target="_blank" class="bg-gray-700 w-10 h-10 flex items-center justify-center rounded-full text-xl hover:bg-mudalali-green"><i class="fab fa-facebook-f"></i></a>`;
+                    if (data.youtubeUrl) socialsContainer.innerHTML += `<a href="${data.youtubeUrl}" target="_blank" class="bg-gray-700 w-10 h-10 flex items-center justify-center rounded-full text-xl hover:bg-mudalali-green"><i class="fab fa-youtube"></i></a>`;
+                    if (data.instagramUrl) socialsContainer.innerHTML += `<a href="${data.instagramUrl}" target="_blank" class="bg-gray-700 w-10 h-10 flex items-center justify-center rounded-full text-xl hover:bg-mudalali-green"><i class="fab fa-instagram"></i></a>`;
+                }
+            } catch(e) { console.error("Error loading footer contact", e); }
+            
+            const linksRef = collection(db, publicDataPath, 'footerLinks');
+            onSnapshot(linksRef, (querySnapshot) => {
+                const lists = {
+                    col_tsmgroup: document.getElementById('footer-col-tsmgroup'),
+                    col_info: document.getElementById('footer-col-info'),
+                    col_quicklinks: document.getElementById('footer-col-quicklinks')
+                };
+                Object.values(lists).forEach(list => { if(list) list.innerHTML = ''; }); 
+
+                querySnapshot.forEach((doc) => {
+                    const link = doc.data();
+                    if (lists[link.column]) {
+                        lists[link.column].innerHTML += `<li><a href="${link.url}" class="hover:text-white">${link.text}</a></li>`;
+                    }
+                });
+            });
+        }
+
+        function updateWishlistCountBadge() {
+            const desktopBadge = document.getElementById('wishlist-count-badge');
+            const mobileBadge = document.getElementById('mobile-wishlist-badge');
+
+            if (desktopBadge) desktopBadge.textContent = '0';
+            if (mobileBadge) mobileBadge.textContent = '0';
+        };
+
+        // --- UPDATED updateCartCounters ---
+        function updateCartCounters(count) {
+            const countStr = String(count);
+            const badges = [
+                document.getElementById('cart-count-badge'),
+                document.getElementById('mobile-cart-badge'), // This is from the cart drawer
+                document.getElementById('mobile-cart-badge-nav') // This is the new one in the nav
+            ];
+            badges.forEach(badge => {
+                if(badge) {
+                    badge.textContent = countStr;
+                    badge.classList.add('pop');
+                    setTimeout(() => badge.classList.remove('pop'), 200);
+                }
+            });
+        }
+        
+        function attachCartDrawerListener(userId) {
+            const container = document.getElementById('cart-drawer-items-container');
+            const totalEl = document.getElementById('cart-drawer-total');
+            if (!container || !totalEl) return;
+            
+            if (!userId) {
+                container.innerHTML = '<p class="text-gray-500">Please log in to see your cart.</p>';
+                totalEl.textContent = 'Rs. 0.00';
+                updateCartCounters(0);
+                return;
+            }
+
+            const cartRef = collection(db, usersPath, userId, 'cart');
+            
+            onSnapshot(cartRef, (snapshot) => {
+                updateCartCounters(snapshot.size); 
+                
+                let subtotalLKR = 0;
+                let subtotalUSDT = 0;
+                let cartHasUSDT = false;
+                
+                if (snapshot.empty) {
+                    container.innerHTML = '<p class="text-gray-500">Your cart is empty.</p>';
+                } else {
+                    container.innerHTML = ''; 
+                    snapshot.forEach(doc => {
+                        const item = { id: doc.id, ...doc.data() };
+                        const quantity = parseInt(item.quantity) || 1;
+                        
+                        const priceLKR = parseFloat(item.price) || 0;
+                        const itemTotalLKR = priceLKR * quantity;
+                        subtotalLKR += itemTotalLKR;
+                        
+                        let priceString = `Rs. ${itemTotalLKR.toFixed(2)}`;
+                        
+                        if (item.priceUSDT) {
+                            cartHasUSDT = true;
+                            const priceUSDT = parseFloat(item.priceUSDT) || 0;
+                            const itemTotalUSDT = priceUSDT * quantity;
+                            subtotalUSDT += itemTotalUSDT;
+                            
+                            priceString = `Rs. ${itemTotalLKR.toFixed(2)} / $${itemTotalUSDT.toFixed(2)}`;
+                        }
+                        
+                        container.innerHTML += `
+                        <div class="flex items-center gap-4 py-4 border-b">
+                            <img src="${item.imageUrl || 'https://placehold.co/64'}" alt="${item.name}" class="w-16 h-16 rounded object-contain border p-1">
+                            <div class="flex-grow text-left">
+                                <h4 class="font-semibold text-sm text-slate-800">${item.name}</h4>
+                                <p class="text-sm text-mudalali-green-dark font-bold">${priceString}</p>
+                            </div>
+                            <span class="font-bold text-sm text-slate-700">Qty: ${quantity}</span>
+                        </div>`;
+                    });
+                }
+                
+                let totalString = `Rs. ${subtotalLKR.toFixed(2)}`;
+                if (cartHasUSDT) {
+                    totalString += ` / $${subtotalUSDT.toFixed(2)}`;
+                }
+                totalEl.textContent = totalString;
+                
+            }, (error) => {
+                console.error("Error in cart drawer listener: ", error);
+                container.innerHTML = '<p class="text-red-500">Error loading cart.</p>';
+            });
+        }
+
+        function loadCategoriesIntoDrawer(container) {
+            const collRef = collection(db, publicDataPath, 'categories');
+            onSnapshot(collRef, (querySnapshot) => {
+                container.innerHTML = ''; 
+                if (querySnapshot.empty) {
+                    container.innerHTML = '<p class="p-4 text-gray-500">No categories found.</p>';
+                    return;
+                }
+                querySnapshot.forEach((doc) => {
+                    const category = doc.data();
+                    container.innerHTML += `<a href="#" class="block p-4 border-b text-gray-700">${category.name}</a>`;
+                });
+            }, (error) => {
+                container.innerHTML = '<p class="p-4 text-red-500">Error loading categories.</p>';
+            });
+        }
+
+        function setupMobileDrawers() {
+            const menuDrawer = document.getElementById('menu-drawer');
+            const mobileMenuBtn = document.getElementById('mobile-menu-btn');
+            const menuDrawerClose = document.getElementById('menu-drawer-close');
+            const menuDrawerOverlay = document.getElementById('menu-drawer-overlay');
+            
+            mobileMenuBtn?.addEventListener('click', () => menuDrawer?.classList.add('open'));
+            menuDrawerClose?.addEventListener('click', () => menuDrawer?.classList.remove('open'));
+            menuDrawerOverlay?.addEventListener('click', () => menuDrawer?.classList.remove('open'));
+
+            const menuTabMenu = document.getElementById('menu-tab-menu');
+            const menuTabCategories = document.getElementById('menu-tab-categories');
+            const menuContent = document.getElementById('menu-tab-menu-content');
+            const categoriesContent = document.getElementById('menu-tab-categories-content');
+
+            menuTabMenu?.addEventListener('click', () => {
+                menuContent?.classList.remove('hidden');
+                categoriesContent?.classList.add('hidden');
+                menuTabMenu.classList.add('active');
+                menuTabCategories.classList.remove('active');
+            });
+            menuTabCategories?.addEventListener('click', () => {
+                menuContent?.classList.add('hidden');
+                categoriesContent?.classList.remove('hidden');
+                menuTabCategories.classList.add('active');
+                menuTabMenu.classList.remove('active');
+                if (categoriesContent.children.length === 0) {
+                    loadCategoriesIntoDrawer(categoriesContent);
+                }
+            });
+
+            const cartDrawer = document.getElementById('cart-drawer');
+            const desktopCartBtn = document.getElementById('desktop-cart-btn');
+            const cartDrawerClose = document.getElementById('cart-drawer-close');
+            const cartDrawerOverlay = document.getElementById('cart-drawer-overlay');
+
+            const openCart = () => cartDrawer?.classList.add('open');
+            const closeCart = () => cartDrawer?.classList.remove('open');
+
+            desktopCartBtn?.addEventListener('click', openCart);
+            cartDrawerClose?.addEventListener('click', closeCart);
+            cartDrawerOverlay?.addEventListener('click', closeCart);
+            
+            // --- Mobile Comments Drawer ---
+            const mobileCommentsDrawer = document.getElementById('comments-drawer');
+            const mobileCommentsClose = document.getElementById('comments-drawer-close-mobile');
+            const mobileCommentsOverlay = document.getElementById('comments-drawer-overlay-mobile');
+            
+            const closeMobileComments = () => {
+                mobileCommentsDrawer?.classList.remove('open');
+                if (unsubscribeCommentsListener) {
+                    unsubscribeCommentsListener();
+                    unsubscribeCommentsListener = null;
+                }
+                currentStoryIdForComment = null;
+            };
+            mobileCommentsClose?.addEventListener('click', closeMobileComments);
+            mobileCommentsOverlay?.addEventListener('click', closeMobileComments);
+
+            // --- Auth Drawer ---
+            const authDrawer = document.getElementById('account-drawer-modal');
+            const authDrawerBg = document.getElementById('account-drawer-bg');
+            const closeAuthBtn1 = document.getElementById('close-account-drawer-btn-logged-in');
+            const closeAuthBtn2 = document.getElementById('close-account-drawer-btn-logged-out');
+            
+            document.getElementById('desktop-account-btn')?.addEventListener('click', (e) => {
+                e.preventDefault();
+                authDrawer?.classList.remove('hidden');
+            });
+            document.getElementById('drawer-my-account-btn')?.addEventListener('click', (e) => {
+                e.preventDefault();
+                document.getElementById('menu-drawer')?.classList.remove('open'); 
+                authDrawer?.classList.remove('hidden'); 
+            });
+            
+            const closeAuthDrawer = () => authDrawer?.classList.add('hidden');
+            authDrawerBg?.addEventListener('click', closeAuthDrawer);
+            closeAuthBtn1?.addEventListener('click', closeAuthDrawer);
+            closeAuthBtn2?.addEventListener('click', closeAuthDrawer);
+
+            const loginTab = document.getElementById('drawer-login-tab-btn');
+            const signupTab = document.getElementById('drawer-signup-tab-btn');
+            const loginForm = document.getElementById('drawer-login-form');
+            const signupForm = document.getElementById('drawer-signup-form');
+
+            loginTab?.addEventListener('click', () => {
+                loginTab.classList.add('active');
+                signupTab.classList.remove('active');
+                loginForm.classList.remove('hidden');
+                signupForm.classList.add('hidden');
+            });
+            signupTab?.addEventListener('click', () => {
+                signupTab.classList.add('active');
+                loginTab.classList.remove('active');
+                signupForm.classList.remove('hidden');
+                loginForm.classList.add('hidden');
+            });
+
+            loginForm?.addEventListener('submit', async (e) => {
+                e.preventDefault();
+                const email = document.getElementById('drawer-login-email').value;
+                const password = document.getElementById('drawer-login-password').value;
+                const errorP = document.getElementById('drawer-login-error');
+                errorP.textContent = 'Logging in...';
+                try {
+                    await signInWithEmailAndPassword(auth, email, password);
+                    errorP.textContent = '';
+                    closeAuthDrawer(); 
+                } catch (error) {
+                    console.error("Login Error:", error);
+                    errorP.textContent = error.message.replace('Firebase: ', '');
+                }
+            });
+
+            signupForm?.addEventListener('submit', async (e) => {
+                e.preventDefault();
+                const name = document.getElementById('drawer-signup-name').value;
+                const email = document.getElementById('drawer-signup-email').value;
+                const password = document.getElementById('drawer-signup-password').value;
+                const isSeller = document.getElementById('drawer-signup-is-seller').checked;
+                const errorP = document.getElementById('drawer-signup-error');
+                errorP.textContent = 'Creating account...';
+                
+                try {
+                    const userCredential = await createUserWithEmailAndPassword(auth, email, password);
+                    const user = userCredential.user;
+                    
+                    const userDocRef = doc(db, usersPath, user.uid);
+                    await setDoc(userDocRef, {
+                        name: name, 
+                        email: email,
+                        isSeller: isSeller, 
+                        role: isSeller ? "seller" : "customer" 
+                    });
+                    
+                    if (isSeller) {
+                        const storeDocRef = doc(db, publicDataPath, 'stores', user.uid); 
+                        await setDoc(storeDocRef, {
+                            sellerUid: user.uid,
+                            storeName: name,
+                            bannerUrl: '',
+                            profileUrl: '',
+                            description: 'Welcome to my store!',
+                            createdAt: serverTimestamp()
+                        });
+                    }
+                    
+                    errorP.textContent = '';
+                    closeAuthDrawer(); 
+                } catch (error) {
+                    console.error("Signup Error:", error);
+                    errorP.textContent = error.message.replace('Firebase: ', '');
+                }
+            });
+            
+            document.getElementById('drawer-logout-btn')?.addEventListener('click', () => {
+                signOut(auth).then(() => {
+                    closeAuthDrawer();
+                    console.log('User signed out');
+                });
+            });
+        }
+    </script>
+</body>
+</html>

@@ -1,0 +1,1624 @@
+<!DOCTYPE html>
+<html lang="si">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Product Details - මුදලාලි මාමා</title>
+    
+    <script src="https://cdn.tailwindcss.com"></script>
+    
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.2/css/all.min.css">
+
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+    <link href="https://fonts.googleapis.com/css2?family=Poppins:wght@300;400;500;600;700&display=swap" rel="stylesheet">
+
+    <script>
+        tailwind.config = {
+            theme: {
+                extend: {
+                    fontFamily: {
+                        sans: ['Poppins', 'sans-serif'],
+                    },
+                    colors: {
+                        'mudalali-green': {
+                            light: '#76b852',       
+                            DEFAULT: '#3a6a4a',      
+                            dark: '#2c5234',        
+                        },
+                        'mudalali-gold': '#bda26b',
+                        'mudalali-red': '#d93a3e',
+                        'mudalali-bg': '#f5f5f4',
+                        'mm-gray': { 
+                            light: '#f8f8f8',
+                            DEFAULT: '#e5e5e5',
+                        }
+                    }
+                }
+            }
+        }
+    </script>
+    <style type="text/tailwindcss">
+        body {
+            @apply font-sans text-gray-800;
+        }
+        .drawer-overlay {
+            @apply fixed inset-0 bg-black bg-opacity-50 z-50 transition-opacity opacity-0 pointer-events-none;
+        }
+        .drawer-content {
+            @apply fixed top-0 right-0 h-full bg-white shadow-xl z-50 transform translate-x-full transition-transform duration-300 ease-in-out;
+            width: 90%;
+            max-width: 400px;
+        }
+        .drawer-content.left {
+            @apply left-0 right-auto transform -translate-x-full;
+        }
+        .drawer.open .drawer-overlay {
+            @apply opacity-100 pointer-events-auto;
+        }
+        .drawer.open .drawer-content {
+            @apply transform translate-x-0;
+        }
+        .mobile-nav-link.active {
+            @apply text-mudalali-green;
+        }
+        .no-scrollbar::-webkit-scrollbar {
+            display: none;
+        }
+        .no-scrollbar {
+            scrollbar-width: none;
+        }
+        .tab-button.active { 
+            border-color: #3a6a4a; 
+            color: #3a6a4a; 
+        }
+        .menu-tab-btn.active {
+            @apply border-mudalali-green text-mudalali-green;
+        }
+        @keyframes pop { 0% { transform: scale(1); } 50% { transform: scale(1.3); } 100% { transform: scale(1); } }
+        .pop { animation: pop 0.2s ease-out; }
+        .line-clamp-2 {
+            display: -webkit-box;
+            -webkit-line-clamp: 2;
+            -webkit-box-orient: vertical;  
+            overflow: hidden;
+        }
+        /* Star Rating CSS */
+        .rating-stars .star {
+            @apply text-gray-300 cursor-pointer text-3xl transition-colors;
+        }
+        .rating-stars:hover .star {
+            @apply text-mudalali-gold;
+        }
+        .rating-stars .star:hover ~ .star {
+            @apply text-gray-300;
+        }
+        .rating-stars .star.selected,
+        .rating-stars .star.selected ~ .star {
+            @apply text-gray-300;
+        }
+        .rating-stars .star.selected {
+             @apply text-mudalali-gold;
+        }
+        .rating-stars.selected .star {
+            @apply text-mudalali-gold;
+        }
+        .rating-stars.selected .star.selected ~ .star {
+            @apply text-gray-300;
+        }
+        .display-stars {
+            @apply relative inline-block text-gray-300;
+        }
+        .display-stars-filled {
+            @apply absolute top-0 left-0 whitespace-nowrap overflow-hidden text-mudalali-gold;
+        }
+        /* Wishlist Button Style */
+        #wishlist-btn.liked {
+            @apply bg-mudalali-red text-white;
+        }
+        /* Page Tabs Style (FIX 1: w-1/2 -> flex-1) */
+        .page-tab-btn {
+            @apply flex-1 text-center py-4 px-2 font-semibold text-gray-500 border-b-2 border-transparent transition-colors;
+        }
+        .page-tab-btn.active {
+            @apply text-mudalali-green border-mudalali-green;
+        }
+    </style>
+</head>
+<body class="pb-20 md:pb-0" style="background-color: #f5f5f4;"> 
+    
+    <div id="page-loader" class="fixed top-0 left-0 w-0 h-1 bg-mudalali-green z-[9999] transition-all duration-300 ease-linear"></div>
+    
+    <header class="bg-white shadow-md sticky top-0 z-40 hidden md:block">
+        <div class="container mx-auto px-4 py-3 flex justify-between items-center">
+            <a href="index.html" id="logo-link" class="flex items-center gap-2">
+                <img id="logo-img" src="https://i.ibb.co/1tCywvyP/logo.png" class="h-10" alt="Logo">
+            </a>
+
+            <div class="flex-grow max-w-xl mx-4">
+                <form class="flex">
+                    <input type="text" placeholder="Search for anything..." class="w-full px-4 py-2 border border-mm-gray-DEFAULT rounded-l-md focus:outline-none focus:ring-2 focus:ring-mudalali-green">
+                    <button type="submit" class="bg-mudalali-green text-white px-4 py-2 rounded-r-md hover:bg-mudalali-green-dark">
+                        <i class="fa fa-search"></i>
+                    </button>
+                </form>
+            </div>
+
+            <div class="flex items-center space-x-6">
+                <div class="text-right">
+                    <div class="text-sm font-semibold">Support Hotline</div>
+                    <div id="header-hotline" class="text-lg font-bold text-mudalali-green-dark">...</div>
+                </div>
+                <a href="account.html" id="desktop-account-btn" class="flex flex-col items-center text-gray-600 hover:text-mudalali-green">
+                    <i class="fa fa-user text-xl"></i>
+                    <span class="text-xs">Account</span>
+                </a>
+                <a href="wishlist.html" class="relative flex flex-col items-center text-gray-600 hover:text-mudalali-green">
+                    <i class="fa fa-heart text-xl"></i>
+                    <span id="wishlist-count-badge" class="absolute -top-2 -right-2 bg-mudalali-red text-white text-xs rounded-full px-1.5 py-0.5">0</span>
+                    <span class="text-xs">Wishlist</span>
+                </a>
+                <button id="desktop-cart-btn" class="flex flex-col items-center text-gray-600 hover:text-mudalali-green relative">
+                    <i class="fa fa-shopping-cart text-xl"></i>
+                    <span id="cart-count-badge" class="absolute -top-2 -right-2 bg-mudalali-red text-white text-xs rounded-full px-1.5 py-0.5">0</span>
+                    <span class="text-xs">Cart</span>
+                </button>
+            </div>
+        </div>
+    </header>
+
+    <nav class="bg-mudalali-bg shadow-sm hidden md:block" style="border-bottom: 1px solid #e5e5e5;">
+        <div class="container mx-auto px-4 flex justify-between items-center">
+            <div id="desktop-nav-links-container" class="flex space-x-6">
+                <div class="relative group">
+                    <a href="#" class="flex items-center bg-mudalali-green text-white px-4 py-2.5 rounded-t-md font-bold">
+                        <i class="fa fa-bars mr-2"></i>
+                        Categories
+                        <i class="fa fa-chevron-down text-xs ml-2"></i>
+                    </a>
+                    
+                    <div class="dropdown-menu absolute left-0 top-full w-56 bg-white shadow-lg rounded-b-md z-40">
+                    </div>
+                </div>
+            </div>
+            <a href="#" class="bg-mudalali-green-dark text-white px-4 py-2 rounded-md text-sm font-semibold hover:bg-mudalali-green">
+                Order Status
+            </a>
+        </div>
+    </nav>
+
+    <header class="bg-white shadow-md sticky top-0 z-40 flex md:hidden items-center justify-between p-4">
+        <button id="mobile-menu-btn" class="text-2xl text-gray-700">
+            <i class="fa fa-bars"></i>
+        </button>
+         <a href="index.html" id="mobile-logo-link" class="text-3xl font-bold text-mudalali-green-dark">
+              <img id="mobile-logo-img" src="https://i.ibb.co/1tCywvyP/logo.png" class="h-8" alt="Mudalali Mama Logo">
+            </a>
+        <a href="account.html" id="mobile-account-btn" class="text-2xl text-gray-700 w-8 text-right">
+            <i class="fa fa-user"></i>
+        </a>
+    </header>
+
+   <main class="container mx-auto p-4 md:p-8" style="min-height: calc(100vh - 200px);">
+        
+        <div id="product-loader" class="w-full text-center py-20">
+            <svg class="animate-spin h-10 w-10 text-mudalali-green mx-auto" xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24">
+                <circle class="opacity-25" cx="12" cy="12" r="10" stroke="currentColor" stroke-width="4"></circle>
+                <path class="opacity-75" fill="currentColor" d="M4 12a8 8 0 018-8V0C5.373 0 0 5.373 0 12h4zm2 5.291A7.962 7.962 0 014 12H0c0 3.042 1.135 5.824 3 7.938l3-2.647z"></path>
+            </svg>
+            <p class="mt-4 text-gray-500 font-semibold">Loading Product...</p>
+        </div>
+
+        <div id="product-content" class="hidden lg:grid lg:grid-cols-3 lg:gap-8">
+            
+            <div id="seller-info-box" class="lg:col-span-3 bg-white rounded-lg shadow-lg mb-6 p-6 flex items-center gap-4">
+                <img id="seller-logo" src="https://placehold.co/80x80/e2e8f0/94a3b8?text=Store" alt="Seller Logo" class="w-20 h-20 rounded-full object-cover border-2 border-gray-200">
+                <div class="flex-grow">
+                    <p class="text-sm text-gray-500">Sold By:</p>
+                    <h3 id="seller-name" class="text-xl font-bold text-gray-800">Loading Seller...</h3>
+                    <p id="seller-bio" class="text-sm text-gray-600 mt-1 line-clamp-2">Loading seller bio...</p>
+                </div>
+                <a id="seller-store-link" href="#" class="flex-shrink-0 bg-gray-100 text-gray-700 px-4 py-2 rounded-lg font-semibold text-sm hover:bg-gray-200">
+                    Visit Store
+                </a>
+            </div>
+
+            <div class="lg:col-span-2">
+                <div class="bg-white rounded-lg shadow-lg overflow-hidden">
+                    <div class="lg:flex">
+                        <div class="lg:w-1/2 p-4">
+                            <img id="main-product-image" src="https://placehold.co/600x600/e2e8f0/94a3b8?text=Loading..." alt="Product Image" class="w-full h-auto object-contain rounded-lg border">
+                            <div id="product-thumbnails" class="flex gap-2 mt-2 overflow-x-auto no-scrollbar p-1">
+                                </div>
+                        </div>
+                        
+                        <div class="lg:w-1/2 p-6 flex flex-col">
+                            <h1 id="product-name" class="text-3xl font-bold text-gray-800">Product Name</h1>
+                            <div class="flex items-center my-2">
+                                <div id="product-average-rating-stars" class="display-stars text-2xl">
+                                    <i class="fa fa-star"></i><i class="fa fa-star"></i><i class="fa fa-star"></i><i class="fa fa-star"></i><i class="fa fa-star"></i>
+                                    <div class="display-stars-filled" style="width: 0%;">
+                                        <i class="fa fa-star"></i><i class="fa fa-star"></i><i class="fa fa-star"></i><i class="fa fa-star"></i><i class="fa fa-star"></i>
+                                    </div>
+                                </div>
+                                <span id="product-review-count" class="ml-2 text-sm text-gray-500">(0 reviews)</span>
+                            </div>
+
+                            <div id="product-price" class="my-4">
+                                <span class="text-3xl font-bold text-mudalali-red">Rs. 0.00</span>
+                            </div>
+                            
+                            <div class="flex-grow"></div> <div class="flex items-center gap-3 mt-6">
+                                <button id="add-to-cart-btn" class="flex-1 bg-mudalali-green text-white p-3 rounded-lg hover:bg-mudalali-green-dark font-bold text-lg whitespace-nowrap">
+                                    <i class="fa fa-shopping-cart mr-2"></i> Add to Cart
+                                </button>
+                                <button id="buy-now-btn" class="flex-1 bg-mudalali-green-dark text-white p-3 rounded-lg hover:bg-mudalali-green font-bold text-lg whitespace-nowrap">
+                                    <i class="fa fa-bolt mr-2"></i> Buy Now
+                                </button>
+                                <button id="wishlist-btn" class="w-16 h-16 border-2 border-mudalali-red text-mudalali-red rounded-lg flex items-center justify-center text-2xl hover:bg-mudalali-red hover:text-white transition-colors">
+                                    <i class="fa fa-heart"></i>
+                                </button>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+
+                <div class="bg-white rounded-lg shadow-lg mt-8">
+                    <div class="flex border-b">
+                        <button id="desc-tab-btn" class="page-tab-btn active">Description</button>
+                        <button id="delivery-tab-btn" class="page-tab-btn">Delivery Details</button>
+                        <button id="reviews-tab-btn" class="page-tab-btn">Reviews</button>
+                    </div>
+                
+                    <div id="desc-tab-panel" class="p-6">
+                        <h2 class="text-xl font-bold text-gray-800 mb-4">Product Description</h2>
+                        <p id="product-description" class="text-gray-600 leading-relaxed">Loading description...</p>
+                    </div>
+
+                    <div id="delivery-tab-panel" class="p-6 hidden">
+                        <h2 class="text-xl font-bold text-gray-800 mb-4">Delivery Details</h2>
+                        <div id="product-delivery-details" class="text-gray-600 leading-relaxed space-y-2">
+                            <p>Loading delivery information...</p>
+                        </div>
+                    </div>
+
+                    <div id="reviews-tab-panel" class="p-6 hidden">
+                        <h2 class="text-2xl font-bold text-gray-800 mb-4">Customer Reviews</h2>
+                        <div id="review-form-container" class="mb-6 border-b pb-6">
+                            <h3 class="text-lg font-semibold mb-2">Leave a Review</h3>
+                            <div id="review-login-prompt" class="hidden">
+                                <p class="text-gray-600">Please <button id="login-to-review-btn" class="font-bold text-mudalali-green hover:underline">log in</button> to leave a review.</p>
+                            </div>
+                            <form id="review-form" class="hidden space-y-4">
+                                <div>
+                                    <label class="block text-sm font-medium text-gray-700">Your Rating:</label>
+                                    <div id="rating-stars-input" class="rating-stars flex flex-row-reverse justify-end">
+                                        <i class="star fa fa-star" data-value="5"></i>
+                                        <i class="star fa fa-star" data-value="4"></i>
+                                        <i class="star fa fa-star" data-value="3"></i>
+                                        <i class="star fa fa-star" data-value="2"></i>
+                                        <i class="star fa fa-star" data-value="1"></i>
+                                    </div>
+                                </div>
+                                <div>
+                                    <label for="review-text" class="block text-sm font-medium text-gray-700">Your Review:</label>
+                                    <textarea id="review-text" rows="3" class="mt-1 block w-full p-2 border rounded-md focus:ring-mudalali-green focus:border-mudalali-green" placeholder="Write your review here..."></textarea>
+                                </div>
+                                <button type="submit" class="bg-mudalali-green text-white px-5 py-2 rounded-lg font-semibold hover:bg-mudalali-green-dark">
+                                    Submit Review
+                                </button>
+                                <p id="review-submit-status" class="text-sm"></p>
+                            </form>
+                        </div>
+                        
+                        <div id="reviews-list-container" class="space-y-4">
+                            <p class="text-gray-500">Loading reviews...</p>
+                        </div>
+                    </div>
+                </div>
+
+            </div>
+            
+            <div id="related-products-sidebar" class="hidden lg:block lg:col-span-1 space-y-6 sticky top-24">
+                <h3 class="text-xl font-bold text-gray-800">Related Products</h3>
+                <div id="related-products-grid" class="space-y-4">
+                    <p id="related-loader" class="text-gray-500">Loading related products...</p>
+                </div>
+            </div>
+
+            <div id="related-products-section-mobile" class="mt-8 lg:hidden lg:col-span-3">
+                 <h2 class="text-2xl font-bold text-gray-800 mb-4">Related Products</h2>
+                <div id="related-products-grid-mobile" class="grid grid-cols-2 md:grid-cols-4 gap-4">
+                    <p id="related-loader-mobile" class="text-gray-500 col-span-full">Loading related products...</p>
+                </div>
+            </div>
+
+        </div>
+    </main>
+
+    <footer class="bg-gray-800 text-gray-300 pt-16 pb-8 hidden md:block">
+        <div id="footer-container" class="container mx-auto px-4">
+            
+            <div class="bg-gray-700 p-8 rounded-lg -mt-28 mb-16 relative z-10 shadow-xl flex items-center justify-between">
+                <div>
+                    <h3 class="text-2xl font-bold text-white mb-2">SUBSCRIBE TO US</h3>
+                    <p class="text-gray-300">Get the first look at exclusive offers, promotions, and more.</p>
+                </div>
+                <form class="flex w-full max-w-md">
+                    <input type="email" placeholder="Email Address" class="w-full px-4 py-3 rounded-l-md text-gray-800 focus:outline-none focus:ring-2 focus:ring-mudalali-green">
+                    <button type="submit" class="bg-mudalali-green text-white px-6 py-3 rounded-r-md font-bold hover:bg-mudalali-green-dark">
+                        SUBSCRIBE
+                    </button>
+                </form>
+            </div>
+
+            <div class="grid grid-cols-2 md:grid-cols-5 gap-8 mb-8">
+                <div>
+                    <h4 class="font-bold text-white mb-4">මුදලාලි මාමා</h4>
+                    <ul id="footer-col-tsmgroup" class="space-y-2"><li>Loading...</li></ul>
+                </div>
+                <div>
+                    <h4 class="font-bold text-white mb-4">INFO</h4>
+                    <ul id="footer-col-info" class="space-y-2"><li>Loading...</li></ul>
+                </div>
+                <div>
+                    <h4 class="font-bold text-white mb-4">QUICK LINKS</h4>
+                    <ul id="footer-col-quicklinks" class="space-y-2"><li>Loading...</li></ul>
+                </div>
+                <div class="col-span-2 md:col-span-1">
+                    <h4 class="font-bold text-white mb-4">COLOMBO HEAD OFFICE</h4>
+                    <address id="footer-address" class="not-italic">Loading...</address>
+                    <p class="mt-2">Email: <a id="footer-email" href="#" class="hover:text-white">...</a></p>
+                    <p>Hotline: <a id="footer-hotline" href="#" class="hover:text-white">...</a></p>
+                </div>
+                <div class="col-span-2 md:col-span-1">
+                    <h4 class="font-bold text-white mb-4">KEEP IN TOUCH</h4>
+                    <div id="footer-socials" class="flex space-x-4 mb-4">
+                    </div>
+                    <h4 class="font-bold text-white mb-4 mt-6">PAYMENTS</h4>
+                    <div class="flex space-x-2">
+                        <img src="https://i.ibb.co/fDYrL3g/visa.png" alt="Visa" class="h-6">
+                        <img src="https://i.ibb.co/7rmXz4F/mastercard.png" alt="Mastercard" class="h-6">
+                        <img src="https://i.ibb.co/C0W2LFr/amex.png" alt="Amex" class="h-6">
+                    </div>
+                </div>
+            </div>
+
+            <div class="border-t border-gray-700 pt-6 text-sm text-center md:flex justify-between">
+                <p>&copy; 2025 Mudalali Mama. All Rights reserved.</p>
+                <div class="space-x-4 mt-4 md:mt-0">
+                    <a href="#" class="hover:text-white">TERMS & CONDITIONS</a>
+                    <span>|</span>
+                    <a href="#" class="hover:text-white">PRIVACY POLICY</a>
+                </div>
+            </div>
+        </div>
+    </footer>
+
+    <nav class="fixed bottom-0 left-0 right-0 h-16 bg-white border-t border-gray-200 shadow-lg flex justify-around items-center z-40 md:hidden">
+        <a href="index.html" class="mobile-nav-link flex-1 flex flex-col items-center justify-center text-gray-600 hover:text-mudalali-green text-xs">
+            <i class="fa fa-store text-xl"></i>
+            <span class="mt-1">Shop</span>
+        </a>
+        <a href="stories.html" class="mobile-nav-link flex-1 flex flex-col items-center justify-center text-gray-600 hover:text-mudalali-green text-xs">
+            <i class="fa fa-book-open text-xl"></i>
+            <span class="mt-1">Stories</span>
+        </a>
+        <a href="wishlist.html" class="mobile-nav-link flex-1 flex flex-col items-center justify-center text-gray-600 hover:text-mudalali-green text-xs relative">
+            <div class="relative">
+                <i class="fa fa-heart text-xl"></i>
+                <span id="mobile-wishlist-badge" class="absolute -top-1 -right-2.5 bg-mudalali-red text-white text-xs font-semibold rounded-full h-4 w-4 flex items-center justify-center">0</span>
+            </div>
+            <span class="mt-1">Wishlist</span>
+        </a>
+        <button id="mobile-cart-btn" class="mobile-nav-link flex-1 flex flex-col items-center justify-center text-gray-600 hover:text-mudalali-green text-xs relative">
+            <div class="relative">
+                <i class="fa fa-shopping-bag text-xl"></i>
+                <span id="mobile-cart-badge" class="absolute -top-1 -right-2.5 bg-mudalali-red text-white text-xs font-semibold rounded-full h-4 w-4 flex items-center justify-center">0</span>
+            </div>
+            <span class="mt-1">Cart</span>
+        </button>
+        
+    </nav>
+
+    <div id="account-drawer-modal" class="drawer drawer-modal fixed inset-0 z-50 hidden">
+        <div id="account-drawer-bg" class="drawer-bg fixed inset-0 bg-black bg-opacity-50 opacity-0 transition-opacity"></div>
+        <div id="account-drawer" class="drawer-content fixed top-0 right-0 h-full bg-white shadow-xl w-full max-w-md flex flex-col">
+            
+            <div id="account-drawer-logged-in" class="hidden flex flex-col h-full">
+                <div class="p-4 flex justify-between items-center border-b flex-shrink-0">
+                    <h2 class="text-xl font-semibold text-gray-800">My Account</h2>
+                    <button id="close-account-drawer-btn-logged-in" class="text-gray-500 hover:text-gray-800 text-sm flex items-center gap-1"><i class="fas fa-times"></i> Close</button>
+                </div>
+                <div class="flex-grow p-6 overflow-y-auto">
+                    <p class="text-gray-600 mb-2">Welcome back,</p>
+                    <h3 id="account-drawer-user-email" class="text-lg font-semibold text-gray-800 mb-6 break-words"></h3>
+                    <a href="customer-account.html" class="w-full text-center bg-mudalali-green text-white p-3 rounded-lg hover:bg-mudalali-green-dark font-bold text-base">Go to My Account</a>
+                    <button id="drawer-logout-btn" class="w-full text-center bg-gray-100 text-gray-700 p-3 rounded-lg hover:bg-gray-200 font-bold text-base mt-4">Logout</button>
+                </div>
+            </div>
+            
+            <div id="account-drawer-logged-out" class="hidden flex flex-col h-full">
+                <div class="p-4 border-b">
+                    <div class="flex justify-between items-center">
+                        <h2 class="text-xl font-bold text-gray-700">Welcome!</h2>
+                        <button id="close-account-drawer-btn-logged-out" class="text-gray-500 hover:text-gray-800 text-sm flex items-center gap-1"><i class="fas fa-times"></i> Close</button>
+                    </div>
+                </div>
+                <div class="p-2 bg-gray-100 flex gap-2">
+                    <button id="drawer-login-tab-btn" class="tab-button active flex-1 bg-white p-2 rounded-md font-semibold border-b-2">Login</button>
+                    <button id="drawer-signup-tab-btn" class="tab-button flex-1 bg-white p-2 rounded-md font-semibold text-gray-500 border-b-2 border-transparent">Sign Up</button>
+                </div>
+                <div class="p-6" style="max-height: 80vh; overflow-y: auto;">
+                    <form id="drawer-login-form" class="space-y-4">
+                        <input type="email" id="drawer-login-email" placeholder="Email" required class="w-full p-3 border rounded-md focus:ring-mudalali-green focus:border-mudalali-green">
+                        <input type="password" id="drawer-login-password" placeholder="Password" required class="w-full p-3 border rounded-md focus:ring-mudalali-green focus:border-mudalali-green">
+                        <button type="submit" class="w-full bg-mudalali-green text-white p-3 rounded-md hover:bg-mudalali-green-dark font-bold">Login</button>
+                        <p id="drawer-login-error" class="text-red-500 text-sm text-center"></p>
+                    </form>
+                    <form id="drawer-signup-form" class="space-y-4 hidden">
+                        <div class="flex items-center">
+                            <input id="drawer-signup-is-seller" type="checkbox" class="h-4 w-4 text-mudalali-green focus:ring-mudalali-green border-gray-300 rounded">
+                            <label for="drawer-signup-is-seller" class="ml-2 block text-sm text-gray-900">I want to register as a Seller</label>
+                        </div>
+                        <input type="text" id="drawer-signup-name" placeholder="Full Name or Store Name" required class="w-full p-3 border rounded-md focus:ring-mudalali-green focus:border-mudalali-green">
+                        <input type="email" id="drawer-signup-email" placeholder="Email" required class="w-full p-3 border rounded-md focus:ring-mudalali-green focus:border-mudalali-green">
+                        <input type="password" id="drawer-signup-password" placeholder="Password" required class="w-full p-3 border rounded-md focus:ring-mudalali-green focus:border-mudalali-green">
+                        <button type="submit" class="w-full bg-mudalali-green text-white p-3 rounded-md hover:bg-mudalali-green-dark font-bold">Create Account</button>
+                        <p id="drawer-signup-error" class="text-red-500 text-sm text-center"></p>
+                    </form>
+                </div>
+            </div>
+        </div>
+    </div>
+
+
+    <div id="menu-drawer" class="drawer">
+        <div class="drawer-overlay" id="menu-drawer-overlay"></div>
+        <div class="drawer-content left flex flex-col">
+            <div class="flex justify-between items-center p-4 border-b">
+                <h2 class="text-xl font-bold">MENU</h2>
+                <button id="menu-drawer-close" class="text-xl">&times;</button>
+            </div>
+            <div class="p-4 border-b">
+                <form class="flex">
+                    <input type="text" placeholder="Search for products" class="w-full px-4 py-2 border border-r-0 border-gray-300 rounded-l-md focus:outline-none">
+                    <button type="submit" class="bg-gray-100 border border-gray-300 px-4 rounded-r-md text-gray-600">
+                        <i class="fa fa-search"></i>
+                    </button>
+                </form>
+            </div>
+            <div class="flex border-b">
+                <button id="menu-tab-menu" class="menu-tab-btn active flex-1 py-3 font-semibold border-b-2">MENU</button>
+                <button id="menu-tab-categories" class="menu-tab-btn flex-1 py-3 font-semibold text-gray-500 border-b-2 border-transparent">CATEGORIES</button>
+            </div>
+            <div id="menu-tab-menu-content" class="flex-col flex-grow overflow-y-auto">
+                <a href="index.html" class="block p-4 border-b text-gray-700">HOME</a>
+                <a href="stories.html" class="block p-4 border-b text-gray-700">SELLER STORIES</a>
+                <a href="shop.html" class="block p-4 border-b text-gray-700">SHOP</a>
+                <a href="#" class="block p-4 border-b text-gray-700">ABOUT US</a>
+                <a href="#" class="block p-4 border-b text-gray-700">CONTACT US</a>
+                <div class="p-4 bg-gray-100 font-bold text-gray-600">MY ACCOUNT</div>
+                <a href="wishlist.html" class="block p-4 border-b text-gray-700"><i class="fa fa-heart w-6 mr-1"></i> WISHLIST</a>
+                <a href="#" class="block p-4 border-b text-gray-700"><i class="fa fa-exchange-alt w-6 mr-1"></i> COMPARE</a>
+                <a href="account.html" id="drawer-my-account-btn" class="block w-full text-left p-4 border-b text-gray-700"><i class="fa fa-user w-6 mr-1"></i> MY ACCOUNT</a>
+            </div>
+            <div id="menu-tab-categories-content" class="hidden flex-col flex-grow overflow-y-auto">
+            </div>
+        </div>
+    </div>
+
+    <div id="cart-drawer" class="drawer">
+        <div class="drawer-overlay" id="cart-drawer-overlay"></div>
+        <div class="drawer-content flex flex-col">
+            <div class="flex justify-between items-center p-4 border-b">
+                <h2 class="text-xl font-bold">Shopping cart</h2>
+                <button id="cart-drawer-close" class="text-xl">&times;</button>
+            </div>
+            <div id="cart-drawer-items-container" class="flex-grow p-6 overflow-y-auto text-center">
+                <p class="text-gray-500">Your cart is empty.</p>
+            </div>
+            <div class="p-6 border-t bg-gray-50">
+                <div class="flex justify-between items-center mb-2">
+                    <span class="text-lg font-medium text-gray-600">Subtotal:</span>
+                    <span id="cart-drawer-total" class="text-xl font-bold text-mudalali-green-dark">Rs. 0.00</span>
+                </div>
+                <p class="text-sm text-center text-gray-500 mb-4">Shipping & taxes calculated at checkout.</p>
+                <div class="flex flex-col gap-3">
+                    <a href="cart.html" class="w-full text-center bg-white border-2 border-mudalali-green text-mudalali-green p-3 rounded-lg hover:bg-gray-50 font-bold text-base">
+                        VIEW CART
+                    </a>
+                    <a href="checkout.html" class="w-full text-center bg-mudalali-green text-white p-3 rounded-lg hover:bg-mudalali-green-dark font-bold text-base">
+                        CHECKOUT
+                    </a>
+                </div>
+            </div>
+        </div>
+    </div>
+    
+    <script type="module">
+        import { initializeApp } from "https://www.gstatic.com/firebasejs/11.6.1/firebase-app.js";
+        import { 
+            getAuth, 
+            createUserWithEmailAndPassword, 
+            signInWithEmailAndPassword, 
+            onAuthStateChanged, 
+            signOut 
+        } from "https://www.gstatic.com/firebasejs/11.6.1/firebase-auth.js";
+        import { 
+            getFirestore, 
+            doc, 
+            getDoc, 
+            getDocs,
+            collection, 
+            onSnapshot,
+            query,
+            where,
+            orderBy,
+            limit,
+            setDoc,
+            addDoc,
+            updateDoc, 
+            deleteDoc, 
+            increment, 
+            serverTimestamp,
+            runTransaction
+        } from "https://www.gstatic.com/firebasejs/11.6.1/firebase-firestore.js";
+
+        const firebaseConfig = {
+            apiKey: "AIzaSyDIbu2qT53iGPqMCx5UdU6XY8wvXkb3ZF4",
+            authDomain: "mudalali-mama.firebaseapp.com",
+            projectId: "mudalali-mama",
+            storageBucket: "mudalali-mama.firebasestorage.app",
+            messagingSenderId: "296597428969",
+            appId: "1:296597428969:web:684668be9c0eaeecb4ae78",
+            measurementId: "G-GC1CP1LRFD"
+        };
+
+        const app = initializeApp(firebaseConfig);
+        const db = getFirestore(app);
+        const auth = getAuth(app); 
+        
+        const appId = typeof __app_id !== 'undefined' ? __app_id : 'default-app-id';
+        const publicDataPath = `/artifacts/${appId}/public/data`;
+        const usersPath = `/users`; 
+
+        let currentUser = null;
+        let currentProductId = null;
+        let currentProductData = null;
+        let userRating = 0;
+        let wishlistUnsubscribe = null; // Wishlist listener
+
+        const pageLoader = document.getElementById('page-loader');
+
+        document.addEventListener('DOMContentLoaded', () => {
+            console.log("Mudalali Mama Product Detail Page Initialized");
+            
+            if (pageLoader) pageLoader.style.width = '30%';
+            
+            localStorage.setItem('selectedCurrency', 'LKR');
+
+            loadSiteConfig();
+            loadDesktopNavCategories();
+            loadFooter();
+            setupMobileDrawers(); 
+            // updateWishlistCountBadge() is now called inside onAuthStateChanged
+
+            const urlParams = new URLSearchParams(window.location.search);
+            currentProductId = urlParams.get('id');
+
+            if (currentProductId) {
+                loadProductDetails(currentProductId);
+                loadProductReviews(currentProductId);
+                setupReviewForm(currentProductId);
+            } else {
+                showProductError("Product ID not found.");
+            }
+            
+            // (ඉල්ලීම 1) Tab switching logic
+            const descTabBtn = document.getElementById('desc-tab-btn');
+            const deliveryTabBtn = document.getElementById('delivery-tab-btn'); // New
+            const reviewsTabBtn = document.getElementById('reviews-tab-btn');
+            const descTabPanel = document.getElementById('desc-tab-panel');
+            const deliveryTabPanel = document.getElementById('delivery-tab-panel'); // New
+            const reviewsTabPanel = document.getElementById('reviews-tab-panel');
+
+            descTabBtn?.addEventListener('click', () => {
+                descTabBtn.classList.add('active');
+                deliveryTabBtn.classList.remove('active'); // New
+                reviewsTabBtn.classList.remove('active');
+                descTabPanel.classList.remove('hidden');
+                deliveryTabPanel.classList.add('hidden'); // New
+                reviewsTabPanel.classList.add('hidden');
+            });
+            
+            deliveryTabBtn?.addEventListener('click', () => { // New
+                descTabBtn.classList.remove('active');
+                deliveryTabBtn.classList.add('active');
+                reviewsTabBtn.classList.remove('active');
+                descTabPanel.classList.add('hidden');
+                deliveryTabPanel.classList.remove('hidden');
+                reviewsTabPanel.classList.add('hidden');
+            });
+
+            reviewsTabBtn?.addEventListener('click', () => {
+                reviewsTabBtn.classList.add('active');
+                descTabBtn.classList.remove('active');
+                deliveryTabBtn.classList.remove('active'); // New
+                reviewsTabPanel.classList.remove('hidden');
+                descTabPanel.classList.add('hidden');
+                deliveryTabPanel.classList.add('hidden'); // New
+            });
+        });
+
+        onAuthStateChanged(auth, async (user) => {
+            currentUser = user;
+            const loggedInView = document.getElementById('account-drawer-logged-in');
+            const loggedOutView = document.getElementById('account-drawer-logged-out');
+            
+            if (user) {
+                loggedInView.classList.remove('hidden');
+                loggedInView.classList.add('flex');
+                loggedOutView.classList.add('hidden');
+                loggedOutView.classList.remove('flex');
+                document.getElementById('account-drawer-user-email').textContent = user.email;
+                attachCartDrawerListener(user.uid);
+                
+                document.getElementById('review-login-prompt').classList.add('hidden');
+                document.getElementById('review-form').classList.remove('hidden');
+                
+                // (ඉල්ලීම 3) Wishlist status check
+                checkWishlistStatus();
+                // (ඉල්ලීම 3) Wishlist badge listener එක attach කරනවා
+                attachWishlistBadgeListener(user.uid);
+
+            } else {
+                loggedInView.classList.add('hidden');
+                loggedInView.classList.remove('flex');
+                loggedOutView.classList.remove('hidden');
+                loggedOutView.classList.add('flex');
+                attachCartDrawerListener(null); 
+                
+                document.getElementById('review-login-prompt').classList.remove('hidden');
+                document.getElementById('review-form').classList.add('hidden');
+                
+                document.getElementById('wishlist-btn')?.classList.remove('liked');
+                
+                // (ඉල්ලීම 3) Wishlist listener එක detach කරලා, badge 0 කරනවා
+                if (wishlistUnsubscribe) {
+                    wishlistUnsubscribe();
+                    wishlistUnsubscribe = null;
+                }
+                updateWishlistCountBadge(0);
+            }
+        });
+        
+        function showProductError(message) {
+            document.getElementById('product-loader').innerHTML = `<p class="text-center text-red-500 text-xl">${message}</p>`;
+            document.getElementById('product-content').classList.add('hidden');
+        }
+
+        async function loadProductDetails(productId) {
+            const productRef = doc(db, publicDataPath, 'products', productId);
+            try {
+                const docSnap = await getDoc(productRef);
+                if (!docSnap.exists()) {
+                    showProductError("Product not found.");
+                    return;
+                }
+
+                currentProductData = { id: docSnap.id, ...docSnap.data() };
+                
+                document.title = `${currentProductData.name} - මුදලාලි මාමා`;
+                
+                document.getElementById('product-name').textContent = currentProductData.name;
+                document.getElementById('product-description').textContent = currentProductData.description || 'No description provided.';
+                document.getElementById('product-price').innerHTML = formatPrice(currentProductData);
+                
+                // (ඉල්ලීම 3) Image Gallery Setup
+                const mainImage = document.getElementById('main-product-image');
+                const thumbContainer = document.getElementById('product-thumbnails');
+                let imageUrls = [];
+                if (currentProductData.imageUrl) {
+                    imageUrls.push(currentProductData.imageUrl);
+                }
+                if (currentProductData.gallery && Array.isArray(currentProductData.gallery)) {
+                    imageUrls = [...imageUrls, ...currentProductData.gallery];
+                }
+                imageUrls = [...new Set(imageUrls)]; // Duplicates අයින් කරනවා
+
+                mainImage.src = imageUrls.length > 0 ? imageUrls[0] : 'https://placehold.co/600x600';
+                thumbContainer.innerHTML = ''; 
+                
+                if (imageUrls.length > 1) { 
+                    imageUrls.forEach((url, index) => {
+                        thumbContainer.innerHTML += `
+                            <img src="${url}" alt="Thumbnail ${index+1}" 
+                                 class="w-20 h-20 object-contain rounded-md border-2 cursor-pointer ${index === 0 ? 'border-mudalali-green' : 'border-transparent'} flex-shrink-0">
+                        `;
+                    });
+                }
+                
+                thumbContainer.addEventListener('click', (e) => {
+                    if (e.target.tagName === 'IMG') {
+                        mainImage.src = e.target.src;
+                        // Animate main image on change
+                        mainImage.classList.add('opacity-0');
+                        setTimeout(() => mainImage.classList.remove('opacity-0'), 150); // Simple fade-in
+                        
+                        thumbContainer.querySelectorAll('img').forEach(img => img.classList.replace('border-mudalali-green', 'border-transparent'));
+                        e.target.classList.replace('border-transparent', 'border-mudalali-green');
+                    }
+                });
+
+                document.getElementById('add-to-cart-btn').addEventListener('click', () => {
+                    addToCart(currentProductData, 1);
+                });
+                document.getElementById('buy-now-btn').addEventListener('click', async () => {
+                    await addToCart(currentProductData, 1);
+                    window.location.href = 'checkout.html';
+                });
+                document.getElementById('wishlist-btn').addEventListener('click', toggleWishlist);
+                
+                // (ඉල්ලීම 6) Load seller info
+                if (currentProductData.sellerUid) {
+                    loadSellerInfo(currentProductData.sellerUid); // This will now also load delivery details
+                } else {
+                    document.getElementById('seller-info-box').classList.add('hidden');
+                    document.getElementById('product-delivery-details').innerHTML = '<p>Standard delivery options are available.</p>';
+                }
+
+                // (ඉල්ලීම 1) Load related products
+                const category = currentProductData.categories ? currentProductData.categories[0] : null;
+                if (category) {
+                    loadRelatedProducts(category, currentProductId);
+                } else {
+                     document.getElementById('related-loader').innerHTML = 'No related products found.';
+                     document.getElementById('related-loader-mobile').innerHTML = 'No related products found.';
+                }
+
+                document.getElementById('product-loader').classList.add('hidden');
+                document.getElementById('product-content').classList.remove('hidden');
+                
+                if (pageLoader) {
+                    pageLoader.style.width = '100%';
+                    setTimeout(() => { pageLoader.classList.add('hidden'); }, 500);
+                }
+
+            } catch (e) {
+                console.error("Error loading product: ", e);
+                showProductError("Error loading product details.");
+            }
+        }
+
+        // (ඉල්ලීම 2) Seller info load කරන function එකට Delivery details add කළා
+        async function loadSellerInfo(sellerUid) {
+            const storeRef = doc(db, publicDataPath, 'stores', sellerUid);
+            try {
+                const docSnap = await getDoc(storeRef);
+                if (docSnap.exists()) {
+                    const storeData = docSnap.data();
+                    document.getElementById('seller-logo').src = storeData.profileUrl || 'https://placehold.co/80x80';
+                    document.getElementById('seller-name').textContent = storeData.storeName || 'Mudalali Mama Seller';
+                    document.getElementById('seller-bio').textContent = storeData.description || 'No seller description available.';
+                    document.getElementById('seller-store-link').href = `store.html?id=${sellerUid}`;
+                    
+                    // --- Delivery Details Load ---
+                    const deliveryEl = document.getElementById('product-delivery-details');
+                    if (storeData.deliveryDetails) {
+                        // Firestore එකේ \n (new lines) තියෙනවා නම් <br> වලට මාරු කරනවා
+                        deliveryEl.innerHTML = storeData.deliveryDetails.replace(/\n/g, '<br>');
+                    } else {
+                        deliveryEl.innerHTML = '<p>Standard delivery options are available. Please contact the seller for more details.</p>';
+                    }
+                    // --- End Delivery ---
+
+                } else {
+                    document.getElementById('seller-info-box').classList.add('hidden');
+                    document.getElementById('product-delivery-details').innerHTML = '<p>Delivery information could not be loaded.</p>';
+                }
+            } catch (e) {
+                console.error("Error loading seller info: ", e);
+                document.getElementById('seller-info-box').classList.add('hidden');
+                document.getElementById('product-delivery-details').innerHTML = '<p>Error loading delivery information.</p>';
+            }
+        }
+        
+        async function loadRelatedProducts(categoryName, currentProductId) {
+            const sidebarContainer = document.getElementById('related-products-grid');
+            const mobileContainer = document.getElementById('related-products-grid-mobile');
+            
+            if (!categoryName) {
+                const msg = '<p class="text-gray-500 text-sm">No category defined.</p>';
+                sidebarContainer.innerHTML = msg;
+                mobileContainer.innerHTML = `<p class="text-gray-500 text-sm col-span-full">${msg}</p>`;
+                return;
+            }
+
+            const productsRef = collection(db, publicDataPath, 'products');
+            const q = query(productsRef, 
+                where("categories", "array-contains", categoryName),
+                limit(5)
+            );
+            
+            try {
+                const querySnapshot = await getDocs(q);
+                let productsFound = 0;
+                sidebarContainer.innerHTML = '';
+                mobileContainer.innerHTML = '';
+
+                querySnapshot.forEach(doc => {
+                    if (doc.id === currentProductId || productsFound >= 4) return; 
+
+                    const product = doc.data();
+                    
+                    let priceString = `Rs. ${parseFloat(product.price).toFixed(2)}`;
+                    let priceClass = 'text-mudalali-green-dark';
+                    if (product.originalPrice) {
+                        priceClass = 'text-mudalali-red';
+                        priceString = `${priceString} <span class="text-gray-400 line-through text-xs">Rs. ${parseFloat(product.originalPrice).toFixed(2)}</span>`;
+                    }
+
+                    const sidebarHtml = `
+                        <a href="product.html?id=${doc.id}" class="group bg-white p-3 rounded-lg shadow-md hover:shadow-lg transition-shadow flex items-center gap-3">
+                            <img src="${product.imageUrl || 'https://placehold.co/80x80'}" alt="${product.name}" class="w-16 h-16 rounded-md object-cover">
+                            <div class="flex-grow">
+                                <p class="text-sm font-semibold text-gray-800 line-clamp-2">${product.name}</p>
+                                <div class="text-sm font-bold ${priceClass}">${priceString}</div>
+                            </div>
+                        </a>
+                    `;
+                    
+                    const mobileHtml = `
+                        <a href="product.html?id=${doc.id}" class="group bg-white rounded-lg shadow overflow-hidden transform transition-all duration-300 hover:shadow-lg hover:-translate-y-1">
+                            <div class="h-40 w-full overflow-hidden">
+                                <img src="${product.imageUrl || 'https://placehold.co/300x300'}" alt="${product.name}" class="w-full h-full object-cover group-hover:scale-110 transition-transform duration-300">
+                            </div>
+                            <div class="p-3 text-center">
+                                <h4 class="text-sm font-semibold text-gray-800 line-clamp-2 mb-2">${product.name}</h4>
+                                <div class="text-sm font-bold ${priceClass}">${priceString}</div>
+                            </div>
+                        </a>
+                    `;
+
+                    sidebarContainer.innerHTML += sidebarHtml;
+                    mobileContainer.innerHTML += mobileHtml;
+                    productsFound++;
+                });
+
+                if (productsFound === 0) {
+                    const noProductsMsg = '<p class="text-gray-500 text-sm">No other products found in this category.</p>';
+                    sidebarContainer.innerHTML = noProductsMsg;
+                    mobileContainer.innerHTML = `<p class="text-gray-500 text-sm col-span-full">${noProductsMsg}</p>`;
+                }
+            } catch (e) {
+                console.error("Error loading related products: ", e);
+                const errorMsg = '<p class="text-red-500 text-sm">Error loading related products.</p>';
+                sidebarContainer.innerHTML = errorMsg;
+                mobileContainer.innerHTML = `<p class="text-red-500 text-sm col-span-full">${errorMsg}</p>`;
+            }
+        }
+
+        function loadProductReviews(productId) {
+            const listContainer = document.getElementById('reviews-list-container');
+            const avgStarsEl = document.getElementById('product-average-rating-stars').querySelector('.display-stars-filled');
+            const reviewCountEl = document.getElementById('product-review-count');
+            
+            const reviewsRef = collection(db, publicDataPath, 'productReviews');
+            // Sort එක 'asc' (ascending) කළා. පරණ ඒවා උඩ, අලුත් ඒවා යට
+            const q = query(reviewsRef, where("productId", "==", productId), orderBy("createdAt", "asc"));
+
+            onSnapshot(q, async (snapshot) => {
+                if (snapshot.empty) {
+                    listContainer.innerHTML = '<p class="text-gray-500">No reviews for this product yet. Be the first!</p>';
+                    avgStarsEl.style.width = '0%';
+                    reviewCountEl.textContent = '(0 reviews)';
+                    return;
+                }
+
+                listContainer.innerHTML = ''; // Clear loader
+                let totalRating = 0;
+                let reviewCount = 0;
+
+                for (const doc of snapshot.docs) {
+                    const review = doc.data();
+                    let userName = 'Anonymous';
+                    
+                    try {
+                        const userRef = doc(db, usersPath, review.userId);
+                        const userSnap = await getDoc(userRef);
+                        if (userSnap.exists()) {
+                            userName = userSnap.data().name || 'Anonymous';
+                        }
+                    } catch (e) { console.error("Error getting user for review", e); }
+                    
+                    const reviewDate = review.createdAt ? formatTimestamp(review.createdAt.toDate()) : '';
+                    totalRating += review.rating;
+                    reviewCount++;
+
+                    const starRatingHtml = `
+                        <div class="display-stars text-xl">
+                            <i class="fa fa-star"></i><i class="fa fa-star"></i><i class="fa fa-star"></i><i class="fa fa-star"></i><i class="fa fa-star"></i>
+                            <div class="display-stars-filled" style="width: ${review.rating * 20}%;">
+                                <i class="fa fa-star"></i><i class="fa fa-star"></i><i class="fa fa-star"></i><i class="fa fa-star"></i><i class="fa fa-star"></i>
+                            </div>
+                        </div>
+                    `;
+
+                    listContainer.innerHTML += `
+                        <div class="border-t pt-4">
+                            <div class="flex justify-between items-center mb-1">
+                                <h4 class="font-semibold text-gray-800">${userName}</h4>
+                                <span class="text-xs text-gray-400">${reviewDate}</span>
+                            </div>
+                            ${starRatingHtml}
+                            <p class="text-gray-600 mt-2">${review.text}</p>
+                        </div>
+                    `;
+                }
+                
+                const averageRating = totalRating / reviewCount;
+                avgStarsEl.style.width = `${averageRating * 20}%`;
+                reviewCountEl.textContent = `(${reviewCount} review${reviewCount > 1 ? 's' : ''})`;
+
+            });
+        }
+
+        // (ඉල්ලීම 3) Review 1කට වඩා දාන්න logic එක වෙනස් කළා
+        function setupReviewForm(productId) {
+            const starsContainer = document.getElementById('rating-stars-input');
+            const stars = starsContainer.querySelectorAll('.star');
+            const form = document.getElementById('review-form');
+            const statusEl = document.getElementById('review-submit-status');
+            
+            document.getElementById('login-to-review-btn').addEventListener('click', () => {
+                document.getElementById('account-drawer-modal')?.classList.remove('hidden');
+            });
+
+            const setRating = (value) => {
+                userRating = value;
+                starsContainer.classList.add('selected');
+                stars.forEach(star => {
+                    if (star.dataset.value == value) {
+                        star.classList.add('selected');
+                    } else {
+                        star.classList.remove('selected');
+                    }
+                });
+            };
+
+            stars.forEach(star => {
+                star.addEventListener('click', () => setRating(star.dataset.value));
+            });
+
+            form.addEventListener('submit', async (e) => {
+                e.preventDefault();
+                if (!currentUser) {
+                    document.getElementById('account-drawer-modal')?.classList.remove('hidden');
+                    return;
+                }
+                if (userRating === 0) {
+                    statusEl.textContent = 'Please select a star rating.';
+                    statusEl.className = 'text-sm text-red-500';
+                    return;
+                }
+
+                const reviewText = document.getElementById('review-text').value;
+                // Review ID එක auto-generate වෙන්න collection එකට add කරනවා
+                const reviewsCollectionRef = collection(db, publicDataPath, 'productReviews');
+                const productRef = doc(db, publicDataPath, 'products', productId);
+                
+                statusEl.textContent = 'Submitting...';
+                statusEl.className = 'text-sm text-gray-600';
+
+                try {
+                    // 1. Product එකේ rating එක update කරනවා
+                    await runTransaction(db, async (transaction) => {
+                        const productSnap = await transaction.get(productRef);
+                        if (!productSnap.exists()) {
+                            throw new Error("This product does not exist.");
+                        }
+
+                        const productData = productSnap.data();
+                        const oldReviewCount = productData.reviewCount || 0;
+                        const oldTotalRating = productData.totalRating || 0;
+
+                        const newReviewCount = oldReviewCount + 1;
+                        const newTotalRating = oldTotalRating + userRating;
+                        const newAverageRating = newTotalRating / newReviewCount;
+
+                        transaction.update(productRef, {
+                            reviewCount: newReviewCount,
+                            totalRating: newTotalRating,
+                            averageRating: newAverageRating
+                        });
+                    });
+
+                    // 2. Transaction එක success වුණාට පස්සෙ, අලුත් review එක add කරනවා
+                    // Review ID එක auto-ID වෙනවා, User ID එකයි Product ID එකයි ඇතුළෙ save වෙනවා
+                    await addDoc(reviewsCollectionRef, {
+                        productId: productId,
+                        userId: currentUser.uid,
+                        rating: userRating,
+                        text: reviewText,
+                        createdAt: serverTimestamp()
+                    });
+
+                    statusEl.textContent = 'Review submitted successfully!';
+                    statusEl.className = 'text-sm text-green-600';
+                    form.reset();
+                    setRating(0); // Stars reset කරනවා
+                    starsContainer.classList.remove('selected');
+
+                } catch (error) {
+                    console.error("Error submitting review: ", error);
+                    statusEl.textContent = `Error: ${error.message}`;
+                    statusEl.className = 'text-sm text-red-500';
+                }
+            });
+        }
+        
+        function formatTimestamp(date) {
+            const now = new Date();
+            const seconds = Math.floor((now - date) / 1000);
+            
+            let interval = seconds / 31536000;
+            if (interval > 1) return Math.floor(interval) + "y ago";
+            interval = seconds / 2592000;
+            if (interval > 1) return Math.floor(interval) + "mo ago";
+            interval = seconds / 86400;
+            if (interval > 1) return Math.floor(interval) + "d ago";
+            interval = seconds / 3600;
+            if (interval > 1) return Math.floor(interval) + "h ago";
+            interval = seconds / 60;
+            if (interval > 1) return Math.floor(interval) + "m ago";
+            return Math.floor(seconds) + "s ago";
+        }
+        
+        function getSelectedCurrency() {
+            return localStorage.getItem('selectedCurrency') || 'LKR';
+        }
+
+        function formatPrice(product) {
+            const currency = getSelectedCurrency();
+            let prices = {
+                price: `Rs. ${parseFloat(product.price).toFixed(2)}`,
+                originalPrice: product.originalPrice ? `Rs. ${parseFloat(product.originalPrice).toFixed(2)}` : null,
+                priceClass: 'text-mudalali-red'
+            };
+
+            const priceHtml = `
+                <span class="text-3xl font-bold ${prices.priceClass}">${prices.price}</span>
+                ${prices.originalPrice ? `<span class="text-xl text-gray-400 line-through ml-2">${prices.originalPrice}</span>` : ''}
+            `;
+            
+            return priceHtml;
+        }
+
+        const addToCart = async (product, quantity = 1) => {
+            if (!currentUser) {
+                document.getElementById('account-drawer-modal')?.classList.remove('hidden');
+                return; 
+            }
+            if (!product) {
+                console.error("Product data is missing.");
+                return;
+            }
+            
+            const userId = currentUser.uid;
+            const cartItemRef = doc(db, usersPath, userId, 'cart', product.id); 
+            
+            try {
+                const docSnap = await getDoc(cartItemRef);
+                
+                if (docSnap.exists()) {
+                    await updateDoc(cartItemRef, { 
+                        quantity: increment(quantity) 
+                    });
+                } else {
+                    await setDoc(cartItemRef, {
+                        productId: product.id, 
+                        name: product.name,
+                        price: product.price,
+                        priceUSDT: product.priceUSDT || null,
+                        imageUrl: product.imageUrl,
+                        quantity: quantity,
+                        addedAt: serverTimestamp()
+                    });
+                }
+                
+                document.getElementById('cart-drawer').classList.add('open');
+
+            } catch (error) {
+                console.error("Error adding to cart: ", error);
+            }
+        };
+
+        // (ඉල්ලීම 3) Wishlist Functions
+        async function toggleWishlist() {
+            if (!currentUser) {
+                document.getElementById('account-drawer-modal')?.classList.remove('hidden');
+                return;
+            }
+            if (!currentProductId || !currentProductData) return;
+
+            const wishlistBtn = document.getElementById('wishlist-btn');
+            wishlistBtn.disabled = true;
+            const wishlistRef = doc(db, usersPath, currentUser.uid, 'wishlist', currentProductId);
+
+            try {
+                const docSnap = await getDoc(wishlistRef);
+                if (docSnap.exists()) {
+                    // Already liked, so remove it
+                    await deleteDoc(wishlistRef);
+                    wishlistBtn.classList.remove('liked');
+                } else {
+                    // Not liked, so add it
+                    await setDoc(wishlistRef, {
+                        productId: currentProductId,
+                        name: currentProductData.name,
+                        price: currentProductData.price,
+                        priceUSDT: currentProductData.priceUSDT || null,
+                        imageUrl: currentProductData.imageUrl,
+                        addedAt: serverTimestamp()
+                    });
+                    wishlistBtn.classList.add('liked');
+                }
+            } catch (e) {
+                console.error("Error toggling wishlist: ", e);
+            } finally {
+                wishlistBtn.disabled = false;
+                // updateWishlistCountBadge() auto-runs from onSnapshot
+            }
+        }
+
+        async function checkWishlistStatus() {
+            const wishlistBtn = document.getElementById('wishlist-btn');
+            if (!currentUser || !currentProductId || !wishlistBtn) return;
+            
+            const wishlistRef = doc(db, usersPath, currentUser.uid, 'wishlist', currentProductId);
+            const docSnap = await getDoc(wishlistRef);
+            if (docSnap.exists()) {
+                wishlistBtn.classList.add('liked');
+            } else {
+                wishlistBtn.classList.remove('liked');
+            }
+        }
+        
+        // (ඉල්ලීම 3) Wishlist badge listener
+        function attachWishlistBadgeListener(userId) {
+            if (wishlistUnsubscribe) {
+                wishlistUnsubscribe(); // Detach old listener
+            }
+            const wishlistRef = collection(db, usersPath, userId, 'wishlist');
+            wishlistUnsubscribe = onSnapshot(wishlistRef, (snapshot) => {
+                updateWishlistCountBadge(snapshot.size);
+            }, (error) => {
+                console.error("Error updating wishlist badge: ", error);
+                updateWishlistCountBadge(0);
+            });
+        }
+        
+        function updateWishlistCountBadge(count) {
+            const desktopBadge = document.getElementById('wishlist-count-badge');
+            const mobileBadge = document.getElementById('mobile-wishlist-badge');
+            const countStr = String(count);
+
+            if (desktopBadge) {
+                desktopBadge.textContent = countStr;
+                if (count > 0) {
+                    desktopBadge.classList.add('pop');
+                    setTimeout(() => desktopBadge.classList.remove('pop'), 200);
+                }
+            }
+            if (mobileBadge) {
+                mobileBadge.textContent = countStr;
+            }
+        };
+
+        // --- All other functions (Header, Footer, Drawers, etc.) ---
+        
+       async function loadSiteConfig() {
+            try {
+                const docRef = doc(db, publicDataPath, 'siteContent', 'config');
+                const docSnap = await getDoc(docRef);
+                let config = {};
+                if (docSnap.exists()) config = docSnap.data();
+                
+                const logoText = config.logoText || 'මුදලාලි මාමා';
+                const logoImg = document.getElementById('logo-img');
+                const mobileLogoImg = document.getElementById('mobile-logo-img');
+                const logoLink = document.getElementById('logo-link');
+                const mobileLogoLink = document.getElementById('mobile-logo-link');
+
+                if (config.logoImageUrl && logoImg && mobileLogoImg) {
+                    logoImg.src = config.logoImageUrl;
+                    mobileLogoImg.src = config.logoImageUrl;
+                } else {
+                    if (logoLink && !logoImg) logoLink.textContent = logoText;
+                    if (mobileLogoLink && !mobileLogoImg) mobileLogoLink.textContent = logoText;
+                }
+                
+                if (document.getElementById('header-hotline')) {
+                    document.getElementById('header-hotline').textContent = config.headerHotline || '...';
+                }
+            } catch (e) {
+                console.error("Error loading site config: ", e);
+            }
+        }
+        
+        async function loadDesktopNavCategories() {
+            const container = document.getElementById('desktop-nav-links-container');
+            if (!container) return;
+            
+            const collRef = collection(db, publicDataPath, 'categories');
+            onSnapshot(collRef, (querySnapshot) => {
+                
+                const dropdownContainer = container.querySelector('.dropdown-menu');
+                if (dropdownContainer) dropdownContainer.innerHTML = '';
+                
+                const existingLinks = container.querySelectorAll('a:not(.group > a)');
+                existingLinks.forEach(link => link.remove());
+
+                if (querySnapshot.empty) return;
+                
+                let count = 0;
+                querySnapshot.forEach((doc) => {
+                    const category = doc.data();
+                    
+                    if (count < 6) { 
+                        const linkHtml = `<a href="#" class="font-semibold text-gray-700 hover:text-mudalali-green-dark px-3 py-2.5 hidden md:block">${category.name}</a>`;
+                        container.insertAdjacentHTML('beforeend', linkHtml);
+                        count++;
+                    }
+                    
+                    if (dropdownContainer) {
+                         const dropdownLink = `<a href="#" class="font-semibold text-gray-700 hover:text-mudalali-green-dark px-4 py-3 block border-b">${category.name}</a>`;
+                         dropdownContainer.innerHTML += dropdownLink;
+                    }
+                });
+            }, (error) => {
+                console.error("Error loading nav categories: ", error);
+            });
+        }
+
+        async function loadFooter() {
+            try {
+                const contactRef = doc(db, publicDataPath, 'siteContent', 'footerContact');
+                const contactSnap = await getDoc(contactRef);
+                if (contactSnap.exists()) {
+                    const data = contactSnap.data();
+                    document.getElementById('footer-address').textContent = data.address || '...';
+                    const emailEl = document.getElementById('footer-email');
+                    emailEl.textContent = data.email || '...';
+                    emailEl.href = `mailto:${data.email}`;
+                    const hotlineEl = document.getElementById('footer-hotline');
+                    hotlineEl.textContent = data.hotline || '...';
+                    hotlineEl.href = `tel:${data.hotline}`;
+                    
+                    const socialsContainer = document.getElementById('footer-socials');
+                    socialsContainer.innerHTML = '';
+                    if (data.facebookUrl) socialsContainer.innerHTML += `<a href="${data.facebookUrl}" target="_blank" class="bg-gray-700 w-10 h-10 flex items-center justify-center rounded-full text-xl hover:bg-mudalali-green"><i class="fab fa-facebook-f"></i></a>`;
+                    if (data.youtubeUrl) socialsContainer.innerHTML += `<a href="${data.youtubeUrl}" target="_blank" class="bg-gray-700 w-10 h-10 flex items-center justify-center rounded-full text-xl hover:bg-mudalali-green"><i class="fab fa-youtube"></i></a>`;
+                    if (data.instagramUrl) socialsContainer.innerHTML += `<a href="${data.instagramUrl}" target="_blank" class="bg-gray-700 w-10 h-10 flex items-center justify-center rounded-full text-xl hover:bg-mudalali-green"><i class="fab fa-instagram"></i></a>`;
+                }
+            } catch(e) { console.error("Error loading footer contact", e); }
+            
+            const linksRef = collection(db, publicDataPath, 'footerLinks');
+            onSnapshot(linksRef, (querySnapshot) => {
+                const lists = {
+                    col_tsmgroup: document.getElementById('footer-col-tsmgroup'),
+                    col_info: document.getElementById('footer-col-info'),
+                    col_quicklinks: document.getElementById('footer-col-quicklinks')
+                };
+                Object.values(lists).forEach(list => { if(list) list.innerHTML = ''; }); 
+
+                querySnapshot.forEach((doc) => {
+                    const link = doc.data();
+                    if (lists[link.column]) {
+                        lists[link.column].innerHTML += `<li><a href="${link.url}" class="hover:text-white">${link.text}</a></li>`;
+                    }
+                });
+            });
+        }
+
+        function loadCategoriesIntoDrawer(container) {
+            const collRef = collection(db, publicDataPath, 'categories');
+            onSnapshot(collRef, (querySnapshot) => {
+                container.innerHTML = ''; 
+                if (querySnapshot.empty) {
+                    container.innerHTML = '<p class="p-4 text-gray-500">No categories found.</p>';
+                    return;
+                }
+                querySnapshot.forEach((doc) => {
+                    const category = doc.data();
+                    container.innerHTML += `<a href="#" class="block p-4 border-b text-gray-700">${category.name}</a>`;
+                });
+            }, (error) => {
+                container.innerHTML = '<p class="p-4 text-red-500">Error loading categories.</p>';
+            });
+        }
+
+        function setupMobileDrawers() {
+            const menuDrawer = document.getElementById('menu-drawer');
+            const mobileMenuBtn = document.getElementById('mobile-menu-btn');
+            const menuDrawerClose = document.getElementById('menu-drawer-close');
+            const menuDrawerOverlay = document.getElementById('menu-drawer-overlay');
+            
+            mobileMenuBtn?.addEventListener('click', () => menuDrawer?.classList.add('open'));
+            menuDrawerClose?.addEventListener('click', () => menuDrawer?.classList.remove('open'));
+            menuDrawerOverlay?.addEventListener('click', () => menuDrawer?.classList.remove('open'));
+
+            const menuTabMenu = document.getElementById('menu-tab-menu');
+            const menuTabCategories = document.getElementById('menu-tab-categories');
+            const menuContent = document.getElementById('menu-tab-menu-content');
+            const categoriesContent = document.getElementById('menu-tab-categories-content');
+
+            menuTabMenu?.addEventListener('click', () => {
+                menuContent?.classList.remove('hidden');
+                categoriesContent?.classList.add('hidden');
+                menuTabMenu.classList.add('active');
+                menuTabCategories.classList.remove('active');
+            });
+            menuTabCategories?.addEventListener('click', () => {
+                menuContent?.classList.add('hidden');
+                categoriesContent?.classList.remove('hidden');
+                menuTabCategories.classList.add('active');
+                menuTabMenu.classList.remove('active');
+                if (categoriesContent.children.length === 0) {
+                    loadCategoriesIntoDrawer(categoriesContent);
+                }
+            });
+
+            const cartDrawer = document.getElementById('cart-drawer');
+            const mobileCartBtn = document.getElementById('mobile-cart-btn');
+            const desktopCartBtn = document.getElementById('desktop-cart-btn');
+            const cartDrawerClose = document.getElementById('cart-drawer-close');
+            const cartDrawerOverlay = document.getElementById('cart-drawer-overlay');
+
+            const openCart = () => cartDrawer?.classList.add('open');
+            const closeCart = () => cartDrawer?.classList.remove('open');
+
+            mobileCartBtn?.addEventListener('click', openCart);
+            desktopCartBtn?.addEventListener('click', openCart);
+            cartDrawerClose?.addEventListener('click', closeCart);
+            cartDrawerOverlay?.addEventListener('click', closeCart);
+            
+            const authDrawer = document.getElementById('account-drawer-modal');
+            const authDrawerBg = document.getElementById('account-drawer-bg');
+            const closeAuthBtn1 = document.getElementById('close-account-drawer-btn-logged-in');
+            const closeAuthBtn2 = document.getElementById('close-account-drawer-btn-logged-out');
+            
+            document.getElementById('desktop-account-btn')?.addEventListener('click', (e) => {
+                e.preventDefault();
+                authDrawer?.classList.remove('hidden');
+            });
+            document.getElementById('mobile-account-btn')?.addEventListener('click', (e) => {
+                e.preventDefault();
+                authDrawer?.classList.remove('hidden');
+            });
+            document.getElementById('drawer-my-account-btn')?.addEventListener('click', (e) => {
+                e.preventDefault();
+                document.getElementById('menu-drawer')?.classList.remove('open'); 
+                if (currentUser) {
+                    window.location.href = 'customer-account.html';
+                } else {
+                    authDrawer?.classList.remove('hidden');
+                }
+            });
+            
+            const closeAuthDrawer = () => authDrawer?.classList.add('hidden');
+            authDrawerBg?.addEventListener('click', closeAuthDrawer);
+            closeAuthBtn1?.addEventListener('click', closeAuthDrawer);
+            closeAuthBtn2?.addEventListener('click', closeAuthDrawer);
+
+            const loginTab = document.getElementById('drawer-login-tab-btn');
+            const signupTab = document.getElementById('drawer-signup-tab-btn');
+            const loginForm = document.getElementById('drawer-login-form');
+            const signupForm = document.getElementById('drawer-signup-form');
+
+            loginTab?.addEventListener('click', () => {
+                loginTab.classList.add('active');
+                signupTab.classList.remove('active');
+                loginForm.classList.remove('hidden');
+                signupForm.classList.add('hidden');
+            });
+            signupTab?.addEventListener('click', () => {
+                signupTab.classList.add('active');
+                loginTab.classList.remove('active');
+                signupForm.classList.remove('hidden');
+                loginForm.classList.add('hidden');
+            });
+
+            loginForm?.addEventListener('submit', async (e) => {
+                e.preventDefault();
+                const email = document.getElementById('drawer-login-email').value;
+                const password = document.getElementById('drawer-login-password').value;
+                const errorP = document.getElementById('drawer-login-error');
+                errorP.textContent = 'Logging in...';
+                try {
+                    await signInWithEmailAndPassword(auth, email, password);
+                    errorP.textContent = '';
+                    closeAuthDrawer(); 
+                } catch (error) {
+                    console.error("Login Error:", error);
+                    errorP.textContent = error.message.replace('Firebase: ', '');
+                }
+            });
+
+            signupForm?.addEventListener('submit', async (e) => {
+                e.preventDefault();
+                const name = document.getElementById('drawer-signup-name').value;
+                const email = document.getElementById('drawer-signup-email').value;
+                const password = document.getElementById('drawer-signup-password').value;
+                const isSeller = document.getElementById('drawer-signup-is-seller').checked;
+                const errorP = document.getElementById('drawer-signup-error');
+                errorP.textContent = 'Creating account...';
+                
+                try {
+                    const userCredential = await createUserWithEmailAndPassword(auth, email, password);
+                    const user = userCredential.user;
+                    
+                    const userDocRef = doc(db, usersPath, user.uid);
+                    await setDoc(userDocRef, {
+                        name: name, 
+                        email: email,
+                        isSeller: isSeller, 
+                        role: isSeller ? "seller" : "customer" 
+                    });
+                    
+                    if (isSeller) {
+                        const storeDocRef = doc(db, publicDataPath, 'stores', user.uid); 
+                        await setDoc(storeDocRef, {
+                            sellerUid: user.uid,
+                            storeName: name,
+                            bannerUrl: '',
+                            profileUrl: '',
+                            description: 'Welcome to my store!',
+                            createdAt: serverTimestamp()
+                        });
+                    }
+                    
+                    errorP.textContent = '';
+                    closeAuthDrawer(); 
+                } catch (error) {
+                    console.error("Signup Error:", error);
+                    errorP.textContent = error.message.replace('Firebase: ', '');
+                }
+            });
+            
+            document.getElementById('drawer-logout-btn')?.addEventListener('click', () => {
+                signOut(auth).then(() => {
+                    closeAuthDrawer();
+                    console.log('User signed out');
+                });
+            });
+        }
+
+        function updateCartCounters(count) {
+            const countStr = String(count);
+            const badges = [
+                document.getElementById('cart-count-badge'),
+                document.getElementById('mobile-cart-badge')
+            ];
+            badges.forEach(badge => {
+                if(badge) {
+                    badge.textContent = countStr;
+                    badge.classList.add('pop');
+                    setTimeout(() => badge.classList.remove('pop'), 200);
+                }
+            });
+        }
+
+        function attachCartDrawerListener(userId) {
+            const container = document.getElementById('cart-drawer-items-container');
+            const totalEl = document.getElementById('cart-drawer-total');
+            if (!container || !totalEl) return;
+            
+            if (!userId) {
+                container.innerHTML = '<p class="text-gray-500">Please log in to see your cart.</p>';
+                totalEl.textContent = 'Rs. 0.00';
+                updateCartCounters(0);
+                return;
+            }
+
+            const cartRef = collection(db, usersPath, userId, 'cart');
+            
+            onSnapshot(cartRef, (snapshot) => {
+                updateCartCounters(snapshot.size); 
+                
+                let subtotalLKR = 0;
+                let subtotalUSDT = 0;
+                let cartHasUSDT = false;
+                
+                if (snapshot.empty) {
+                    container.innerHTML = '<p class="text-gray-500">Your cart is empty.</p>';
+                } else {
+                    container.innerHTML = ''; 
+                    snapshot.forEach(doc => {
+                        const item = { id: doc.id, ...doc.data() };
+                        const quantity = parseInt(item.quantity) || 1;
+                        
+                        const priceLKR = parseFloat(item.price) || 0;
+                        const itemTotalLKR = priceLKR * quantity;
+                        subtotalLKR += itemTotalLKR;
+                        
+                        let priceString = `Rs. ${itemTotalLKR.toFixed(2)}`;
+                        
+                        if (item.priceUSDT) {
+                            cartHasUSDT = true;
+                            const priceUSDT = parseFloat(item.priceUSDT) || 0;
+                            const itemTotalUSDT = priceUSDT * quantity;
+                            subtotalUSDT += itemTotalUSDT;
+                            
+                            priceString = `Rs. ${itemTotalLKR.toFixed(2)} / $${itemTotalUSDT.toFixed(2)}`;
+                        }
+                        
+                        container.innerHTML += `
+                        <div class="flex items-center gap-4 py-4 border-b">
+                            <img src="${item.imageUrl || 'https://placehold.co/64'}" alt="${item.name}" class="w-16 h-16 rounded object-contain border p-1">
+                            <div class="flex-grow text-left">
+                                <h4 class="font-semibold text-sm text-slate-800">${item.name}</h4>
+                                <div class="flex items-center gap-2 my-1">
+                                    <button data-id="${item.id}" class="cart-qty-decrease w-6 h-6 font-bold rounded bg-slate-100 hover:bg-slate-200 flex items-center justify-center">-</button>
+                                    <span class="w-6 text-center font-bold text-sm text-slate-700">${quantity}</span>
+                                    <button data-id="${item.id}" class="cart-qty-increase w-6 h-6 font-bold rounded bg-slate-100 hover:bg-slate-200 flex items-center justify-center">+</button>
+                                </div>
+                                <p class="text-sm text-mudalali-green-dark font-bold">${priceString}</p>
+                            </div>
+                            <button data-id="${item.id}" class="cart-remove-item text-slate-400 hover:text-red-500" title="Remove Item">
+                                <i class="fas fa-times text-lg"></i>
+                            </button>
+                        </div>`;
+                    });
+                }
+                
+                let totalString = `Rs. ${subtotalLKR.toFixed(2)}`;
+                if (cartHasUSDT) {
+                    totalString += ` / $${subtotalUSDT.toFixed(2)}`;
+                }
+                totalEl.textContent = totalString;
+                
+                addCartDrawerButtonListeners(userId);
+                
+            }, (error) => {
+                console.error("Error in cart drawer listener: ", error);
+                container.innerHTML = '<p class="text-red-500">Error loading cart.</p>';
+            });
+        }
+
+        function addCartDrawerButtonListeners(userId) {
+            const container = document.getElementById('cart-drawer-items-container');
+            if (!container) return;
+            
+            container.querySelectorAll('.cart-qty-decrease, .cart-qty-increase, .cart-remove-item').forEach(button => {
+                const newButton = button.cloneNode(true);
+                button.parentNode.replaceChild(newButton, button);
+                
+                newButton.addEventListener('click', async (e) => {
+                    const itemId = newButton.dataset.id;
+                    const itemRef = doc(db, usersPath, userId, 'cart', itemId);
+
+                    try {
+                        if (newButton.classList.contains('cart-remove-item')) {
+                            await deleteDoc(itemRef);
+                        } else if (newButton.classList.contains('cart-qty-increase')) {
+                            await updateDoc(itemRef, { quantity: increment(1) });
+                        } else if (newButton.classList.contains('cart-qty-decrease')) {
+                            const docSnap = await getDoc(itemRef);
+                            if (docSnap.exists() && docSnap.data().quantity > 1) {
+                                await updateDoc(itemRef, { quantity: increment(-1) });
+                            } else {
+                                await deleteDoc(itemRef);
+                            }
+                        }
+                    } catch (error) {
+                        console.error("Error updating cart item: ", error);
+                    }
+                });
+            });
+        }
+
+    </script>
+</body>
+</html>

@@ -1,0 +1,629 @@
+<!DOCTYPE html>
+<html lang="si">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>My Account - මුදලාලි මාමා</title>
+    
+    <script src="https://cdn.tailwindcss.com"></script>
+    
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.2/css/all.min.css">
+
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+    <link href="https://fonts.googleapis.com/css2?family=Poppins:wght@300;400;500;600;700&display=swap" rel="stylesheet">
+
+    <script>
+        tailwind.config = {
+            theme: {
+                extend: {
+                    fontFamily: {
+                        sans: ['Poppins', 'sans-serif'],
+                    },
+                    colors: {
+                        'mudalali-green': {
+                            light: '#76b852',       
+                            DEFAULT: '#3a6a4a',      
+                            dark: '#2c5234',        
+                        },
+                        'mudalali-gold': '#bda26b',
+                        'mudalali-red': '#d93a3e',
+                        'mudalali-bg': '#f5f5f4',
+                        'mm-gray': { 
+                            light: '#f8f8f8',
+                            DEFAULT: '#e5e5e5',
+                        }
+                    }
+                }
+            }
+        }
+    </script>
+    <style type="text/tailwindcss">
+        body {
+            @apply font-sans text-gray-800;
+        }
+        .drawer-overlay {
+            @apply fixed inset-0 bg-black bg-opacity-50 z-50 transition-opacity opacity-0 pointer-events-none;
+        }
+        .drawer-content {
+            @apply fixed top-0 right-0 h-full bg-white shadow-xl z-50 transform translate-x-full transition-transform duration-300 ease-in-out;
+            width: 90%;
+            max-width: 400px;
+        }
+        .drawer-content.left {
+            @apply left-0 right-auto transform -translate-x-full;
+        }
+        .drawer.open .drawer-overlay {
+            @apply opacity-100 pointer-events-auto;
+        }
+        .drawer.open .drawer-content {
+            @apply transform translate-x-0;
+        }
+        .mobile-nav-link.active {
+            @apply text-mudalali-green;
+        }
+        .no-scrollbar::-webkit-scrollbar {
+            display: none;
+        }
+        .no-scrollbar {
+            scrollbar-width: none;
+        }
+        .tab-button.active { 
+            border-color: #3a6a4a; 
+            color: #3a6a4a; 
+        }
+        .page-tab-btn {
+            @apply w-1/2 text-center pb-4 font-semibold text-gray-500 border-b-2 border-transparent transition-colors;
+        }
+        .page-tab-btn.active {
+            @apply text-mudalali-green border-mudalali-green;
+        }
+        .menu-tab-btn.active {
+            @apply border-mudalali-green text-mudalali-green;
+        }
+    </style>
+</head>
+<body class="pb-20 md:pb-0" style="background-color: #f5f5f4;"> 
+    
+    <div id="page-loader" class="fixed top-0 left-0 w-0 h-1 bg-mudalali-green z-[9999] transition-all duration-300 ease-linear"></div>
+    
+    <header class="bg-white shadow-md sticky top-0 z-40 hidden md:block">
+        <div class="container mx-auto px-4 py-3 flex justify-between items-center">
+             <a href="/" id="logo-link" class="text-3xl font-bold text-mudalali-green-dark">
+              <img id="logo-img" src="https://i.ibb.co/1tCywvyP/logo.png" class="h-10" alt="Mudalali Mama Logo">
+            </a>
+            <div class="flex-grow max-w-xl mx-4">
+                <form class="flex">
+                    <input type="text" placeholder="Search..." class="w-full px-4 py-2 border border-mm-gray-DEFAULT rounded-l-md focus:outline-none focus:ring-2 focus:ring-mudalali-green">
+                    <button type="submit" class="bg-mudalali-green text-white px-4 py-2 rounded-r-md hover:bg-mudalali-green-dark">
+                        <i class="fa fa-search"></i>
+                    </button>
+                </form>
+            </div>
+            <div class="flex items-center space-x-6">
+                <a href="account.html" id="desktop-account-btn" class="flex flex-col items-center text-gray-600 hover:text-mudalali-green">
+                    <i class="fa fa-user text-xl"></i>
+                    <span class="text-xs">Account</span>
+                </a>
+                <button id="desktop-cart-btn" class="flex flex-col items-center text-gray-600 hover:text-mudalali-green relative">
+                    <i class="fa fa-shopping-cart text-xl"></i>
+                    <span id="cart-count-badge" class="absolute -top-2 -right-2 bg-mudalali-red text-white text-xs rounded-full px-1.5 py-0.5">0</span>
+                    <span class="text-xs">Cart</span>
+                </button>
+            </div>
+        </div>
+    </header>
+    <nav class="bg-mudalali-bg shadow-sm hidden md:block" style="border-bottom: 1px solid #e5e5e5;">
+        <div class="container mx-auto px-4 flex justify-between items-center">
+            <div class="flex space-x-6">
+                <a href="index.html" class="font-semibold text-gray-700 hover:text-mudalali-green-dark px-3 py-2.5">Home</a>
+                <a href="stories.html" class="font-semibold text-gray-700 hover:text-mudalali-green-dark px-3 py-2.5">Stories</a>
+                <a href="shop.html" class="font-semibold text-gray-700 hover:text-mudalali-green-dark px-3 py-2.5">Shop</a>
+            </div>
+        </div>
+    </nav>
+    <header class="bg-white shadow-md sticky top-0 z-40 flex md:hidden items-center justify-between p-4">
+        <button id="mobile-menu-btn" class="text-2xl text-gray-700">
+            <i class="fa fa-bars"></i>
+        </button>
+         <a href="/" id="logo-link" class="text-3xl font-bold text-mudalali-green-dark">
+              <img id="logo-img" src="https://i.ibb.co/1tCywvyP/logo.png" class="h-10" alt="Mudalali Mama Logo">
+            </a>
+        <div class="w-8"></div> 
+    </header>
+
+    <main class="md:h-auto" style="min-height: calc(100vh - 128px);">
+        <div class="flex items-center justify-center py-12 px-4 h-full">
+            <div class="max-w-4xl w-full bg-white shadow-xl rounded-lg overflow-hidden md:grid md:grid-cols-2">
+                
+                <div class="p-6 md:p-10">
+                    <div class="max-w-md mx-auto">
+                        <div class="flex border-b mb-6">
+                            <button id="login-tab-btn" class="page-tab-btn active">Login</button>
+                            <button id="register-tab-btn" class="page-tab-btn">Register</button>
+                        </div>
+
+                        <div id="login-form-container">
+                            <h2 class="text-2xl font-bold text-gray-800 mb-6">Sign In to Your Account</h2>
+                            <form id="login-form" class="space-y-4">
+                                <div>
+                                    <label for="login-email" class="block text-sm font-medium text-gray-700">Email Address</label>
+                                    <input type="email" id="login-email" required class="mt-1 block w-full p-3 border rounded-md focus:ring-mudalali-green focus:border-mudalali-green">
+                                </div>
+                                <div>
+                                    <label for="login-password" class="block text-sm font-medium text-gray-700">Password</label>
+                                    <input type="password" id="login-password" required class="mt-1 block w-full p-3 border rounded-md focus:ring-mudalali-green focus:border-mudalali-green">
+                                </div>
+                                <button type="submit" class="w-full bg-mudalali-green text-white p-3 rounded-md hover:bg-mudalali-green-dark font-bold text-lg">Login</button>
+                                <p id="login-error" class="text-red-500 text-sm text-center"></p>
+                            </form>
+                        </div>
+
+                        <div id="register-form-container" class="hidden">
+                            <h2 class="text-2xl font-bold text-gray-800 mb-6">Create an Account</h2>
+                            
+                            <div class="flex gap-4 mb-4 p-2 bg-gray-100 rounded-lg">
+                                <label class="flex-1 text-center p-2 rounded-md cursor-pointer has-[:checked]:bg-white has-[:checked]:shadow font-medium">
+                                    <input type="radio" name="userType" value="customer" class="hidden" checked> I'm a Customer
+                                </label>
+                                <label class="flex-1 text-center p-2 rounded-md cursor-pointer has-[:checked]:bg-white has-[:checked]:shadow font-medium">
+                                    <input type="radio" name="userType" value="seller" class="hidden"> I'm a Seller
+                                </label>
+                            </div>
+
+                            <form id="register-form" class="space-y-4">
+                                <div>
+                                    <label for="reg-name" class="block text-sm font-medium text-gray-700">Full Name</label>
+                                    <input type="text" id="reg-name" placeholder="e.g. Saman Perera" required class="mt-1 block w-full p-3 border rounded-md focus:ring-mudalali-green focus:border-mudalali-green">
+                                </div>
+                                <div>
+                                    <label for="reg-email" class="block text-sm font-medium text-gray-700">Email Address</label>
+                                    <input type="email" id="reg-email" placeholder="you@example.com" required class="mt-1 block w-full p-3 border rounded-md focus:ring-mudalali-green focus:border-mudalali-green">
+                                </div>
+                                <div>
+                                    <label for="reg-password" class="block text-sm font-medium text-gray-700">Password</label>
+                                    <input type="password" id="reg-password" placeholder="Min. 6 characters" required class="mt-1 block w-full p-3 border rounded-md focus:ring-mudalali-green focus:border-mudalali-green">
+                                </div>
+
+                                <div id="seller-fields" class="hidden space-y-4 pt-4 border-t border-gray-200">
+                                    <h3 class="text-lg font-semibold text-mudalali-green">Seller Information</h3>
+                                    <div>
+                                        <label for="reg-store-name" class="block text-sm font-medium text-gray-700">Store Name</label>
+                                        <input type="text" id="reg-store-name" placeholder="e.g. Saman's Kithul Store" class="mt-1 block w-full p-3 border rounded-md focus:ring-mudalali-green focus:border-mudalali-green">
+                                    </div>
+                                    <div>
+                                        <label for="reg-location" class="block text-sm font-medium text-gray-700">Your Location</label>
+                                        <input type="text" id="reg-location" placeholder="e.g. Matara, Sri Lanka" class="mt-1 block w-full p-3 border rounded-md focus:ring-mudalali-green focus:border-mudalali-green">
+                                    </div>
+                                    <div>
+                                        <label for="reg-categories" class="block text-sm font-medium text-gray-700">Product Categories</label>
+                                        <input type="text" id="reg-categories" placeholder="e.g. Food, Crafts, Tea" class="mt-1 block w-full p-3 border rounded-md focus:ring-mudalali-green focus:border-mudalali-green">
+                                        <p class="text-xs text-gray-500 mt-1">Separate categories with a comma (,)</p>
+                                    </div>
+                                </div>
+
+                                <button type="submit" class="w-full bg-mudalali-green text-white p-3 rounded-md hover:bg-mudalali-green-dark font-bold text-lg">Create Account</button>
+                                <p id="register-error" class="text-red-500 text-sm text-center"></p>
+                            </form>
+                        </div>
+                    </div>
+                </div>
+
+                <div class="hidden md:flex flex-col items-center justify-center bg-mudalali-green text-white p-10 rounded-r-lg">
+                    <div class="text-center">
+                        <img src="https" alt="Mudalali Mama" class="h-24 mx-auto mb-4">
+                        <h1 class="text-3xl font-bold mb-3">අනාගතයට අපෙන් දෙයක්</h1>
+                        <p class="text-lg text-green-100">One stop platform for all Sri Lankan entrepreneurs.</p>
+                        
+                        <div class="w-full h-64 bg-mudalali-green-dark/50 rounded-lg flex items-center justify-center mt-8">
+                            <i class="fa fa-shopping-basket text-8xl text-mudalali-green-light/50"></i>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </main>
+    <nav class="fixed bottom-0 left-0 right-0 h-16 bg-white border-t border-gray-200 shadow-lg flex justify-around items-center z-40 md:hidden">
+        <a href="index.html" class="mobile-nav-link flex-1 flex flex-col items-center justify-center text-gray-600 hover:text-mudalali-green text-xs">
+            <i class="fa fa-store text-xl"></i>
+            <span class="mt-1">Shop</span>
+        </a>
+        <a href="stories.html" class="mobile-nav-link flex-1 flex flex-col items-center justify-center text-gray-600 hover:text-mudalali-green text-xs">
+            <i class="fa fa-book-open text-xl"></i>
+            <span class="mt-1">Stories</span>
+        </a>
+        <a href="wishlist.html" class="mobile-nav-link flex-1 flex flex-col items-center justify-center text-gray-600 hover:text-mudalali-green text-xs relative">
+            <div class="relative">
+                <i class="fa fa-heart text-xl"></i>
+                <span id="mobile-wishlist-badge" class="absolute -top-1 -right-2.5 bg-mudalali-red text-white text-xs font-semibold rounded-full h-4 w-4 flex items-center justify-center">0</span>
+            </div>
+            <span class="mt-1">Wishlist</span>
+        </a>
+        <button id="mobile-cart-btn" class="mobile-nav-link flex-1 flex flex-col items-center justify-center text-gray-600 hover:text-mudalali-green text-xs relative">
+            <div class="relative">
+                <i class="fa fa-shopping-bag text-xl"></i>
+                <span id="mobile-cart-badge" class="absolute -top-1 -right-2.5 bg-mudalali-red text-white text-xs font-semibold rounded-full h-4 w-4 flex items-center justify-center">0</span>
+            </div>
+            <span class="mt-1">Cart</span>
+        </button>
+        <a href="account.html" id="mobile-account-btn" class="mobile-nav-link active flex-1 flex flex-col items-center justify-center text-gray-600 hover:text-mudalali-green text-xs">
+            <i class="fa fa-user text-xl"></i>
+            <span class="mt-1">My account</span>
+        </a>
+    </nav>
+
+    <div id="account-drawer-modal" class="drawer drawer-modal fixed inset-0 z-50 hidden">
+        <div id="account-drawer-bg" class="drawer-bg fixed inset-0 bg-black bg-opacity-50 opacity-0 transition-opacity"></div>
+        <div id="account-drawer" class="drawer-content fixed top-0 right-0 h-full bg-white shadow-xl w-full max-w-md flex flex-col">
+            <div id="account-drawer-logged-in" class="hidden flex flex-col h-full">
+                <div class="p-4 flex justify-between items-center border-b flex-shrink-0">
+                    <h2 class="text-xl font-semibold text-gray-800">My Account</h2>
+                    <button id="close-account-drawer-btn-logged-in" class="text-gray-500 hover:text-gray-800 text-sm flex items-center gap-1"><i class="fas fa-times"></i> Close</button>
+                </div>
+                <div class="flex-grow p-6 overflow-y-auto">
+                    <p class="text-gray-600 mb-2">Welcome back,</p>
+                    <h3 id="account-drawer-user-email" class="text-lg font-semibold text-gray-800 mb-6 break-words"></h3>
+                    <button id="drawer-logout-btn" class="w-full text-center bg-gray-100 text-gray-700 p-3 rounded-lg hover:bg-gray-200 font-bold text-base mt-4">Logout</button>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <div id="cart-drawer" class="drawer">
+        <div class="drawer-overlay" id="cart-drawer-overlay"></div>
+        <div class="drawer-content flex flex-col">
+            <div class="flex justify-between items-center p-4 border-b">
+                <h2 class="text-xl font-bold">Shopping cart</h2>
+                <button id="cart-drawer-close" class="text-xl">&times;</button>
+            </div>
+            <div id="cart-drawer-items-container" class="flex-grow p-6 overflow-y-auto text-center">
+                <p class="text-gray-500">Your cart is empty.</p>
+            </div>
+            <div class="p-6 border-t bg-gray-50">
+                <div class="flex justify-between items-center mb-2">
+                    <span class="text-lg font-medium text-gray-600">Subtotal:</span>
+                    <span id="cart-drawer-total" class="text-xl font-bold text-mudalali-green-dark">Rs. 0.00</span>
+                </div>
+                <div class="flex flex-col gap-3">
+                    <a href="cart.html" class="w-full text-center bg-white border-2 border-mudalali-green text-mudalali-green p-3 rounded-lg hover:bg-gray-50 font-bold text-base">VIEW CART</a>
+                    <a href="checkout.html" class="w-full text-center bg-mudalali-green text-white p-3 rounded-lg hover:bg-mudalali-green-dark font-bold text-base">CHECKOUT</a>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <div id="menu-drawer" class="drawer">
+        <div class="drawer-overlay" id="menu-drawer-overlay"></div>
+        <div class="drawer-content left flex flex-col">
+            <div class="flex justify-between items-center p-4 border-b">
+                <h2 class="text-xl font-bold">MENU</h2>
+                <button id="menu-drawer-close" class="text-xl">&times;</button>
+            </div>
+            <div class="flex border-b">
+                <button id="menu-tab-menu" class="menu-tab-btn active flex-1 py-3 font-semibold border-b-2">MENU</button>
+                <button id="menu-tab-categories" class="menu-tab-btn flex-1 py-3 font-semibold text-gray-500 border-b-2 border-transparent">CATEGORIES</button>
+            </div>
+            <div id="menu-tab-menu-content" class="flex-col flex-grow overflow-y-auto">
+                <a href="index.html" class="block p-4 border-b text-gray-700">HOME</a>
+                <a href="stories.html" class="block p-4 border-b text-gray-700">SELLER STORIES</a>
+                <a href="shop.html" class="block p-4 border-b text-gray-700">SHOP</a>
+                <a href="#" class="block p-4 border-b text-gray-700">ABOUT US</a>
+                <a href="account.html" id="drawer-my-account-btn" class="block w-full text-left p-4 border-b font-semibold text-mudalali-green"><i class="fa fa-user w-6 mr-1"></i> MY ACCOUNT</a>
+            </div>
+            <div id="menu-tab-categories-content" class="hidden flex-col flex-grow overflow-y-auto">
+            </div>
+        </div>
+    </div>
+
+    <script type="module">
+        import { initializeApp } from "https://www.gstatic.com/firebasejs/11.6.1/firebase-app.js";
+        import { 
+            getAuth, 
+            createUserWithEmailAndPassword, 
+            signInWithEmailAndPassword, 
+            onAuthStateChanged, 
+            signOut 
+        } from "https://www.gstatic.com/firebasejs/11.6.1/firebase-auth.js";
+        import { 
+            getFirestore, 
+            doc, 
+            getDoc, 
+            getDocs,
+            collection, 
+            onSnapshot,
+            query,
+            where,
+            setDoc,
+            serverTimestamp, 
+            writeBatch
+        } from "https://www.gstatic.com/firebasejs/11.6.1/firebase-firestore.js";
+
+        const firebaseConfig = {
+            apiKey: "AIzaSyDIbu2qT53iGPqMCx5UdU6XY8wvXkb3ZF4",
+            authDomain: "mudalali-mama.firebaseapp.com",
+            projectId: "mudalali-mama",
+            storageBucket: "mudalali-mama.firebasestorage.app",
+            messagingSenderId: "296597428969",
+            appId: "1:296597428969:web:684668be9c0eaeecb4ae78",
+            measurementId: "G-GC1CP1LRFD"
+        };
+
+        const app = initializeApp(firebaseConfig);
+        const db = getFirestore(app);
+        const auth = getAuth(app); 
+        
+        const appId = typeof __app_id !== 'undefined' ? __app_id : 'default-app-id';
+        const publicDataPath = `/artifacts/${appId}/public/data`;
+        const usersPath = `/users`; 
+
+        let currentUser = null;
+
+        document.addEventListener('DOMContentLoaded', () => {
+            console.log("Mudalali Mama Account Page Initialized");
+            document.getElementById('page-loader').style.width = '30%';
+            loadSiteConfig();
+            setupMobileDrawers(); 
+            updateWishlistCountBadge();
+            setupPageSpecificLogic();
+            document.getElementById('page-loader').style.width = '100%';
+            setTimeout(() => document.getElementById('page-loader').style.display = 'none', 500);
+        });
+
+        onAuthStateChanged(auth, async (user) => {
+            currentUser = user;
+            if (user) {
+                const userDocRef = doc(db, usersPath, user.uid);
+                const userDocSnap = await getDoc(userDocRef);
+                
+                if (userDocSnap.exists() && userDocSnap.data().isSeller) {
+                    window.location.href = 'seller-profile.html'; 
+                } else {
+                   window.location.href = 'customer-account.html';
+                }
+
+            } else {
+                attachCartDrawerListener(null); 
+            }
+        });
+
+        function setupPageSpecificLogic() {
+            const loginTab = document.getElementById('login-tab-btn');
+            const registerTab = document.getElementById('register-tab-btn');
+            const loginContainer = document.getElementById('login-form-container');
+            const registerContainer = document.getElementById('register-form-container');
+            
+            loginTab.addEventListener('click', () => {
+                loginTab.classList.add('active');
+                registerTab.classList.remove('active');
+                loginContainer.classList.remove('hidden');
+                registerContainer.classList.add('hidden');
+            });
+
+            registerTab.addEventListener('click', () => {
+                registerTab.classList.add('active');
+                loginTab.classList.remove('active');
+                registerContainer.classList.remove('hidden');
+                loginContainer.classList.add('hidden');
+            });
+
+            const userTypeRadios = document.querySelectorAll('input[name="userType"]');
+            const sellerFields = document.getElementById('seller-fields');
+            const regStoreName = document.getElementById('reg-store-name');
+            const regLocation = document.getElementById('reg-location');
+            const regCategories = document.getElementById('reg-categories');
+
+            userTypeRadios.forEach(radio => {
+                radio.addEventListener('change', (e) => {
+                    if (e.target.value === 'seller') {
+                        sellerFields.classList.remove('hidden');
+                        regStoreName.required = true;
+                        regLocation.required = true;
+                        regCategories.required = true;
+                    } else {
+                        sellerFields.classList.add('hidden');
+                        regStoreName.required = false;
+                        regLocation.required = false;
+                        regCategories.required = false;
+                    }
+                });
+            });
+
+            document.getElementById('login-form').addEventListener('submit', onLoginSubmit);
+            document.getElementById('register-form').addEventListener('submit', onRegisterSubmit);
+        }
+
+        async function onLoginSubmit(e) {
+            e.preventDefault();
+            const email = document.getElementById('login-email').value;
+            const password = document.getElementById('login-password').value;
+            const errorP = document.getElementById('login-error');
+            errorP.textContent = 'Logging in...';
+
+            try {
+                await signInWithEmailAndPassword(auth, email, password);
+                errorP.textContent = '';
+                
+            } catch (error) {
+                console.error("Login Error:", error);
+                errorP.textContent = error.message.replace('Firebase: ', '');
+            }
+        }
+
+        async function onRegisterSubmit(e) {
+            e.preventDefault();
+            const errorP = document.getElementById('register-error');
+            errorP.textContent = 'Creating account...';
+
+            const userType = document.querySelector('input[name="userType"]:checked').value;
+            const name = document.getElementById('reg-name').value;
+            const email = document.getElementById('reg-email').value;
+            const password = document.getElementById('reg-password').value;
+
+            try {
+                const userCredential = await createUserWithEmailAndPassword(auth, email, password);
+                const user = userCredential.user;
+
+                const batch = writeBatch(db);
+                const userDocRef = doc(db, usersPath, user.uid);
+                
+                if (userType === 'customer') {
+                    batch.set(userDocRef, {
+                        name: name,
+                        email: email,
+                        isSeller: false,
+                        role: "customer",
+                        createdAt: serverTimestamp()
+                    });
+
+                } else {
+                    const storeName = document.getElementById('reg-store-name').value;
+                    const location = document.getElementById('reg-location').value;
+                    const categoriesStr = document.getElementById('reg-categories').value;
+                    const categoriesArray = categoriesStr.split(',').map(c => c.trim()).filter(Boolean);
+                    
+                    batch.set(userDocRef, {
+                        name: name, 
+                        email: email,
+                        isSeller: true, 
+                        role: "seller",
+                        storeId: user.uid,
+                        createdAt: serverTimestamp()
+                    });
+                    
+                    const storeDocRef = doc(db, publicDataPath, 'stores', user.uid); 
+                    batch.set(storeDocRef, {
+                        sellerUid: user.uid,
+                        storeName: storeName,
+                        location: location,
+                        categories: categoriesArray,
+                        bannerUrl: '',
+                        profileUrl: '',
+                        description: `Welcome to ${storeName}!`,
+                        createdAt: serverTimestamp()
+                    });
+                }
+                
+                await batch.commit();
+                errorP.textContent = '';
+
+            } catch (error) {
+                console.error("Signup Error:", error);
+                errorP.textContent = error.message.replace('Firebase: ', '');
+            }
+        }
+        
+     async function loadSiteConfig() {
+    try {
+        const docRef = doc(db, publicDataPath, 'siteContent', 'config');
+        const docSnap = await getDoc(docRef);
+        let config = {};
+        if (docSnap.exists()) config = docSnap.data();
+        
+        const logoText = config.logoText || 'මුදලාලි මාමා';
+        const logoImg = document.getElementById('logo-img');
+        const mobileLogoImg = document.getElementById('mobile-logo-img');
+        const logoLink = document.getElementById('logo-link');
+        const mobileLogoLink = document.getElementById('mobile-logo-link');
+
+        // Firestore එකේ logo URL එකක් තිබ්බොත් විතරක් update කරන්න
+        if (config.logoImageUrl && logoImg && mobileLogoImg) {
+            logoImg.src = config.logoImageUrl;
+            mobileLogoImg.src = config.logoImageUrl;
+        } else {
+            // නැත්නම් HTML එකේ තියෙන image එකට මුකුත් කරන්න එපා.
+            // Text-only fallback එකක් විදියට මේක තියමු
+            if (logoLink && !logoImg) logoLink.textContent = logoText;
+            if (mobileLogoLink && !mobileLogoImg) mobileLogoLink.textContent = logoText;
+        }
+        
+        // Hotline එක load කරන්න (මේක index.html එකේ නැතත්, මෙතන තිබ්බට කමක් නෑ)
+        if (document.getElementById('header-hotline')) {
+            document.getElementById('header-hotline').textContent = config.headerHotline || '...';
+        }
+    } catch (e) {
+        console.error("Error loading site config: ", e);
+        // Error එකක් වුණත්, HTML එකේ logo එක පේන නිසා අවුලක් නෑ
+    }
+}
+
+        function updateWishlistCountBadge() {
+            document.getElementById('mobile-wishlist-badge').textContent = '0';
+        };
+
+        function attachCartDrawerListener(userId) {
+            const container = document.getElementById('cart-drawer-items-container');
+            const totalEl = document.getElementById('cart-drawer-total');
+            if (!userId) {
+                container.innerHTML = '<p class="text-gray-500">Please log in to see your cart.</p>';
+                totalEl.textContent = 'Rs. 0.00';
+                updateCartCounters(0);
+                return;
+            }
+            const cartRef = collection(db, usersPath, userId, 'cart');
+            onSnapshot(cartRef, (snapshot) => {
+                updateCartCounters(snapshot.size); 
+                let subtotalLKR = 0;
+                if (snapshot.empty) {
+                    container.innerHTML = '<p class="text-gray-500">Your cart is empty.</p>';
+                } else {
+                    container.innerHTML = ''; 
+                    snapshot.forEach(doc => {
+                        const item = doc.data();
+                        subtotalLKR += (parseFloat(item.price) || 0) * (parseInt(item.quantity) || 1);
+                    });
+                }
+                totalEl.textContent = `Rs. ${subtotalLKR.toFixed(2)}`;
+            });
+        }
+
+        function updateCartCounters(count) {
+            document.getElementById('cart-count-badge').textContent = count;
+            document.getElementById('mobile-cart-badge').textContent = count;
+        }
+
+        function setupMobileDrawers() {
+            const drawers = [
+                { id: 'menu-drawer', openBtn: 'mobile-menu-btn', closeBtn: 'menu-drawer-close', overlay: 'menu-drawer-overlay' },
+                { id: 'cart-drawer', openBtn: 'mobile-cart-btn', closeBtn: 'cart-drawer-close', overlay: 'cart-drawer-overlay' },
+                { id: 'cart-drawer', openBtn: 'desktop-cart-btn', closeBtn: 'cart-drawer-close', overlay: 'cart-drawer-overlay' }
+            ];
+
+            drawers.forEach(d => {
+                const drawerEl = document.getElementById(d.id);
+                const openEl = document.getElementById(d.openBtn);
+                const closeEl = document.getElementById(d.closeBtn);
+                const overlayEl = document.getElementById(d.overlay);
+                
+                openEl?.addEventListener('click', () => drawerEl?.classList.add('open'));
+                closeEl?.addEventListener('click', () => drawerEl?.classList.remove('open'));
+                overlayEl?.addEventListener('click', () => drawerEl?.classList.remove('open'));
+            });
+            
+            const authDrawer = document.getElementById('account-drawer-modal');
+            const closeAuthDrawer = () => authDrawer?.classList.add('hidden');
+            document.getElementById('drawer-my-account-btn')?.addEventListener('click', (e) => { 
+                e.preventDefault(); 
+                document.getElementById('menu-drawer')?.classList.remove('open'); 
+                authDrawer?.classList.remove('hidden'); 
+            });
+            document.getElementById('account-drawer-bg')?.addEventListener('click', closeAuthDrawer);
+            document.getElementById('close-account-drawer-btn-logged-in')?.addEventListener('click', closeAuthDrawer);
+            document.getElementById('drawer-logout-btn')?.addEventListener('click', () => signOut(auth).then(closeAuthDrawer));
+        
+            document.getElementById('desktop-account-btn')?.addEventListener('click', (e) => {
+                e.preventDefault();
+                if(currentUser) {
+                    authDrawer?.classList.remove('hidden');
+                }
+            });
+            document.getElementById('mobile-account-btn')?.addEventListener('click', (e) => {
+                e.preventDefault();
+                if(currentUser) {
+                    authDrawer?.classList.remove('hidden');
+                }
+            });
+        }
+
+    </script>
+</body>
+</html>

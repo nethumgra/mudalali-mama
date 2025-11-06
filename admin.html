@@ -1,0 +1,685 @@
+<!DOCTYPE html>
+<html lang="si">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Admin Panel - මුදලාලි මාමා</title>
+    
+    <script src="https://cdn.tailwindcss.com"></script>
+    
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.2/css/all.min.css">
+
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+    <link href="https://fonts.googleapis.com/css2?family=Poppins:wght@300;400;500;600;700&display=swap" rel="stylesheet">
+
+    <script>
+        tailwind.config = {
+            theme: {
+                extend: {
+                    fontFamily: {
+                        sans: ['Poppins', 'sans-serif'],
+                    },
+                    colors: {
+                        'mudalali-green': {
+                            light: '#76b852',       
+                            DEFAULT: '#3a6a4a',      
+                            dark: '#2c5234',        
+                        },
+                        'mudalali-gold': '#bda26b',
+                        'mudalali-red': '#d93a3e',
+                        'mudalali-bg': '#f5f5f4',
+                        'mm-gray': { 
+                            light: '#f8f8f8',
+                            DEFAULT: '#e5e5e5',
+                        }
+                    }
+                }
+            }
+        }
+    </script>
+    <style type="text/tailwindcss">
+        body {
+            @apply font-sans text-gray-800 bg-mudalali-bg;
+        }
+        .drawer-overlay { @apply fixed inset-0 bg-black bg-opacity-50 z-50 transition-opacity opacity-0 pointer-events-none; }
+        .drawer-content { @apply fixed top-0 right-0 h-full bg-white shadow-xl z-50 transform translate-x-full transition-transform duration-300 ease-in-out; width: 90%; max-width: 400px; }
+        .drawer-content.left { @apply left-0 right-auto transform -translate-x-full; }
+        .drawer.open .drawer-overlay { @apply opacity-100 pointer-events-auto; }
+        .drawer.open .drawer-content { @apply transform translate-x-0; }
+        .no-scrollbar::-webkit-scrollbar { display: none; }
+        .no-scrollbar { scrollbar-width: none; }
+        .sidebar-link { @apply flex items-center p-3 text-gray-600 font-medium rounded-lg hover:bg-gray-100 hover:text-mudalali-green transition-colors; }
+        .sidebar-link.active { @apply bg-mudalali-green text-white shadow-md; }
+        .sidebar-link i { @apply w-6 text-center; }
+        .form-input { @apply mt-1 block w-full p-3 border rounded-md focus:ring-mudalali-green focus:border-mudalali-green; }
+        .form-label { @apply block text-sm font-medium text-gray-700; }
+        .btn-primary { @apply w-full bg-mudalali-green text-white p-3 rounded-md hover:bg-mudalali-green-dark font-bold text-lg; }
+        .btn-secondary { @apply w-full bg-gray-100 text-gray-700 p-3 rounded-md hover:bg-gray-200 font-bold; }
+        .modal-overlay { @apply fixed inset-0 bg-black bg-opacity-50 z-40 transition-opacity; }
+        .modal-content { @apply relative bg-white rounded-lg shadow-xl p-6 w-full max-w-lg m-4 transform transition-all z-50; }
+        .mobile-nav-link { @apply flex-1 flex flex-col items-center justify-center text-gray-600 hover:text-mudalali-green text-xs; }
+        .mobile-nav-link.active { @apply text-mudalali-green; }
+    </style>
+</head>
+<body class="pb-20 md:pb-0"> 
+    
+    <div id="auth-loader" class="fixed inset-0 bg-mudalali-bg z-[10000] flex flex-col items-center justify-center">
+        <svg class="animate-spin h-10 w-10 text-mudalali-green mx-auto" xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24">
+            <circle class="opacity-25" cx="12" cy="12" r="10" stroke="currentColor" stroke-width="4"></circle>
+            <path class="opacity-75" fill="currentColor" d="M4 12a8 8 0 018-8V0C5.373 0 0 5.373 0 12h4zm2 5.291A7.962 7.962 0 014 12H0c0 3.042 1.135 5.824 3 7.938l3-2.647z"></path>
+        </svg>
+        <p class="mt-4 text-gray-600 font-semibold">Authenticating Admin...</p>
+    </div>
+    
+    <div id="page-loader" class="fixed top-0 left-0 w-0 h-1 bg-mudalali-green z-[9999] transition-all duration-300 ease-linear"></div>
+    
+    <aside class="w-64 fixed top-0 left-0 h-full bg-white shadow-lg z-30 hidden md:flex flex-col">
+        <div class="p-4 border-b">
+            <a href="index.html" class="flex items-center gap-2">
+                <img id="logo-img" src="https://i.ibb.co/1tCywvyP/logo.png" class="h-10" alt="Logo">
+                <span class="text-xl font-bold text-mudalali-green-dark">Admin Panel</span>
+            </a>
+        </div>
+        <nav class="flex-grow p-4 space-y-2 overflow-y-auto">
+            <a href="#sellers" id="nav-sellers" class="sidebar-link active">
+                <i class="fa fa-users"></i>
+                <span class="ml-3">Seller Management</span>
+            </a>
+            <a href="#categories" id="nav-categories" class="sidebar-link">
+                <i class="fa fa-list"></i>
+                <span class="ml-3">Categories</span>
+            </a>
+            <a href="#homepage" id="nav-homepage" class="sidebar-link">
+                <i class="fa fa-tachometer-alt"></i>
+                <span class="ml-3">Homepage Content</span>
+            </a>
+        </nav>
+        <div class="p-4 border-t">
+            <button id="drawer-logout-btn" class="w-full text-left text-gray-600 p-3 rounded-lg hover:bg-gray-100 font-medium text-sm mt-2">
+                <i class="fa fa-sign-out-alt w-6"></i>
+                <span class="ml-3">Logout</span>
+            </button>
+        </div>
+    </aside>
+
+    <header class="bg-white shadow-md sticky top-0 z-40 flex md:hidden items-center justify-between p-4">
+        <button id="dashboard-menu-btn" class="text-2xl text-gray-700">
+            <i class="fa fa-bars"></i>
+        </button>
+        <h1 class="text-lg font-bold text-mudalali-green-dark" id="mobile-page-title">Seller Management</h1>
+        <div class="w-8"></div> </header>
+
+    <main class="md:ml-64 py-8 px-4 md:px-10">
+        
+        <div id="view-sellers" class="dashboard-view">
+            <div class="flex justify-between items-center mb-6">
+                <h1 class="text-3xl font-bold text-gray-800">Seller Management</h1>
+            </div>
+            <div id="seller-list-container" class="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-4 md:gap-6">
+                <p class="text-gray-500 col-span-full">Loading sellers awaiting approval...</p>
+            </div>
+            <h2 class="text-2xl font-bold text-gray-800 mt-12 mb-6">All Approved Sellers</h2>
+            <div id="approved-seller-list-container" class="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-4 md:gap-6">
+                <p class="text-gray-500 col-span-full">Loading approved sellers...</p>
+            </div>
+        </div>
+
+        <div id="view-categories" class="dashboard-view hidden">
+            <h1 class="text-3xl font-bold text-gray-800 mb-6">Manage Categories</h1>
+            <div class="grid grid-cols-1 lg:grid-cols-2 gap-6">
+                <div class="lg:col-span-1">
+                    <form id="category-form" class="bg-white p-6 rounded-lg shadow-md space-y-4">
+                        <input type="hidden" id="category-edit-id">
+                        <h2 id="category-form-title" class="text-xl font-bold text-gray-800">Add New Category</h2>
+                        <div>
+                            <label for="category-name" class="form-label">Category Name</label>
+                            <input type="text" id="category-name" class="form-input" required>
+                        </div>
+                        <div>
+                            <label for="category-image-url" class="form-label">Image URL</label>
+                            <input type="text" id="category-image-url" class="form-input" placeholder="https://...">
+                        </div>
+                        <div>
+                            <label for="category-color" class="form-label">Background Color (e.g., #FFFFFF)</label>
+                            <input type="text" id="category-color" class="form-input" placeholder="#f5f5f4">
+                        </div>
+                        <button id="submit-category-btn" type="submit" class="btn-primary !text-base !py-2">Save Category</button>
+                        <p id="category-upload-status" class="text-sm text-gray-600 mt-2"></p>
+                    </form>
+                </div>
+                <div class="lg:col-span-1">
+                    <h2 class="text-xl font-bold text-gray-800 mb-4">Published Categories</h2>
+                    <div id="category-list-container" class="space-y-4">
+                        <p class="text-gray-500">Loading your categories...</p>
+                    </div>
+                </div>
+            </div>
+        </div>
+
+        <div id="view-homepage" class="dashboard-view hidden">
+            <h1 class="text-3xl font-bold text-gray-800 mb-6">Homepage Content</h1>
+            <div id="homepage-settings-container" class="space-y-6">
+                <p class="text-gray-500">Loading homepage settings...</p>
+            </div>
+        </div>
+        
+    </main>
+
+    <nav class="fixed bottom-0 left-0 right-0 h-16 bg-white border-t border-gray-200 shadow-lg flex justify-around items-center z-40 md:hidden">
+        <a href="index.html" class="mobile-nav-link">
+            <i class="fa fa-home text-xl"></i>
+            <span class="mt-1">Home</span>
+        </a>
+        <button id="nav-btn-sellers" class="mobile-nav-link active" data-hash="#sellers">
+            <i class="fa fa-users text-xl"></i>
+            <span class="mt-1">Sellers</span>
+        </button>
+        <button id="nav-btn-categories" class="mobile-nav-link" data-hash="#categories">
+            <i class="fa fa-list text-xl"></i>
+            <span class="mt-1">Categories</span>
+        </button>
+        <button id="nav-btn-homepage" class="mobile-nav-link" data-hash="#homepage">
+            <i class="fa fa-tachometer-alt text-xl"></i>
+            <span class="mt-1">Homepage</span>
+        </button>
+    </nav>
+
+    <div id="dashboard-drawer" class="drawer">
+        <div class="drawer-overlay" id="dashboard-drawer-overlay"></div>
+        <aside class="drawer-content left w-64 flex flex-col">
+            <div class="p-4 border-b">
+                <a href="index.html" class="flex items-center gap-2">
+                    <img id="mobile-logo-img" src="https://i.ibb.co/1tCywvyP/logo.png" class="h-10" alt="Logo">
+                    <span class="text-xl font-bold text-mudalali-green-dark">Admin Panel</span>
+                </a>
+            </div>
+            <nav class="flex-grow p-4 space-y-2 overflow-y-auto">
+                <a href="#sellers" id="mobile-nav-sellers" class="sidebar-link active">
+                    <i class="fa fa-users"></i>
+                    <span class="ml-3">Seller Management</span>
+                </a>
+                <a href="#categories" id="mobile-nav-categories" class="sidebar-link">
+                    <i class="fa fa-list"></i>
+                    <span class="ml-3">Categories</span>
+                </a>
+                <a href="#homepage" id="mobile-nav-homepage" class="sidebar-link">
+                    <i class="fa fa-tachometer-alt"></i>
+                    <span class="ml-3">Homepage Content</span>
+                </a>
+            </nav>
+            <div class="p-4 border-t">
+                <button id="mobile-drawer-logout-btn" class="w-full text-left text-gray-600 p-3 rounded-lg hover:bg-gray-100 font-medium text-sm mt-2">
+                    <i class="fa fa-sign-out-alt w-6"></i>
+                    <span class="ml-3">Logout</span>
+                </button>
+            </div>
+        </aside>
+    </div>
+
+    <script type="module">
+        import { initializeApp } from "https://www.gstatic.com/firebasejs/11.6.1/firebase-app.js";
+        import { 
+            getAuth, 
+            onAuthStateChanged, 
+            signOut 
+        } from "https://www.gstatic.com/firebasejs/11.6.1/firebase-auth.js";
+        import { 
+            getFirestore, 
+            doc, 
+            getDoc, 
+            getDocs,
+            collection, 
+            onSnapshot,
+            query,
+            where,
+            orderBy,
+            setDoc,
+            addDoc,
+            updateDoc, 
+            deleteDoc, 
+            serverTimestamp,
+            increment
+        } from "https://www.gstatic.com/firebasejs/11.6.1/firebase-firestore.js";
+
+        // --- 8. JS (සම්පූර්ණයෙන්ම වෙනස් කළා) ---
+
+        const firebaseConfig = {
+            apiKey: "AIzaSyDIbu2qT53iGPqMCx5UdU6XY8wvXkb3ZF4",
+            authDomain: "mudalali-mama.firebaseapp.com",
+            projectId: "mudalali-mama",
+            storageBucket: "mudalali-mama.firebasestorage.app",
+            messagingSenderId: "296597428969",
+            appId: "1:296597428969:web:684668be9c0eaeecb4ae78",
+            measurementId: "G-GC1CP1LRFD"
+        };
+
+        const app = initializeApp(firebaseConfig);
+        const db = getFirestore(app);
+        const auth = getAuth(app); 
+        
+        const appId = typeof __app_id !== 'undefined' ? __app_id : 'default-app-id';
+        const publicDataPath = `/artifacts/${appId}/public/data`;
+        const usersPath = `/users`; 
+
+        let currentUser = null;
+        let currentUserData = null;
+
+        // --- ADMIN AUTH CHECK (වැදගත්ම කොටස) ---
+        onAuthStateChanged(auth, async (user) => {
+            const authLoader = document.getElementById('auth-loader');
+            if (user) {
+                currentUser = user;
+                const userDocRef = doc(db, usersPath, user.uid);
+                const userDocSnap = await getDoc(userDocRef);
+
+                // Admin ද කියලා බලනවා
+                if (!userDocSnap.exists() || !userDocSnap.data().isAdmin) {
+                    // Admin නෙවෙයි නම්, index.html එකට redirect කරනවා
+                    alert("You do not have permission to view this page.");
+                    window.location.href = 'index.html'; 
+                    return; // Function එක මෙතනින්ම නතර කරනවා
+                }
+                
+                currentUserData = userDocSnap.data();
+                initializeAdminDashboard(); // Admin නම් විතරක් dashboard එක load කරනවා
+                
+                authLoader.classList.add('hidden'); 
+
+            } else {
+                // ලොග් වෙලා නැත්නම් account.html එකට යවනවා
+                window.location.href = 'account.html'; 
+            }
+        });
+
+        // --- Dashboard Initialization ---
+        function initializeAdminDashboard() {
+            console.log("Admin Dashboard Initialized for:", currentUser.uid);
+            loadSiteConfig();
+            setupDashboardNavigation();
+            loadSellersForApproval(); // Default view's data
+            loadAllApprovedSellers();
+            loadCategoryManagement(); // Background load
+            loadHomepageSettings();   // Background load
+            setupLogoutButtons();
+
+            document.getElementById('page-loader').style.width = '100%';
+            setTimeout(() => document.getElementById('page-loader').style.display = 'none', 500);
+        }
+
+        // --- Navigation ---
+        function setupDashboardNavigation() {
+            const navLinks = document.querySelectorAll('.sidebar-link');
+            const mobileNavLinks = document.querySelectorAll('#dashboard-drawer .sidebar-link');
+            const mobileBottomNavLinks = document.querySelectorAll('.mobile-nav-link[data-hash]');
+            const views = document.querySelectorAll('.dashboard-view');
+            const mobilePageTitle = document.getElementById('mobile-page-title');
+            const dashboardDrawer = document.getElementById('dashboard-drawer');
+
+            function switchView(hash) {
+                if (!hash || hash === '#') hash = '#sellers'; // Default view
+                window.location.hash = hash;
+
+                views.forEach(view => view.classList.add('hidden'));
+                const activeView = document.getElementById(`view-${hash.substring(1)}`);
+                activeView?.classList.remove('hidden');
+
+                let activeLinkTitle = 'Seller Management';
+                navLinks.forEach(link => {
+                    if (link.hash === hash) {
+                        link.classList.add('active');
+                        activeLinkTitle = link.querySelector('span').textContent;
+                    } else {
+                        link.classList.remove('active');
+                    }
+                });
+                
+                mobileNavLinks.forEach(link => {
+                    if (link.hash === hash) link.classList.add('active');
+                    else link.classList.remove('active');
+                });
+
+                mobileBottomNavLinks.forEach(link => {
+                    if (link.dataset.hash === hash) link.classList.add('active');
+                    else link.classList.remove('active');
+                });
+                
+                mobilePageTitle.textContent = activeLinkTitle;
+                dashboardDrawer.classList.remove('open');
+            }
+
+            navLinks.forEach(link => link.addEventListener('click', (e) => switchView(e.currentTarget.hash)));
+            mobileNavLinks.forEach(link => link.addEventListener('click', (e) => switchView(e.currentTarget.hash)));
+            mobileBottomNavLinks.forEach(link => link.addEventListener('click', (e) => switchView(e.currentTarget.dataset.hash)));
+
+            document.getElementById('dashboard-menu-btn').addEventListener('click', () => dashboardDrawer.classList.add('open'));
+            document.getElementById('dashboard-drawer-overlay').addEventListener('click', () => dashboardDrawer.classList.remove('open'));
+            
+            switchView(window.location.hash);
+        }
+
+        // --- Section 1: Seller Management ---
+        async function loadSellersForApproval() {
+            const container = document.getElementById('seller-list-container');
+            container.innerHTML = '<p class="text-gray-500 col-span-full">Loading sellers awaiting approval...</p>';
+
+            const usersRef = collection(db, usersPath);
+            const q = query(usersRef, where("isSeller", "==", true), where("isApproved", "==", false));
+
+            try {
+                const querySnapshot = await getDocs(q);
+                if (querySnapshot.empty) {
+                    container.innerHTML = '<p class="text-gray-500 col-span-full">No new seller registrations.</p>';
+                    return;
+                }
+                
+                container.innerHTML = ''; // Clear loading text
+                querySnapshot.forEach(doc => {
+                    const seller = doc.data();
+                    const sellerId = doc.id;
+                    
+                    // account.html එකේ register වෙනකොට storeName එකක් save වෙන්න ඕන
+                    // අපි ඒකත් user doc එකේම save කරගමු (ඔයාගේ logic එක අනුව)
+                    // දැනට අපි seller.name එක පාවිච්චි කරමු
+                    let storeName = seller.storeName || seller.name || 'N/A';
+                    
+                    container.innerHTML += `
+                        <div class="col-span-1 bg-white p-4 rounded shadow border-l-4 border-yellow-500">
+                            <h3 class="font-bold text-lg">${storeName}</h3>
+                            <p class="text-sm text-gray-600">Owner: ${seller.name || 'N/A'}</p>
+                            <p class="text-sm text-gray-600">Email: ${seller.email}</p>
+                            <div class="flex gap-2 mt-4">
+                                <button class="approve-seller-btn flex-1 bg-mudalali-green text-white px-3 py-2 rounded font-semibold text-sm" data-id="${sellerId}">
+                                    Approve
+                                </button>
+                                <button class="reject-seller-btn flex-1 bg-red-600 text-white px-3 py-2 rounded font-semibold text-sm" data-id="${sellerId}">
+                                    Reject
+                                </button>
+                            </div>
+                        </div>
+                    `;
+                });
+
+                container.querySelectorAll('.approve-seller-btn').forEach(btn => {
+                    btn.addEventListener('click', (e) => approveSeller(e.target.dataset.id));
+                });
+                container.querySelectorAll('.reject-seller-btn').forEach(btn => {
+                    btn.addEventListener('click', (e) => rejectSeller(e.target.dataset.id));
+                });
+
+            } catch (err) {
+                console.error("Error loading pending sellers: ", err);
+                container.innerHTML = '<p class="text-red-500 col-span-full">Error loading sellers.</p>';
+            }
+        }
+
+        async function loadAllApprovedSellers() {
+            const container = document.getElementById('approved-seller-list-container');
+            container.innerHTML = '<p class="text-gray-500 col-span-full">Loading approved sellers...</p>';
+
+            const usersRef = collection(db, usersPath);
+            const q = query(usersRef, where("isSeller", "==", true), where("isApproved", "==", true), orderBy("name"));
+
+            try {
+                const querySnapshot = await getDocs(q);
+                if (querySnapshot.empty) {
+                    container.innerHTML = '<p class="text-gray-500 col-span-full">No approved sellers found.</p>';
+                    return;
+                }
+                
+                container.innerHTML = ''; // Clear loading text
+                querySnapshot.forEach(doc => {
+                    const seller = doc.data();
+                    const sellerId = doc.id;
+                    let storeName = seller.storeName || seller.name || 'N/A';
+                    
+                    container.innerHTML += `
+                        <div class="col-span-1 bg-white p-4 rounded shadow border-l-4 border-green-500">
+                            <h3 class="font-bold text-lg">${storeName}</h3>
+                            <p class="text-sm text-gray-600">Owner: ${seller.name || 'N/A'}</p>
+                            <p class="text-sm text-gray-600">Email: ${seller.email}</p>
+                             <div class="flex gap-2 mt-4">
+                                <a href="store.html?id=${sellerId}" target="_blank" class="flex-1 text-center bg-gray-100 text-gray-700 px-3 py-2 rounded font-semibold text-sm hover:bg-gray-200">
+                                    View Store
+                                </a>
+                                <button class="reject-seller-btn flex-1 bg-red-100 text-red-600 px-3 py-2 rounded font-semibold text-sm" data-id="${sellerId}">
+                                    Revoke
+                                </button>
+                            </div>
+                        </div>
+                    `;
+                });
+
+                container.querySelectorAll('.reject-seller-btn').forEach(btn => {
+                    btn.addEventListener('click', (e) => rejectSeller(e.target.dataset.id, true));
+                });
+
+            } catch (err) {
+                console.error("Error loading approved sellers: ", err);
+                container.innerHTML = '<p class="text-red-500 col-span-full">Error loading sellers.</p>';
+            }
+        }
+
+        async function approveSeller(sellerId) {
+            if (!confirm('Are you sure you want to approve this seller?')) return;
+            
+            const userDocRef = doc(db, usersPath, sellerId);
+            const storeDocRef = doc(db, publicDataPath, 'stores', sellerId);
+            
+            try {
+                await updateDoc(userDocRef, { isApproved: true });
+                await updateDoc(storeDocRef, { isApproved: true });
+                
+                alert('Seller Approved!');
+                loadSellersForApproval(); // Refresh pending list
+                loadAllApprovedSellers(); // Refresh approved list
+            } catch (err) {
+                console.error("Error approving seller: ", err);
+                alert('Approval failed.');
+            }
+        }
+
+        async function rejectSeller(sellerId, isRevoke = false) {
+            const action = isRevoke ? 'revoke approval for' : 'reject';
+            if (!confirm(`Are you sure you want to ${action} this seller?`)) return;
+
+            const userDocRef = doc(db, usersPath, sellerId);
+            const storeDocRef = doc(db, publicDataPath, 'stores', sellerId);
+
+            try {
+                // For a simple rejection/revoke, we just set isApproved to false.
+                // You could also delete the user, but that's riskier.
+                await updateDoc(userDocRef, { isApproved: false });
+                await updateDoc(storeDocRef, { isApproved: false });
+                
+                alert(`Seller ${isRevoke ? 'access revoked' : 'rejected'}.`);
+                loadSellersForApproval(); // Refresh pending list
+                loadAllApprovedSellers(); // Refresh approved list
+            } catch (err) {
+                console.error(`Error ${action}ing seller: `, err);
+                alert('Action failed.');
+            }
+        }
+
+        // --- Section 2: Category Management ---
+        function loadCategoryManagement() {
+            const form = document.getElementById('category-form');
+            form.addEventListener('submit', saveCategory);
+
+            const listContainer = document.getElementById('category-list-container');
+            listContainer.innerHTML = '<p class="text-gray-500">Loading categories...</p>';
+            
+            const categoriesRef = collection(db, publicDataPath, 'categories');
+            onSnapshot(query(categoriesRef, orderBy("name")), (snapshot) => {
+                if (snapshot.empty) {
+                    listContainer.innerHTML = '<p class="text-gray-500">No categories found.</p>';
+                    return;
+                }
+                listContainer.innerHTML = snapshot.docs.map(doc => `
+                    <div class="bg-white p-3 rounded shadow flex justify-between items-center">
+                        <div class="flex items-center gap-3">
+                            <div class="w-10 h-10 rounded-full flex items-center justify-center" style="background-color: ${doc.data().color || '#eee'}">
+                                <img src="${doc.data().imageUrl || 'https://placehold.co/40x40'}" class="w-8 h-8 object-contain">
+                            </div>
+                            <strong class="text-gray-700">${doc.data().name}</strong>
+                        </div>
+                        <div>
+                            <button class="delete-category-btn text-red-500 hover:text-red-700 font-semibold" data-id="${doc.id}">Delete</button>
+                        </div>
+                    </div>
+                `).join('');
+
+                listContainer.querySelectorAll('.delete-category-btn').forEach(btn => {
+                    btn.addEventListener('click', (e) => deleteCategory(e.target.dataset.id));
+                });
+            });
+        }
+
+        async function saveCategory(e) {
+            e.preventDefault();
+            const name = document.getElementById('category-name').value;
+            const imageUrl = document.getElementById('category-image-url').value;
+            const color = document.getElementById('category-color').value;
+            const statusEl = document.getElementById('category-upload-status');
+
+            if (!name) {
+                statusEl.textContent = 'Category name is required.';
+                return;
+            }
+            
+            statusEl.textContent = 'Saving...';
+            try {
+                const docId = name.toLowerCase().replace(/\s+/g, '-').replace(/&/g, 'and'); 
+                const docRef = doc(db, publicDataPath, 'categories', docId);
+                
+                await setDoc(docRef, {
+                    name: name,
+                    imageUrl: imageUrl,
+                    color: color
+                });
+
+                statusEl.textContent = 'Category Saved!';
+                document.getElementById('category-form').reset();
+            } catch (err) {
+                console.error(err);
+                statusEl.textContent = 'Error saving category.';
+            }
+            setTimeout(() => statusEl.textContent = '', 3000);
+        }
+
+        async function deleteCategory(docId) {
+            if (!confirm('Are you sure you want to delete this category? This cannot be undone.')) return;
+            try {
+                const docRef = doc(db, publicDataPath, 'categories', docId);
+                await deleteDoc(docRef);
+            } catch (err) {
+                console.error(err);
+                alert('Error deleting category.');
+            }
+        }
+
+        // --- Section 3: Homepage Settings ---
+        async function loadHomepageSettings() {
+            const viewContainer = document.getElementById('homepage-settings-container');
+            viewContainer.innerHTML = '';
+            
+            const settingsToLoad = [
+                { id: 'heroBanner1', title: 'Hero Banner 1' },
+                { id: 'heroBanner2', title: 'Hero Banner 2' },
+                { id: 'heroBanner3', title: 'Hero Banner 3' },
+                { id: 'smallBanner1', title: 'Small Banner 1 (Left)' },
+                { id: 'smallBanner2', title: 'Small Banner 2 (Middle)' },
+                { id: 'smallBanner3', title: 'Small Banner 3 (Right)' }
+            ];
+
+            for (const setting of settingsToLoad) {
+                const docRef = doc(db, publicDataPath, 'siteContent', setting.id);
+                const docSnap = await getDoc(docRef);
+                const data = docSnap.exists() ? docSnap.data() : {};
+
+                viewContainer.innerHTML += `
+                    <form class="bg-white p-6 rounded-lg shadow-md space-y-4 homepage-form" data-doc-id="${setting.id}">
+                        <h3 class="text-xl font-bold text-gray-700">${setting.title}</h3>
+                        <div>
+                            <label class="form-label">Image URL</label>
+                            <input type="text" class="form-input banner-image-url" value="${data.imageUrl || ''}" placeholder="https://...">
+                        </div>
+                        <div>
+                            <label class="form-label">Link URL (When clicked)</label>
+                            <input type="text" class="form-input banner-link-url" value="${data.linkUrl || ''}" placeholder="/shop.html?category=...">
+                        </div>
+                        <button type="submit" class="btn-primary !text-base !py-2 !w-auto !px-6">Save ${setting.title}</button>
+                    </form>
+                `;
+            }
+
+            viewContainer.querySelectorAll('.homepage-form').forEach(form => {
+                form.addEventListener('submit', saveHomepageContent);
+            });
+        }
+
+        async function saveHomepageContent(e) {
+            e.preventDefault();
+            const form = e.currentTarget;
+            const docId = form.dataset.docId;
+            const saveBtn = form.querySelector('button[type="submit"]');
+            const originalBtnText = saveBtn.textContent;
+            
+            const dataToSave = {
+                imageUrl: form.querySelector('.banner-image-url').value,
+                linkUrl: form.querySelector('.banner-link-url').value
+            };
+
+            saveBtn.disabled = true;
+            saveBtn.textContent = 'Saving...';
+            
+            try {
+                const docRef = doc(db, publicDataPath, 'siteContent', docId);
+                await setDoc(docRef, dataToSave, { merge: true });
+                saveBtn.textContent = 'Saved!';
+            } catch (err) {
+                console.error(err);
+                saveBtn.textContent = 'Error!';
+            }
+            
+            setTimeout(() => {
+                saveBtn.disabled = false;
+                saveBtn.textContent = originalBtnText;
+            }, 2000);
+        }
+
+        // --- General Functions ---
+        async function loadSiteConfig() {
+            try {
+                const docRef = doc(db, publicDataPath, 'siteContent', 'config');
+                const docSnap = await getDoc(docRef);
+                let config = {};
+                if (docSnap.exists()) config = docSnap.data();
+                
+                const logoImg = document.getElementById('logo-img');
+                const mobileLogoImg = document.getElementById('mobile-logo-img');
+
+                if (config.logoImageUrl && logoImg && mobileLogoImg) {
+                    logoImg.src = config.logoImageUrl;
+                    mobileLogoImg.src = config.logoImageUrl;
+                }
+            } catch (e) {
+                console.error("Error loading site config: ", e);
+            }
+        }
+
+        function setupLogoutButtons() {
+            const logoutBtns = [
+                document.getElementById('drawer-logout-btn'),
+                document.getElementById('mobile-drawer-logout-btn')
+            ];
+            logoutBtns.forEach(btn => {
+                btn?.addEventListener('click', () => {
+                    signOut(auth).catch(error => console.error("Logout Error:", error));
+                });
+            });
+        }
+
+    </script>
+</body>
+</html>
