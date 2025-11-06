@@ -662,6 +662,17 @@
         const deleteAddressBtn = document.getElementById('delete-address-btn');
 
 
+        function captureAffiliateRef() {
+            const urlParams = new URLSearchParams(window.location.search);
+            const affiliateId = urlParams.get('ref');
+            if (affiliateId) {
+                // ID ekak URL eke thibboth, eka browser eke save karanawa
+                console.log(`Affiliate ID captured: ${affiliateId}`);
+                localStorage.setItem('affiliateRef', affiliateId);
+            }
+        }
+
+        
         // --- Page Load ---
         document.addEventListener('DOMContentLoaded', () => {
             console.log("Mudalali Mama Account Page Initialized");
@@ -669,6 +680,7 @@
             loadSiteTheme();
             loadDesktopNavCategories();
             loadFooter();
+            captureAffiliateRef();
             setupMobileDrawers(); 
             updateWishlistCountBadge(); // Initialize wishlist count
             

@@ -515,6 +515,16 @@
 
         let storeIdForShare = null; 
 
+function captureAffiliateRef() {
+            const urlParams = new URLSearchParams(window.location.search);
+            const affiliateId = urlParams.get('ref');
+            if (affiliateId) {
+                // ID ekak URL eke thibboth, eka browser eke save karanawa
+                console.log(`Affiliate ID captured: ${affiliateId}`);
+                localStorage.setItem('affiliateRef', affiliateId);
+            }
+        }
+
         document.addEventListener('DOMContentLoaded', () => {
             console.log("Mudalali Mama Store Page Initialized");
             if (pageLoader) pageLoader.style.width = '30%';
@@ -524,6 +534,7 @@
             loadSiteConfig();
             loadDesktopNavCategories();
             loadFooter();
+            captureAffiliateRef();
             setupMobileDrawers(); 
             updateWishlistCountBadge();
             setupPageSpecificLogic();

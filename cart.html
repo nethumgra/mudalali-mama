@@ -455,6 +455,16 @@
         let currentUser = null;
         const pageLoader = document.getElementById('page-loader');
 
+function captureAffiliateRef() {
+            const urlParams = new URLSearchParams(window.location.search);
+            const affiliateId = urlParams.get('ref');
+            if (affiliateId) {
+                // ID ekak URL eke thibboth, eka browser eke save karanawa
+                console.log(`Affiliate ID captured: ${affiliateId}`);
+                localStorage.setItem('affiliateRef', affiliateId);
+            }
+        }
+
         document.addEventListener('DOMContentLoaded', () => {
             console.log("Mudalali Mama Cart Page Initialized");
             
@@ -464,6 +474,7 @@
 
             loadSiteConfig();
             loadDesktopNavCategories();
+            captureAffiliateRef();
             loadFooter();
             setupMobileDrawers(); 
             updateWishlistCountBadge();

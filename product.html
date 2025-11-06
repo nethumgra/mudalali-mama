@@ -591,6 +591,16 @@
 
         const pageLoader = document.getElementById('page-loader');
 
+        function captureAffiliateRef() {
+            const urlParams = new URLSearchParams(window.location.search);
+            const affiliateId = urlParams.get('ref');
+            if (affiliateId) {
+                // ID ekak URL eke thibboth, eka browser eke save karanawa
+                console.log(`Affiliate ID captured: ${affiliateId}`);
+                localStorage.setItem('affiliateRef', affiliateId);
+            }
+        }
+
         document.addEventListener('DOMContentLoaded', () => {
             console.log("Mudalali Mama Product Detail Page Initialized");
             
@@ -601,6 +611,7 @@
             loadSiteConfig();
             loadDesktopNavCategories();
             loadFooter();
+            captureAffiliateRef();
             setupMobileDrawers(); 
             // updateWishlistCountBadge() is now called inside onAuthStateChanged
 

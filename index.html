@@ -434,6 +434,7 @@
     </div>
     
     <script type="module">
+        
         import { initializeApp } from "https://www.gstatic.com/firebasejs/11.6.1/firebase-app.js";
         import { 
             getAuth, 
@@ -487,6 +488,16 @@
         let unsubscribeCommentsListener = null;
         const pageLoader = document.getElementById('page-loader');
 
+function captureAffiliateRef() {
+            const urlParams = new URLSearchParams(window.location.search);
+            const affiliateId = urlParams.get('ref');
+            if (affiliateId) {
+                // ID ekak URL eke thibboth, eka browser eke save karanawa
+                console.log(`Affiliate ID captured: ${affiliateId}`);
+                localStorage.setItem('affiliateRef', affiliateId);
+            }
+        }
+
         function setupAutoScroll(containerElement) {
             if (!containerElement) return;
             let scrollInterval;
@@ -511,6 +522,9 @@
             startScroll(); 
         }
 
+
+
+
         document.addEventListener('DOMContentLoaded', () => {
             console.log("Mudalali Mama App Initialized");
             
@@ -521,6 +535,7 @@
             loadSiteConfig();
             loadSiteTheme();
             buildHomepage();
+            captureAffiliateRef();
             loadDesktopNavCategories();
             loadFooter();
             setupMobileDrawers(); 
@@ -1255,7 +1270,7 @@ section.appendChild(mobileViewAllBtn);
                             addToCart(productDataForCart, 1); 
                         });
                         
-                        productEl.querySelectorAll('.product-link, .quick-view-btn').forEach(link => {
+                      productEl.querySelectorAll('.quick-view-btn').forEach(link => {
                             link.addEventListener('click', (e) => {
                                 if (!currentUser) {
                                     e.preventDefault();
@@ -1527,8 +1542,8 @@ section.appendChild(mobileViewAllBtn);
                 </div>
             `;
             
-            const gridEl = document.createElement('div');
-            gridEl.className = 'grid grid-cols-2 gap-4 md:flex md:gap-4 md:overflow-x-auto md:scroll-snap-type-x-mandatory md:no-scrollbar';
+        const gridEl = document.createElement('div');
+            gridEl.className = 'flex gap-4 overflow-x-auto scroll-snap-type-x-mandatory no-scrollbar pb-4';
             gridEl.innerHTML = '<p class="col-span-full text-gray-500 text-center">Loading stories...</p>';
             section.appendChild(gridEl);
             mainContainer.appendChild(section);
@@ -1576,10 +1591,29 @@ section.appendChild(mobileViewAllBtn);
                             } catch (e) { console.error("Error checking like status: ", e); }
                         }
 
-                        const storyCard = document.createElement('div');
-                storyCard.className = "bg-white rounded-lg shadow-lg overflow-hidden transform transition-all duration-300 hover:shadow-xl hover:-translate-y-1 flex flex-col w-full md:flex-shrink-0 md:w-[25vw] lg:w-[20vw] scroll-snap-align-start";
-                        
-                        storyCard.innerHTML = `
+                    const storyCard = document.createElement('div');
+               storyCard.className = "bg-white rounded-lg shadow-lg overflow-hidden transform transition-all duration-300 hover:shadow-xl hover:-translate-y-1 flex flex-col w-[75vw] flex-shrink-0 scroll-snap-align-start md:w-[30vw] lg:w-[24vw]";
+                  
+               let taggedProductHtml = '';
+                        if (story.taggedProductId && story.taggedProductName) {
+                            taggedProductHtml = `
+                                <a href="product.html?id=${story.taggedProductId}" class="block p-3 bg-gray-50 hover:bg-gray-100 transition-colors border-t">
+                                    <div class="flex items-center gap-3">
+                                        <img src="${story.taggedProductImageUrl || 'https://placehold.co/60x60'}" class="w-12 h-12 object-cover rounded-md border flex-shrink-0">
+                                        <div class="flex-grow min-w-0">
+                                            <p class="text-xs text-gray-500">TAGGED PRODUCT</p>
+                                            <p class="text-sm font-semibold text-gray-800 truncate">${story.taggedProductName}</p>
+                                            <p class="text-sm font-bold text-mudalali-red">Rs. ${story.taggedProductPrice ? story.taggedProductPrice.toFixed(2) : '0.00'}</p>
+                                        </div>
+                                        <button class="buy-now-tag-btn flex-shrink-0 bg-mudalali-green text-white text-xs font-bold px-3 py-2 rounded-md hover:bg-mudalali-green-dark">
+                                            Buy Now
+                                        </button>
+                                    </div>
+                                </a>
+                            `;
+                        }
+
+                  storyCard.innerHTML = `
                             <div class="p-5">
                                 <div class="flex items-center mb-3">
                                     <img class="h-10 w-10 rounded-full object-cover" src="${sellerProfilePic}" alt="${sellerName}">
@@ -1594,9 +1628,10 @@ section.appendChild(mobileViewAllBtn);
                             </div>
 
                  <a href="story-detail.html?id=${storyId}" class="block relative w-full bg-gray-100">
-                <img class="h-full w-full object-contain" src="${story.imageUrl || 'https://placehold.co/400x300'}" alt="Story Image">
+                <img class="w-full h-auto" src="${story.imageUrl || 'https://placehold.co/400x300'}" alt="Story Image">
             </a>
 
+            ${taggedProductHtml}
             <div class="p-2 flex justify-around items-center border-t bg-gray-50">
                 
                 <button class="${likeBtnClass} flex items-center justify-center gap-2" data-story-id="${storyId}">

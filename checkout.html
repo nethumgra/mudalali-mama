@@ -372,11 +372,27 @@
         const pageLoader = document.getElementById('page-loader');
         const checkoutLoader = document.getElementById('checkout-loader');
         const checkoutContent = document.getElementById('checkout-content');
+        
+        // --- AFFILIATE CAPTURE FUNCTION (ALUTH) ---
+        function captureAffiliateRef() {
+            const urlParams = new URLSearchParams(window.location.search);
+            const affiliateId = urlParams.get('ref');
+            if (affiliateId) {
+                // ID ekak URL eke thibboth, eka browser eke save karanawa
+                console.log(`Affiliate ID captured: ${affiliateId}`);
+                localStorage.setItem('affiliateRef', affiliateId);
+            }
+        }
+        // --- END AFFILIATE CAPTURE FUNCTION ---
 
         document.addEventListener('DOMContentLoaded', () => {
             console.log("Mudalali Mama Checkout Page Initialized");
             
             if (pageLoader) pageLoader.style.width = '30%';
+
+            // --- AFFILIATE ---
+            captureAffiliateRef(); // <-- Page load weddima call karanna
+            // --- END AFFILIATE ---
 
             loadSiteConfig();
             setupMobileDrawers(); 
@@ -443,7 +459,7 @@
                 
                 attachCartDrawerListener(user.uid);
                 attachWishlistBadgeListener(user.uid);
-                loadOrderSummary(user.uid); // <--- shipping logic එක මෙතන තියෙන්නෙ
+                loadOrderSummary(user.uid); // <--- shipping logic eka methana thiyenne
 
             } else {
                 window.location.href = `account.html?redirect=checkout.html`;
@@ -559,10 +575,10 @@
             }
         }
         
-        /**
-         * (වෙනස් කළා)
-         * Order object එකට අලුත් 'shipping' total එක save කරනවා
-         */
+        // ====================================================================
+        // ===== ALUTHIN HADAPU `onPlaceOrder` FUNCTION EKA (AFFILIATE SAMAGA) =====
+        // ====================================================================
+        
         async function onPlaceOrder(e) {
             e.preventDefault();
             if (!currentUser || currentCart.length === 0) {
@@ -575,6 +591,9 @@
             placeOrderBtn.disabled = true;
             placeOrderBtn.innerHTML = '<i class="fas fa-spinner fa-spin mr-2"></i> Placing Order...';
             errorP.textContent = '';
+            
+            // --- 1. AFFILIATE ID EKA BROWSER EKEN GANNAWA ---
+            const affiliateId = localStorage.getItem('affiliateRef');
             
             const customerInfo = {
                 name: document.getElementById('billing-name').value,
@@ -589,9 +608,8 @@
             const paymentMethod = document.querySelector('input[name="payment-method"]:checked').value;
             const orderNotes = document.getElementById('order-notes').value;
             
-            // --- අලුත් Calculation Logic (re-calculate from currentCart) ---
+            // --- Calculation Logic (re-calculate from currentCart) ---
             const subtotal = currentCart.reduce((sum, item) => sum + (item.price * item.quantity), 0);
-            // item.shippingCost එක අපි `loadOrderSummary` එකේදි save කරගත්තා
             const totalShipping = currentCart.reduce((sum, item) => sum + (item.shippingCost || 0), 0); 
             const platformFee = subtotal * 0.04;
             const totalAmount = subtotal + totalShipping + platformFee;
@@ -607,20 +625,24 @@
             const newOrder = {
                 userId: currentUser.uid,
                 customerInfo: customerInfo,
-                items: currentCart, // Cart එකේ දැන් shippingCost, sellerUid වගේ data ත් තියෙනවා
+                items: currentCart, // Cart eke shippingCost, sellerUid data thiyenawa
                 paymentMethod: paymentMethod,
                 orderNotes: orderNotes,
                 subtotal: subtotal,
-                shipping: totalShipping, // <-- Hardcoded 350 වෙනුවට අලුත් total එක
+                shipping: totalShipping, // Shipping calculation eken gaththa total eka
                 platformFee: platformFee, 
                 totalAmount: totalAmount, 
                 status: orderStatus,
-                createdAt: serverTimestamp()
+                createdAt: serverTimestamp(),
+                affiliateId: affiliateId || null // <-- 2. ID EKA ORDER EKATA ADD KARANAWA
             };
             
             try {
+                // "orders" collection ekata order eka add karanawa
+                // (Me path eka oyage anith files wala "orders" nisa man wenas kala)
                 const newOrderRef = await addDoc(collection(db, "orders"), newOrder);
                 
+                // Cart eka clear karanawa
                 const cartRef = collection(db, usersPath, currentUser.uid, 'cart');
                 const batch = writeBatch(db);
                 currentCart.forEach(item => {
@@ -628,6 +650,10 @@
                     batch.delete(itemRef);
                 });
                 await batch.commit();
+                
+                // --- 3. AFFILIATE ID EKA CLEAR KIRIMA ---
+                // Order eka dapu gaman, ID eka browser eken ain karanawa
+                localStorage.removeItem('affiliateRef');
                 
                 console.log("Order placed successfully! ID:", newOrderRef.id);
                 window.location.href = `order-success.html?id=${newOrderRef.id}`;

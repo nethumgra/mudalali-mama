@@ -1,0 +1,1231 @@
+<!DOCTYPE html>
+<html lang="si">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Affiliate Payouts - Mudalali Mama</title>
+    
+    <script src="https://cdn.tailwindcss.com"></script>
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.2/css/all.min.css">
+    
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+    <link href="https://fonts.googleapis.com/css2?family=Poppins:wght@300;400;500;600;700&display=swap" rel="stylesheet">
+    
+    <script src="https://cdn.jsdelivr.net/npm/qrcode-generator/qrcode.js"></script>
+
+    <script>
+        tailwind.config = {
+            theme: {
+                extend: {
+                    fontFamily: {
+                        sans: ['Poppins', 'sans-serif'],
+                    },
+                    colors: {
+                        'mudalali-green': {
+                            light: '#76b852',       
+                            DEFAULT: '#3a6a4a',      
+                            dark: '#2c5234',        
+                        },
+                        'mudalali-gold': '#bda26b',
+                        'mudalali-red': '#d93a3e',
+                        'mudalali-bg': '#f5f5f4',
+                        'mm-gray': { 
+                            light: '#f8f8f8',
+                            DEFAULT: '#e5e5e5',
+                        }
+                    }
+                }
+            }
+        }
+    </script>
+    
+    <style type="text/tailwindcss">
+        body {
+            @apply font-sans text-gray-800;
+        }
+        .drawer-overlay {
+            @apply fixed inset-0 bg-black bg-opacity-50 z-50 transition-opacity opacity-0 pointer-events-none;
+        }
+        .drawer-content {
+            @apply fixed top-0 right-0 h-full bg-white shadow-xl z-50 transform translate-x-full transition-transform duration-300 ease-in-out;
+            width: 90%;
+            max-width: 400px;
+        }
+        .drawer-content.left {
+            @apply left-0 right-auto transform -translate-x-full;
+        }
+        .drawer.open .drawer-overlay {
+            @apply opacity-100 pointer-events-auto;
+        }
+        .drawer.open .drawer-content {
+            @apply transform translate-x-0;
+        }
+        .mobile-nav-link.active {
+            @apply text-mudalali-green;
+        }
+        .tab-button.active { 
+            border-color: #3a6a4a;
+            color: #3a6a4a;
+        }
+        .sidebar-link.active {
+            background-color: #f3f4f6; color: #1f2937; 
+            border-left: 4px solid #3a6a4a;
+            padding-left: 16px; font-weight: 600; 
+        }
+        .menu-tab-btn.active {
+            @apply border-mudalali-green text-mudalali-green;
+        }
+        @keyframes pop { 0% { transform: scale(1); } 50% { transform: scale(1.3); } 100% { transform: scale(1); } }
+        .pop { animation: pop 0.2s ease-out; }
+        .loading-spinner { 
+            border: 4px solid #f3f3f3; 
+            border-top: 4px solid #3a6a4a;
+            border-radius: 50%; width: 30px; height: 30px; 
+            animation: spin 1s linear infinite; 
+        }
+        @keyframes spin { 0% { transform: rotate(0deg); } 100% { transform: rotate(360deg); } }
+        .sidebar-link { 
+            display: block; padding: 12px 16px; font-size: 0.9rem; font-weight: 500; 
+            color: #374151; border-bottom: 1px solid #f3f4f6; transition: all 0.2s ease; 
+        }
+        .sidebar-link:hover { 
+            background-color: #f9fafb; 
+            color: #2c5234;
+            padding-left: 20px; 
+        }
+        .sidebar-link.mobile-nav-link {
+            @apply flex items-center p-4 border-b text-gray-700;
+        }
+        .sidebar-link.mobile-nav-link i {
+            @apply w-5 mr-3 text-center;
+        }
+        .line-clamp-2 {
+            display: -webkit-box;
+            -webkit-line-clamp: 2;
+            -webkit-box-orient: vertical;  
+            overflow: hidden;
+        }
+        .form-input {
+            @apply mt-1 block w-full p-3 border rounded-md focus:ring-mudalali-green focus:border-mudalali-green;
+        }
+        .form-label {
+            @apply block text-sm font-medium text-gray-700;
+        }
+        .btn-primary {
+            @apply w-full bg-mudalali-green text-white p-3 rounded-md hover:bg-mudalali-green-dark font-bold text-lg;
+        }
+        .btn-secondary {
+            @apply w-full bg-gray-100 text-gray-700 p-3 rounded-md hover:bg-gray-200 font-bold;
+        }
+        /* --- ALUTH: QR Code Style --- */
+        #qr-code-container {
+            @apply w-64 h-64 mx-auto my-4 bg-gray-100 rounded-lg flex items-center justify-center border;
+        }
+        /* Canvas eka hinda img tag eka ona na */
+        #qr-code-container canvas {
+            @apply rounded-lg;
+        }
+    </style>
+</head>
+<body class="pb-20 md:pb-0" style="background-color: #f5f5f4;"> 
+
+    <div id="auth-loader" class="fixed inset-0 bg-mudalali-bg z-[10000] flex flex-col items-center justify-center">
+        <svg class="animate-spin h-10 w-10 text-mudalali-green mx-auto" xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24">
+            <circle class="opacity-25" cx="12" cy="12" r="10" stroke="currentColor" stroke-width="4"></circle>
+            <path class="opacity-75" fill="currentColor" d="M4 12a8 8 0 018-8V0C5.373 0 0 5.373 0 12h4zm2 5.291A7.962 7.962 0 014 12H0c0 3.042 1.135 5.824 3 7.938l3-2.647z"></path>
+        </svg>
+        <p class="mt-4 text-gray-600 font-semibold">Verifying Affiliate Access...</p>
+    </div>
+
+    <header class="bg-white shadow-md sticky top-0 z-40 hidden md:block">
+        <div class="container mx-auto px-4 py-3 flex justify-between items-center">
+            <button id="desktop-menu-btn" class="text-2xl text-gray-700"><i class="fa fa-bars"></i></button>
+            <a href="/" id="logo-link" class="text-3xl font-bold text-mudalali-green-dark">
+              <img id="logo-img" src="https://i.ibb.co/1tCywvyP/logo.png" class="h-10" alt="Mudalali Mama Logo">
+            </a>
+            <div class="flex-grow max-w-xl mx-4">
+                <form class="flex">
+                    <input type="text" placeholder="Search..." class="w-full px-4 py-2 border border-mm-gray-DEFAULT rounded-l-md focus:outline-none focus:ring-2 focus:ring-mudalali-green">
+                    <button type="submit" class="bg-mudalali-green text-white px-4 py-2 rounded-r-md hover:bg-mudalali-green-dark"><i class="fa fa-search"></i></button>
+                </form>
+            </div>
+            <div class="flex items-center space-x-6">
+                <div class="text-right">
+                    <div class="text-sm font-semibold">Support Hotline</div>
+                    <div id="header-hotline" class="text-lg font-bold text-mudalali-green-dark">...</div>
+                </div>
+                <a href="customer-account.html" id="desktop-account-btn" class="flex flex-col items-center text-gray-600 hover:text-mudalali-green">
+                    <i class="fa fa-user text-xl"></i><span class="text-xs">Account</span>
+                </a>
+                <a href="wishlist.html" class="relative flex flex-col items-center text-gray-600 hover:text-mudalali-green">
+                    <i class="fa fa-heart text-xl"></i>
+                    <span id="wishlist-count-badge" class="absolute -top-2 -right-2 bg-mudalali-red text-white text-xs rounded-full px-1.5 py-0.5">0</span>
+                    <span class="text-xs">Wishlist</span>
+                </a>
+                <button id="desktop-cart-btn" class="flex flex-col items-center text-gray-600 hover:text-mudalali-green relative">
+                    <i class="fa fa-shopping-cart text-xl"></i>
+                    <span id="cart-count-badge" class="absolute -top-2 -right-2 bg-mudalali-red text-white text-xs rounded-full px-1.5 py-0.5">0</span>
+                    <span class="text-xs">Cart</span>
+                </button>
+            </div>
+        </div>
+    </header>
+    <header class="bg-white shadow-md sticky top-0 z-40 flex md:hidden items-center justify-between p-4">
+        <button id="mobile-menu-btn" class="text-2xl text-gray-700"><i class="fa fa-bars"></i></button>
+        <a href="index.html" id="mobile-logo-link" class="text-2xl font-bold text-mudalali-green-dark">
+            <img id="mobile-logo-img" src="https://i.ibb.co/1tCywvyP/logo.png" class="h-8" alt="Mudalali Mama Logo">
+        </a>
+        <a href="customer-account.html" id="mobile-account-btn" class="text-2xl text-gray-700 w-8 text-right"><i class="fa fa-user"></i></a>
+    </header>
+    <div id="account-drawer-modal" class="drawer drawer-modal fixed inset-0 z-50 hidden">
+        <div id="account-drawer-bg" class="drawer-overlay fixed inset-0 bg-black bg-opacity-50 opacity-0 transition-opacity"></div>
+        <div id="account-drawer" class="drawer-content fixed top-0 right-0 h-full bg-white shadow-xl w-full max-w-md flex flex-col">
+            <div id="account-drawer-logged-in" class="hidden flex flex-col h-full">
+                <div class="p-4 flex justify-between items-center border-b flex-shrink-0"><h2 class="text-xl font-semibold text-gray-800">My Account</h2><button id="close-account-drawer-btn-logged-in" class="text-gray-500 hover:text-gray-800 text-sm flex items-center gap-1"><i class="fas fa-times"></i> Close</button></div>
+                <div class="flex-grow p-6 overflow-y-auto"><p class="text-gray-600 mb-2">Welcome back,</p><h3 id="account-drawer-user-email" class="text-lg font-semibold text-gray-800 mb-6 break-words"></h3><a href="customer-account.html" class="w-full text-center bg-mudalali-green text-white p-3 rounded-lg hover:bg-mudalali-green-dark font-bold text-base">Customer Account</a><button id="drawer-logout-btn" class="w-full text-center bg-gray-100 text-gray-700 p-3 rounded-lg hover:bg-gray-200 font-bold text-base mt-4">Logout</button></div>
+            </div>
+        </div>
+    </div>
+    <div id="menu-drawer" class="drawer">
+        <div class="drawer-overlay" id="menu-drawer-overlay"></div>
+        <div class="drawer-content left flex flex-col">
+            <div class="flex justify-between items-center p-4 border-b"><h2 class="text-xl font-bold">MENU</h2><button id="menu-drawer-close" class="text-xl">&times;</button></div>
+            <div id="menu-tab-menu-content" class="flex-col flex-grow overflow-y-auto">
+                <a href="affiliate-dashboard.html" class="sidebar-link mobile-nav-link"><i class="fas fa-chart-line"></i> Affiliate Stats</a>
+                <a href="affiliate-story-marketing.html" class="sidebar-link mobile-nav-link"><i class="fas fa-bullhorn"></i> Story Marketing</a>
+                <a href="affiliate-payouts.html" class="sidebar-link mobile-nav-link active"><i class="fas fa-money-bill-wave"></i> Payouts</a>
+                <div class="p-4 bg-gray-100 font-bold text-gray-600">My Account</div>
+                <a href="customer-account.html" class="sidebar-link mobile-nav-link"><i class="fa fa-user-circle"></i> Customer Account</a>
+                <a href="wishlist.html" class="sidebar-link mobile-nav-link"><i class="fa fa-heart"></i> Wishlist</a>
+                <a href="#" class="sidebar-link mobile-nav-link" id="hamburger-logout-btn"><i class="fa fa-sign-out-alt"></i> Logout</a>
+            </div>
+        </div>
+    </div>
+    <div id="cart-drawer" class="drawer">
+        <div class="drawer-overlay" id="cart-drawer-overlay"></div>
+        <div class="drawer-content flex flex-col">
+            <div class="flex justify-between items-center p-4 border-b"><h2 class="text-xl font-bold">Shopping cart</h2><button id="cart-drawer-close" class="text-xl">&times;</button></div>
+            <div id="cart-drawer-items-container" class="flex-grow p-6 overflow-y-auto text-center"><p class="text-gray-500">Your cart is empty.</p></div>
+            <div class="p-6 border-t bg-gray-50"><div class="flex justify-between items-center mb-2"><span class="text-lg font-medium text-gray-600">Subtotal:</span><span id="cart-drawer-total" class="text-xl font-bold text-mudalali-green-dark">Rs. 0.00</span></div><div class="flex flex-col gap-3"><a href="cart.html" class="w-full text-center bg-white border-2 border-mudalali-green text-mudalali-green p-3 rounded-lg hover:bg-gray-50 font-bold text-base">VIEW CART</a><a href="checkout.html" class="w-full text-center bg-mudalali-green text-white p-3 rounded-lg hover:bg-mudalali-green-dark font-bold text-base">CHECKOUT</a></div></div>
+        </div>
+    </div>
+    <main class="container mx-auto p-4 md:p-8" style="min-height: calc(100vh - 200px);">
+        
+        <div id="account-container" class="hidden">
+            <h2 class="text-2xl font-bold text-gray-800 mb-6 uppercase tracking-wide">Payouts & Verification</h2>
+             
+            <div class="max-w-2xl mx-auto">
+                
+                <div id="payout-step-1-id" class="payout-step-view bg-white rounded-lg shadow-md p-6 hidden">
+                    <h3 class="text-xl font-bold text-gray-800 mb-2">Step 1: Verify Your Identity</h3>
+                    <p class="text-gray-600 mb-4">To receive payouts, you must first verify your identity. Please upload a clear image of your National ID, Passport, or Driver's License.</p>
+                    <div class="space-y-4">
+                        <div>
+                            <label for="id-upload-input" class="form-label">Upload ID Document</label>
+                            <input type="file" id="id-upload-input" class="form-input" accept="image/*">
+                            <img id="id-preview" class="hidden w-full max-w-xs h-auto object-contain rounded-md mt-2 border p-2">
+                        </div>
+                        <button id="id-upload-btn" class="btn-primary" disabled>
+                            Next Step: Take Selfie
+                        </button>
+                        <p id="id-upload-status" class="text-sm text-center"></p>
+                    </div>
+                </div>
+
+                <div id="payout-step-2-selfie" class="payout-step-view bg-white rounded-lg shadow-md p-6 hidden">
+                    <h3 class="text-xl font-bold text-gray-800 mb-2">Step 2: Take a Selfie</h3>
+                    
+                    <div id="selfie-webcam-view">
+                        <p class="text-gray-600 mb-4">Please take a clear selfie to match with your ID. Make sure your face is well-lit.</p>
+                        
+                        <div id="camera-error" class="hidden bg-red-100 border-l-4 border-red-500 text-red-700 p-4 mb-4">
+                            <h4 class="font-bold">Camera Error!</h4>
+                            <p>Could not access your camera. Please check your browser permissions or use your phone.</p>
+                        </div>
+
+                        <div id="selfie-container" class="space-y-4">
+                            <video id="selfie-video" autoplay playsinline class="w-full h-auto rounded-lg border bg-gray-200"></video>
+                            <canvas id="selfie-canvas" class="hidden"></canvas>
+                            <img id="selfie-preview" class="hidden w-full h-auto rounded-lg border">
+                            
+                            <button id="take-selfie-btn" class="btn-primary">
+                                <i class="fa fa-camera mr-2"></i> Take Photo
+                            </button>
+                            <div class="flex gap-4 hidden" id="selfie-controls">
+                                <button id="retake-selfie-btn" class="btn-secondary">Retake</button>
+                                <button id="selfie-upload-btn" class="btn-primary">Upload Selfie</button>
+                            </div>
+                            <p id="selfie-upload-status" class="text-sm text-center"></p>
+                        </div>
+                    </div>
+                    
+                    <div class="text-center border-t-2 border-gray-200 pt-6 mt-6">
+                        <p class="text-gray-600 mb-4">...Or, use your phone's camera.</p>
+                        <button id="show-qr-btn" class="bg-gray-700 text-white p-3 rounded-md hover:bg-gray-800 font-bold">
+                            <i class="fa fa-qrcode mr-2"></i> Show QR Code to Scan
+                        </button>
+                        
+                        <div id="qr-code-section" class="hidden mt-4">
+                            <p class="text-gray-600 mb-2">Scan this code with your phone. After you upload the photo, this page will update automatically.</p>
+                            <div id="qr-code-container">
+                                <div class="loading-spinner mx-auto"></div>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+
+
+                <div id="payout-step-3-pending" class="payout-step-view bg-white rounded-lg shadow-md p-6 hidden">
+                    <div class="text-center">
+                        <i class="fa fa-clock text-4xl text-mudalali-gold mb-4"></i>
+                        <h3 class="text-xl font-bold text-gray-800 mb-2">Verification Pending</h3>
+                        <p class="text-gray-600">Your documents have been submitted for review. This usually takes 1-2 business days. We will notify you once your account is approved for payouts.</p>
+                    </div>
+                </div>
+
+                <div id="payout-step-4-bank" class="payout-step-view bg-white rounded-lg shadow-md p-6 hidden">
+                    <div id="bank-details-success" class="hidden bg-green-100 border-l-4 border-green-500 text-green-700 p-4 mb-4">
+                        <h4 class="font-bold">Bank Details Saved!</h4>
+                        <p>Your payout information has been updated.</p>
+                    </div>
+                    
+                    <h3 class="text-xl font-bold text-gray-800 mb-2">Step 3: Add Your Bank Details</h3>
+                    <p class="text-gray-600 mb-4">Your account is verified! Please enter the bank account details where you'd like to receive your commissions.</p>
+                    
+                    <form id="bank-details-form" class="space-y-4">
+                        <div>
+                            <label for="bank-name" class="form-label">Bank Name</label>
+                            <input type="text" id="bank-name" class="form-input" required placeholder="e.g. Commercial Bank">
+                        </div>
+                        <div>
+                            <label for="bank-branch" class="form-label">Branch Name</label>
+                            <input type="text" id="bank-branch" class="form-input" required placeholder="e.g. Matara Branch">
+                        </div>
+                        <div>
+                            <label for="bank-acc-holder" class="form-label">Account Holder's Name</label>
+                            <input type="text" id="bank-acc-holder" class="form-input" required placeholder="Full name as on bank account">
+                        </div>
+                        <div>
+                            <label for="bank-acc-number" class="form-label">Account Number</label>
+                            <input type="text" id="bank-acc-number" class="form-input" required>
+                        </div>
+                        
+                        <button id="bank-save-btn" type="submit" class="btn-primary">Save Payout Details</button>
+                        <p id="bank-save-status" class="text-sm text-center"></p>
+                    </form>
+                </div>
+                
+            </div>
+         </div>
+    </main>
+    <footer class="bg-gray-800 text-gray-300 pt-16 pb-8 hidden md:block">
+        <div id="footer-container" class="container mx-auto px-4">
+            <div class="bg-gray-700 p-8 rounded-lg -mt-28 mb-16 relative z-10 shadow-xl flex items-center justify-between">
+                <div>
+                    <h3 class="text-2xl font-bold text-white mb-2">SUBSCRIBE TO US</h3>
+                    <p class="text-gray-300">Get the first look at exclusive offers, promotions, and more.</p>
+                </div>
+                <form class="flex w-full max-w-md">
+                    <input type="email" placeholder="Email Address" class="w-full px-4 py-3 rounded-l-md text-gray-800 focus:outline-none focus:ring-2 focus:ring-mudalali-green">
+                    <button type="submit" class="bg-mudalali-green text-white px-6 py-3 rounded-r-md font-bold hover:bg-mudalali-green-dark">
+                        SUBSCRIBE
+                    </button>
+                </form>
+            </div>
+            <div class="grid grid-cols-2 md:grid-cols-5 gap-8 mb-8">
+                <div>
+                    <h4 class="font-bold text-white mb-4">මුදලාලි මාමා</h4>
+                    <ul id="footer-col-tsmgroup" class="space-y-2"><li>Loading...</li></ul>
+                </div>
+                <div>
+                    <h4 class="font-bold text-white mb-4">INFO</h4>
+                    <ul id="footer-col-info" class="space-y-2"><li>Loading...</li></ul>
+                </div>
+                <div>
+                    <h4 class="font-bold text-white mb-4">QUICK LINKS</h4>
+                    <ul id="footer-col-quicklinks" class="space-y-2"><li>Loading...</li></ul>
+                </div>
+                <div class="col-span-2 md:col-span-1">
+                    <h4 class="font-bold text-white mb-4">COLOMBO HEAD OFFICE</h4>
+                    <address id="footer-address" class="not-italic">Loading...</address>
+                    <p class="mt-2">Email: <a id="footer-email" href="#" class="hover:text-white">...</a></p>
+                    <p>Hotline: <a id="footer-hotline" href="#" class="hover:text-white">...</a></p>
+                </div>
+                <div class="col-span-2 md:col-span-1">
+                    <h4 class="font-bold text-white mb-4">KEEP IN TOUCH</h4>
+                    <div id="footer-socials" class="flex space-x-4 mb-4"></div>
+                    <h4 class="font-bold text-white mb-4 mt-6">PAYMENTS</h4>
+                    <div class="flex space-x-2">
+                        <img src="https://i.ibb.co/fDYrL3g/visa.png" alt="Visa" class="h-6">
+                        <img src="https://i.ibb.co/7rmXz4F/mastercard.png" alt="Mastercard" class="h-6">
+                        <img src="https://i.ibb.co/C0W2LFr/amex.png" alt="Amex" class="h-6">
+                    </div>
+                </div>
+            </div>
+            <div class="border-t border-gray-700 pt-6 text-sm text-center md:flex justify-between">
+                <p>&copy; 2025 Mudalali Mama. All Rights reserved.</p>
+                <div class="space-x-4 mt-4 md:mt-0">
+                    <a href="#" class="hover:text-white">TERMS & CONDITIONS</a>
+                    <span>|</span>
+                    <a href="#" class="hover:text-white">PRIVACY POLICY</a>
+                </div>
+            </div>
+        </div>
+    </footer>
+
+    <nav class="fixed bottom-0 left-0 right-0 h-16 bg-white border-t border-gray-200 shadow-lg flex justify-around items-center z-40 md:hidden">
+        <a href="index.html" class="mobile-nav-link flex-1 flex flex-col items-center justify-center text-gray-600 hover:text-mudalali-green text-xs">
+            <i class="fa fa-store text-xl"></i>
+            <span class="mt-1">Shop</span>
+        </a>
+        <a href="stories.html" class="mobile-nav-link flex-1 flex flex-col items-center justify-center text-gray-600 hover:text-mudalali-green text-xs">
+            <i class="fa fa-book-open text-xl"></i>
+            <span class="mt-1">Stories</span>
+        </a>
+        <a href="wishlist.html" class="mobile-nav-link flex-1 flex flex-col items-center justify-center text-gray-600 hover:text-mudalali-green text-xs relative">
+            <div class="relative">
+                <i class="fa fa-heart text-xl"></i>
+                <span id="mobile-wishlist-badge" class="absolute -top-1 -right-2.5 bg-mudalali-red text-white text-xs font-semibold rounded-full h-4 w-4 flex items-center justify-center">0</span>
+            </div>
+            <span class="mt-1">Wishlist</span>
+        </a>
+        <button id="mobile-cart-btn" class="mobile-nav-link flex-1 flex flex-col items-center justify-center text-gray-600 hover:text-mudalali-green text-xs relative">
+            <div class="relative">
+                <i class="fa fa-shopping-bag text-xl"></i>
+                <span id="mobile-cart-badge" class="absolute -top-1 -right-2.5 bg-mudalali-red text-white text-xs font-semibold rounded-full h-4 w-4 flex items-center justify-center">0</span>
+            </div>
+            <span class="mt-1">Cart</span>
+        </button>
+         <a href="customer-account.html" id="mobile-account-btn-nav" class="mobile-nav-link active flex-1 flex flex-col items-center justify-center text-gray-600 hover:text-mudalali-green text-xs">
+            <i class="fa fa-user text-xl"></i>
+            <span class="mt-1">My account</span>
+        </a>
+    </nav>
+
+
+    <script type="module">
+        // Firebase Imports (v11.6.1)
+        import { initializeApp } from "https://www.gstatic.com/firebasejs/11.6.1/firebase-app.js";
+        import { 
+            getAuth, 
+            onAuthStateChanged, 
+            signOut 
+        } from "https://www.gstatic.com/firebasejs/11.6.1/firebase-auth.js";
+        import { 
+            getFirestore, 
+            doc, 
+            getDoc, 
+            getDocs,
+            collection, 
+            onSnapshot, // <-- ALUTH: REAL-TIME LISTENER
+            query,
+            where,
+            orderBy,
+            limit,
+            startAfter,
+            setDoc,
+            addDoc,
+            updateDoc, 
+            deleteDoc, 
+            increment, 
+            serverTimestamp,
+            runTransaction,
+            writeBatch
+        } from "https://www.gstatic.com/firebasejs/11.6.1/firebase-firestore.js";
+
+        // Firebase Config
+        const firebaseConfig = {
+            apiKey: "AIzaSyDIbu2qT53iGPqMCx5UdU6XY8wvXkb3ZF4",
+            authDomain: "mudalali-mama.firebaseapp.com",
+            projectId: "mudalali-mama",
+            storageBucket: "mudalali-mama.firebasestorage.app",
+            messagingSenderId: "296597428969",
+            appId: "1:296597428969:web:684668be9c0eaeecb4ae78",
+            measurementId: "G-GC1CP1LRFD"
+        };
+        
+        // --- ALUTH: ImgBB Key (Meka oyage seller-profile eken gaththe) ---
+        const imgbbApiKey = 'f068295c19803c448665a0ea48bcc2fc'; 
+
+        const app = initializeApp(firebaseConfig);
+        const db = getFirestore(app);
+        const auth = getAuth(app); 
+        
+        // Paths
+        const appId = typeof __app_id !== 'undefined' ? __app_id : 'default-app-id';
+        const publicDataPath = `/artifacts/${appId}/public/data`;
+        const usersPath = `/users`; 
+
+        // Global State
+        let currentUser = null;
+        let currentUserData = null;
+        let currentUserDocRef = null;
+        let wishlistUnsubscribe = null;
+        
+        // --- ALUTH: Payout Page State ---
+        let webcamStream = null;
+        let idFile = null;
+        let selfieListenerUnsubscribe = null; // <-- ALUTH: Real-time listener eka stop karanna
+
+        // --- DOM Elements ---
+        const authLoader = document.getElementById('auth-loader');
+        const accountContainer = document.getElementById('account-container');
+        
+        // --- Page Load ---
+        document.addEventListener('DOMContentLoaded', () => {
+            console.log("Mudalali Mama Payouts Page Initialized");
+            // Standard page loads
+            loadSiteConfig();
+            loadDesktopNavCategories();
+            loadFooter();
+            setupMobileDrawers();
+        });
+
+
+        onAuthStateChanged(auth, async (user) => {
+            const loggedInView = document.getElementById('account-drawer-logged-in');
+
+            if (user) {
+                if(window.authRedirectTimer) {
+                    clearTimeout(window.authRedirectTimer);
+                }
+                
+                currentUser = user;
+                currentUserDocRef = doc(db, usersPath, user.uid);
+                const userDocSnap = await getDoc(currentUserDocRef);
+
+                if (userDocSnap.exists()) {
+                    currentUserData = userDocSnap.data();
+
+                    if (currentUserData.isAffiliate === true || currentUserData.wantsToBeAffiliate === true) {
+                        
+                        loggedInView.classList.remove('hidden');
+                        loggedInView.classList.add('flex');
+                        document.getElementById('account-drawer-user-email').textContent = user.email;
+                        attachCartDrawerListener(user.uid);
+                        attachWishlistBadgeListener(user.uid);
+                        
+                        // --- ALUTH: Payout Page eka Initialize karanna ---
+                        initializePayoutsPage();
+                        
+                        authLoader.classList.add('hidden');
+                        accountContainer.classList.remove('hidden');
+
+                    } else {
+                        alert("You do not have affiliate access. Redirecting to your customer account.");
+                        window.location.href = 'customer-account.html';
+                    }
+                } else {
+                    console.error("User doc not found!");
+                    alert("Error finding user data. Redirecting to customer account.");
+                    window.location.href = 'customer-account.html';
+                }
+
+            } else {
+                console.log("User is null, starting redirect timer...");
+                if(window.authRedirectTimer) {
+                    clearTimeout(window.authRedirectTimer);
+                }
+                window.authRedirectTimer = setTimeout(() => {
+                    if (!auth.currentUser) { 
+                        console.log("Timer fired. User is still null. Redirecting.");
+                        window.location.href = 'account.html?redirect=affiliate-payouts.html'; 
+                    } else {
+                        window.location.reload();
+                    }
+                }, 1500); 
+            }
+        });
+        
+        // --- ALUTH: Payout Page Initialization ---
+        function initializePayoutsPage() {
+            setupStep1_ID();
+            setupStep2_Selfie();
+            setupStep4_Bank();
+            
+            // Current status eka check karala adala step eka pennanna
+            const userData = currentUserData;
+            
+            if (userData.payoutsVerified === true) {
+                // Bank details verify wela iwarai
+                showStep(4);
+                loadBankDetails();
+            } else if (userData.idUrl && userData.selfieUrl) {
+                // OYAGE TEST MODE ILLEEMA:
+                // Selfie eka upload karapu gaman Bank Details walata yanawa
+                showStep(4); 
+                // showStep(3); // <-- Admin approval ona nam meka use karanna
+            } else if (userData.idUrl) {
+                // ID eka witharai upload karala thiyenne
+                showStep(2);
+                startWebcam();
+                generateAndShowQRCode(); // <-- ALUTH: QR code eka pennanna
+                listenForSelfieUpload(); // <-- ALUTH: Phone eken upload karana kam balan inna
+            } else {
+                // Mula idan patan ganna
+                showStep(1);
+            }
+        }
+        
+        // --- ALUTH: Step 1: ID Upload Logic ---
+        function setupStep1_ID() {
+            const input = document.getElementById('id-upload-input');
+            const preview = document.getElementById('id-preview');
+            const uploadBtn = document.getElementById('id-upload-btn');
+            const statusEl = document.getElementById('id-upload-status');
+
+            input.addEventListener('change', (e) => {
+                idFile = e.target.files[0];
+                if (idFile) {
+                    preview.src = URL.createObjectURL(idFile);
+                    preview.classList.remove('hidden');
+                    uploadBtn.disabled = false;
+                    statusEl.textContent = '';
+                } else {
+                    idFile = null;
+                    preview.classList.add('hidden');
+                    uploadBtn.disabled = true;
+                }
+            });
+
+            uploadBtn.addEventListener('click', async () => {
+                if (!idFile) return;
+
+                uploadBtn.disabled = true;
+                uploadBtn.innerHTML = '<i class="fa fa-spinner fa-spin mr-2"></i> Uploading ID...';
+                statusEl.textContent = 'Uploading image...';
+
+                try {
+                    const imageUrl = await uploadImageToImgBB(idFile);
+                    if (!imageUrl) throw new Error('Image upload failed.');
+                    
+                    // Firestore update karanawa
+                    await updateDoc(currentUserDocRef, {
+                        idUrl: imageUrl,
+                        idUploadedAt: serverTimestamp()
+                    });
+                    
+                    statusEl.textContent = 'ID Uploaded Successfully!';
+                    
+                    // Adala step ekata yanawa
+                    showStep(2);
+                    startWebcam(); // Camera eka on karanawa
+                    generateAndShowQRCode(); // <-- ALUTH: QR code eka pennanna
+                    listenForSelfieUpload(); // <-- ALUTH: Phone eken upload karana kam balan inna
+
+                } catch (err) {
+                    console.error("ID Upload Error: ", err);
+                    statusEl.textContent = `Error: ${err.message}`;
+                    uploadBtn.disabled = false;
+                    uploadBtn.innerHTML = 'Next Step: Take Selfie';
+                }
+            });
+        }
+
+        // --- ALUTH: Step 2: Selfie Upload Logic ---
+        function setupStep2_Selfie() {
+            const video = document.getElementById('selfie-video');
+            const canvas = document.getElementById('selfie-canvas');
+            const preview = document.getElementById('selfie-preview');
+            const takeBtn = document.getElementById('take-selfie-btn');
+            const retakeBtn = document.getElementById('retake-selfie-btn');
+            const uploadBtn = document.getElementById('selfie-upload-btn');
+            const controls = document.getElementById('selfie-controls');
+            const statusEl = document.getElementById('selfie-upload-status');
+            
+            // --- ALUTH: QR Code Logic ---
+            const showQrBtn = document.getElementById('show-qr-btn');
+            const qrSection = document.getElementById('qr-code-section');
+            showQrBtn.addEventListener('click', () => {
+                qrSection.classList.toggle('hidden');
+                showQrBtn.textContent = qrSection.classList.contains('hidden') ? 'Show QR Code to Scan' : 'Hide QR Code';
+            });
+            // --- End QR Code Logic ---
+
+            takeBtn.addEventListener('click', () => {
+                // Canvas eka video eke size ekata hadanawa
+                canvas.width = video.videoWidth;
+                canvas.height = video.videoHeight;
+                // Video eken photo ekak canvas ekata adinawa
+                canvas.getContext('2d').drawImage(video, 0, 0, canvas.width, canvas.height);
+                
+                // Photo eka preview eke pennanawa
+                const dataUrl = canvas.toDataURL('image/jpeg');
+                preview.src = dataUrl;
+                
+                // Elementu hide/show karanawa
+                video.classList.add('hidden');
+                preview.classList.remove('hidden');
+                takeBtn.classList.add('hidden');
+                controls.classList.remove('hidden');
+                
+                // Camera eka off karanawa
+                stopWebcam();
+            });
+
+            retakeBtn.addEventListener('click', () => {
+                video.classList.remove('hidden');
+                preview.classList.add('hidden');
+                takeBtn.classList.remove('hidden');
+                controls.classList.add('hidden');
+                statusEl.textContent = '';
+                startWebcam(); // Camera eka ayeth on karanawa
+            });
+            
+            uploadBtn.addEventListener('click', async () => {
+                uploadBtn.disabled = true;
+                retakeBtn.disabled = true;
+                uploadBtn.innerHTML = '<i class="fa fa-spinner fa-spin mr-2"></i> Uploading Selfie...';
+                statusEl.textContent = 'Uploading selfie...';
+
+                try {
+                    // Canvas eken 'blob' ekak hadanawa
+                    canvas.toBlob(async (blob) => {
+                        if (!blob) throw new Error("Could not create image blob.");
+
+                        const imageUrl = await uploadImageToImgBB(blob);
+                        if (!imageUrl) throw new Error('Selfie upload failed.');
+
+                        // Firestore update karanawa
+                        await updateDoc(currentUserDocRef, {
+                            selfieUrl: imageUrl,
+                            selfieUploadedAt: serverTimestamp()
+                        });
+                        
+                        statusEl.textContent = 'Selfie Uploaded! Proceeding...';
+                        
+                        // onSnapshot listener eka (listenForSelfieUpload) meka auto alla gani
+                        // Eth me PC ekenma upload kaloth listener eka trigger unata passe
+                        // showStep(4) eka call wenna kalin meka call wenna puluwan
+                        // E nisa listener eka nikanma stop karala, manually call karamu
+                        if (selfieListenerUnsubscribe) {
+                            selfieListenerUnsubscribe();
+                            selfieListenerUnsubscribe = null;
+                        }
+                        showStep(4);
+                        
+                    }, 'image/jpeg', 0.9); // 90% quality JPEG
+
+                } catch (err) {
+                    console.error("Selfie Upload Error: ", err);
+                    statusEl.textContent = `Error: ${err.message}`;
+                    uploadBtn.disabled = false;
+                    retakeBtn.disabled = false;
+                    uploadBtn.innerHTML = 'Upload Selfie';
+                }
+            });
+        }
+        
+        // --- ALUTH: Generate QR Code Function (Logo ekath ekka) ---
+        async function generateAndShowQRCode() {
+            const container = document.getElementById('qr-code-container');
+            container.innerHTML = '<div class="loading-spinner mx-auto"></div>'; // Show loader
+            
+            // 2. Aluth file ekata link eka hadanawa, userge ID ekath ekka
+            const phoneUploadUrl = `${window.location.origin}/selfie-upload.html?uid=${currentUser.uid}`;
+            const logoUrl = 'https://i.ibb.co/1tCywvyP/logo.png'; // Ape logo eka
+            const qrSize = 256; // QR code eke size eka (pixels)
+            const logoSize = 60; // Logo eke size eka
+            const logoMargin = 4; // Logo eka wate thiyena sudu border eka
+
+            try {
+                // 1. QR code eka generate karanawa (img tag ekak widiyata nemei)
+                const qr = qrcode(0, 'H'); // 'H' (High) error correction logo ekata hoda
+                qr.addData(phoneUploadUrl);
+                qr.make();
+                
+                // 2. Data URL eka gannawa
+                const qrDataUrl = qr.createDataURL(6, 8); // 6px per module, 8px margin
+                
+                // 3. Canvas ekak hadanawa
+                const canvas = document.createElement('canvas');
+                canvas.width = qrSize;
+                canvas.height = qrSize;
+                const ctx = canvas.getContext('2d');
+                
+                // 4. Aluth Image object ekak hadala QR eka load karanawa
+                const qrImg = new Image();
+                
+                // Async/await walata promise ekak use karamu
+                await new Promise((resolve, reject) => {
+                    qrImg.onload = () => resolve();
+                    qrImg.onerror = reject;
+                    qrImg.src = qrDataUrl;
+                });
+                
+                // 5. QR eka canvas eke andinawa
+                ctx.drawImage(qrImg, 0, 0, qrSize, qrSize);
+
+                // 6. Aluth Image object ekak hadala Logo eka load karanawa
+                const logoImg = new Image();
+                logoImg.crossOrigin = "Anonymous"; // CORS policy ekata
+                
+                await new Promise((resolve, reject) => {
+                    logoImg.onload = () => resolve();
+                    logoImg.onerror = reject;
+                    logoImg.src = logoUrl;
+                });
+
+                // 7. Logo eka meda andinawa
+                const centerX = (qrSize - logoSize) / 2;
+                const centerY = (qrSize - logoSize) / 2;
+
+                // 7a. Logo eka wate sudu background eka andinawa
+                ctx.fillStyle = '#FFFFFF';
+                ctx.fillRect(
+                    centerX - logoMargin, 
+                    centerY - logoMargin, 
+                    logoSize + (logoMargin * 2), 
+                    logoSize + (logoMargin * 2)
+                );
+                
+                // 7b. Logo eka andinawa
+                ctx.drawImage(logoImg, centerX, centerY, logoSize, logoSize);
+                
+                // 8. Canvas eka page ekata add karanawa
+                container.innerHTML = ''; // Loader eka ain karanawa
+                canvas.style.width = '100%';
+                canvas.style.height = '100%';
+                container.appendChild(canvas);
+
+            } catch (err) {
+                console.error("QR Code generation error with logo: ", err);
+                container.innerHTML = '<p class="text-red-500 text-sm p-4">Error generating QR code with logo.</p>';
+            }
+        }
+        
+        // --- ALUTH: Real-time Listener for Selfie ---
+        function listenForSelfieUpload() {
+            // Listener eka double wena eka nawaththanna
+            if (selfieListenerUnsubscribe) {
+                selfieListenerUnsubscribe();
+            }
+
+            console.log("Listening for selfie upload...");
+            
+            selfieListenerUnsubscribe = onSnapshot(currentUserDocRef, (doc) => {
+                if (doc.exists()) { // <-- Check karanna doc eka thiyenawada kiyala
+                    const data = doc.data();
+                    // Check karanna selfie eka upload welada, eth thama bank details verify welada kiyala
+                    if (data.selfieUrl && !data.payoutsVerified) {
+                        // Selfie eka phone eken upload wela!
+                        console.log("Selfie URL detected! Moving to next step.");
+                        
+                        // Listener eka ain karanawa
+                        if(selfieListenerUnsubscribe) {
+                            selfieListenerUnsubscribe(); 
+                            selfieListenerUnsubscribe = null;
+                        }
+                        
+                        // Webcam eka off karanawa
+                        stopWebcam();
+                        
+                        // --- OYAGE TEST MODE ILLEEMA ---
+                        // Bank details step ekata yanawa
+                        showStep(4);
+                        // ---------------------------------
+                    }
+                }
+            });
+        }
+
+
+        function setupStep4_Bank() {
+            const form = document.getElementById('bank-details-form');
+            const saveBtn = document.getElementById('bank-save-btn');
+            const statusEl = document.getElementById('bank-save-status');
+
+            form.addEventListener('submit', async (e) => {
+                e.preventDefault();
+                saveBtn.disabled = true;
+                saveBtn.innerHTML = '<i class="fa fa-spinner fa-spin mr-2"></i> Saving...';
+                statusEl.textContent = 'Saving details...';
+
+                try {
+                    const bankDetails = {
+                        bankName: document.getElementById('bank-name').value,
+                        branchName: document.getElementById('bank-branch').value,
+                        accountHolder: document.getElementById('bank-acc-holder').value,
+                        accountNumber: document.getElementById('bank-acc-number').value
+                    };
+
+                    await updateDoc(currentUserDocRef, {
+                        bankDetails: bankDetails,
+                        payoutsVerified: true // TEST MODE NISA auto-verify karanawa
+                    });
+
+                    statusEl.textContent = 'Details saved successfully!';
+                    document.getElementById('bank-details-success').classList.remove('hidden');
+
+                } catch (err) {
+                    console.error("Bank Save Error: ", err);
+                    statusEl.textContent = `Error: ${err.message}`;
+                } finally {
+                    saveBtn.disabled = false;
+                    saveBtn.innerHTML = 'Save Payout Details';
+                    setTimeout(() => statusEl.textContent = '', 3000);
+                }
+            });
+        }
+        
+        function loadBankDetails() {
+            if (currentUserData.bankDetails) {
+                document.getElementById('bank-name').value = currentUserData.bankDetails.bankName || '';
+                document.getElementById('bank-branch').value = currentUserData.bankDetails.branchName || '';
+                document.getElementById('bank-acc-holder').value = currentUserData.bankDetails.accountHolder || '';
+                document.getElementById('bank-acc-number').value = currentUserData.bankDetails.accountNumber || '';
+            }
+        }
+        
+        async function startWebcam() {
+            if (webcamStream) {
+                stopWebcam(); // Parana stream eka stop karanawa
+            }
+            try {
+                const video = document.getElementById('selfie-video');
+                const constraints = { video: { facingMode: "user" }, audio: false };
+                webcamStream = await navigator.mediaDevices.getUserMedia(constraints);
+                video.srcObject = webcamStream;
+                document.getElementById('camera-error').classList.add('hidden');
+                document.getElementById('selfie-webcam-view').classList.remove('hidden');
+            } catch (err) {
+                console.error("Error accessing webcam: ", err);
+                document.getElementById('camera-error').classList.remove('hidden');
+                document.getElementById('selfie-webcam-view').classList.add('hidden'); // Webcam UI eka hide karanawa
+            }
+        }
+
+        function stopWebcam() {
+            if (webcamStream) {
+                webcamStream.getTracks().forEach(track => track.stop());
+                webcamStream = null;
+            }
+        }
+        
+        function showStep(stepNumber) {
+            document.querySelectorAll('.payout-step-view').forEach(step => {
+                step.classList.add('hidden');
+            });
+
+            let stepId;
+            if (stepNumber === 1) {
+                stepId = 'payout-step-1-id';
+            } else if (stepNumber === 2) {
+                stepId = 'payout-step-2-selfie';
+            } else if (stepNumber === 3) {
+                stepId = 'payout-step-3-pending';
+            } else if (stepNumber === 4) {
+                stepId = 'payout-step-4-bank';
+            }
+
+            if (stepId && document.getElementById(stepId)) {
+                document.getElementById(stepId).classList.remove('hidden');
+            } else {
+                console.error(`Could not find step view for step number: ${stepNumber}`);
+                document.getElementById('payout-step-1-id').classList.remove('hidden'); // Fallback
+            }
+            
+            // Webcam eka stop karanawa 2weni step eken giyoth
+            if (stepNumber !== 2) {
+                stopWebcam();
+            }
+            // Real-time listener eka stop karanawa
+            if (stepNumber !== 2 && selfieListenerUnsubscribe) {
+                selfieListenerUnsubscribe();
+                selfieListenerUnsubscribe = null; // Listener eka clear karanna
+            }
+        }
+
+        async function uploadImageToImgBB(imageFile) {
+            const formData = new FormData();
+            formData.append('image', imageFile);
+            try {
+                const response = await fetch(`https://api.imgbb.com/1/upload?key=${imgbbApiKey}`, {
+                    method: 'POST',
+                    body: formData
+                });
+                const data = await response.json();
+                if (data.success) {
+                    return data.data.url; 
+                } else {
+                    throw new Error(data.error.message);
+                }
+            } catch (error) {
+                console.error('ImgBB Upload Error:', error);
+                return null; 
+            }
+        }
+
+        // --- ANITH OKKOMA STANDARD FUNCTIONS ---
+        // (Headers, Footers, Drawers, Cart, Wishlist, etc.)
+
+        async function loadSiteConfig() {
+            try {
+                const docRef = doc(db, publicDataPath, 'siteContent', 'config');
+                const docSnap = await getDoc(docRef);
+                let config = {};
+                if (docSnap.exists()) config = docSnap.data();
+                
+                const logoImg = document.getElementById('logo-img');
+                const mobileLogoImg = document.getElementById('mobile-logo-img');
+
+                if (config.logoImageUrl && logoImg && mobileLogoImg) {
+                    logoImg.src = config.logoImageUrl;
+                    mobileLogoImg.src = config.logoImageUrl;
+                }
+                
+                if (document.getElementById('header-hotline')) {
+                    document.getElementById('header-hotline').textContent = config.headerHotline || '...';
+                }
+            } catch (e) {
+                console.error("Error loading site config: ", e);
+            }
+        }
+        
+        function updateCartCounters(count) {
+            const countStr = String(count);
+            const badges = [
+                document.getElementById('cart-count-badge'),
+                document.getElementById('mobile-cart-badge')
+            ];
+            badges.forEach(badge => {
+                if(badge) {
+                    badge.textContent = countStr;
+                    badge.classList.add('pop');
+                    setTimeout(() => badge.classList.remove('pop'), 200);
+                }
+            });
+        }
+
+        function attachCartDrawerListener(userId) {
+            const container = document.getElementById('cart-drawer-items-container');
+            const totalEl = document.getElementById('cart-drawer-total');
+            if (!container || !totalEl) return;
+            
+            if (!userId) {
+                container.innerHTML = '<p class="text-gray-500">Please log in to see your cart.</p>';
+                totalEl.textContent = 'Rs. 0.00';
+                updateCartCounters(0);
+                return;
+            }
+
+            const cartRef = collection(db, usersPath, userId, 'cart');
+            
+            onSnapshot(cartRef, (snapshot) => {
+                updateCartCounters(snapshot.size); 
+                let subtotalLKR = 0;
+                
+                if (snapshot.empty) {
+                    container.innerHTML = '<p class="text-gray-500">Your cart is empty.</p>';
+                } else {
+                    container.innerHTML = ''; 
+                    snapshot.forEach(doc => {
+                        const item = { id: doc.id, ...doc.data() };
+                        const quantity = parseInt(item.quantity) || 1;
+                        const priceLKR = parseFloat(item.price) || 0;
+                        const itemTotalLKR = priceLKR * quantity;
+                        subtotalLKR += itemTotalLKR;
+                        
+                        container.innerHTML += `
+                        <div class="flex items-center gap-4 py-4 border-b">
+                            <img src="${item.imageUrl || 'https://placehold.co/64'}" alt="${item.name}" class="w-16 h-16 rounded object-contain border p-1">
+                            <div class="flex-grow text-left">
+                                <h4 class="font-semibold text-sm text-slate-800">${item.name}</h4>
+                                <div class="flex items-center gap-2 my-1">
+                                    <button data-id="${item.id}" class="cart-qty-decrease w-6 h-6 font-bold rounded bg-slate-100 hover:bg-slate-200 flex items-center justify-center">-</button>
+                                    <span class="w-6 text-center font-bold text-sm text-slate-700">${quantity}</span>
+                                    <button data-id="${item.id}" class="cart-qty-increase w-6 h-6 font-bold rounded bg-slate-100 hover:bg-slate-200 flex items-center justify-center">+</button>
+                                </div>
+                                <p class="text-sm text-mudalali-green-dark font-bold">Rs. ${itemTotalLKR.toFixed(2)}</p>
+                            </div>
+                            <button data-id="${item.id}" class="cart-remove-item text-slate-400 hover:text-red-500" title="Remove Item">
+                                <i class="fas fa-times text-lg"></i>
+                            </button>
+                        </div>`;
+                    });
+                }
+                
+                totalEl.textContent = `Rs. ${subtotalLKR.toFixed(2)}`;
+                addCartDrawerButtonListeners(userId);
+                
+            }, (error) => {
+                console.error("Error in cart drawer listener: ", error);
+                container.innerHTML = '<p class="text-red-500">Error loading cart.</p>';
+            });
+        }
+
+        function addCartDrawerButtonListeners(userId) {
+            const container = document.getElementById('cart-drawer-items-container');
+            if (!container) return;
+            
+            container.querySelectorAll('.cart-qty-decrease, .cart-qty-increase, .cart-remove-item').forEach(button => {
+                const newButton = button.cloneNode(true);
+                button.parentNode.replaceChild(newButton, button);
+                
+                newButton.addEventListener('click', async (e) => {
+                    const itemId = newButton.dataset.id;
+                    const itemRef = doc(db, usersPath, userId, 'cart', itemId);
+                    try {
+                        if (newButton.classList.contains('cart-remove-item')) {
+                            await deleteDoc(itemRef);
+                        } else if (newButton.classList.contains('cart-qty-increase')) {
+                            await updateDoc(itemRef, { quantity: increment(1) });
+                        } else if (newButton.classList.contains('cart-qty-decrease')) {
+                            const docSnap = await getDoc(itemRef);
+                            if (docSnap.exists() && docSnap.data().quantity > 1) {
+                                await updateDoc(itemRef, { quantity: increment(-1) });
+                            } else {
+                                await deleteDoc(itemRef);
+                            }
+                        }
+                    } catch (error) {
+                        console.error("Error updating cart item: ", error);
+                    }
+                });
+            });
+        }
+
+        async function loadDesktopNavCategories() {
+            // (Function code)
+        }
+
+        async function loadFooter() {
+            try {
+                const contactRef = doc(db, publicDataPath, 'siteContent', 'footerContact');
+                const contactSnap = await getDoc(contactRef);
+                if (contactSnap.exists()) {
+                    const data = contactSnap.data();
+                    document.getElementById('footer-address').textContent = data.address || '...';
+                    const emailEl = document.getElementById('footer-email');
+                    emailEl.textContent = data.email || '...';
+                    emailEl.href = `mailto:${data.email}`;
+                    const hotlineEl = document.getElementById('footer-hotline');
+                    hotlineEl.textContent = data.hotline || '...';
+                    hotlineEl.href = `tel:${data.hotline}`;
+                    
+                    const socialsContainer = document.getElementById('footer-socials');
+                    socialsContainer.innerHTML = '';
+                    if (data.facebookUrl) socialsContainer.innerHTML += `<a href="${data.facebookUrl}" target="_blank" class="bg-gray-700 w-10 h-10 flex items-center justify-center rounded-full text-xl hover:bg-mudalali-green"><i class="fab fa-facebook-f"></i></a>`;
+                    if (data.youtubeUrl) socialsContainer.innerHTML += `<a href="${data.youtubeUrl}" target="_blank" class="bg-gray-700 w-10 h-10 flex items-center justify-center rounded-full text-xl hover:bg-mudalali-green"><i class="fab fa-youtube"></i></a>`;
+                    if (data.instagramUrl) socialsContainer.innerHTML += `<a href="${data.instagramUrl}" target="_blank" class="bg-gray-700 w-10 h-10 flex items-center justify-center rounded-full text-xl hover:bg-mudalali-green"><i class="fab fa-instagram"></i></a>`;
+                }
+            } catch(e) { console.error("Error loading footer contact", e); }
+            
+            const linksRef = collection(db, publicDataPath, 'footerLinks');
+            onSnapshot(linksRef, (querySnapshot) => {
+                const lists = {
+                    col_tsmgroup: document.getElementById('footer-col-tsmgroup'),
+                    col_info: document.getElementById('footer-col-info'),
+                    col_quicklinks: document.getElementById('footer-col-quicklinks')
+                };
+                Object.values(lists).forEach(list => { if(list) list.innerHTML = ''; }); 
+                querySnapshot.forEach((doc) => {
+                    const link = doc.data();
+                    if (lists[link.column]) {
+                        lists[link.column].innerHTML += `<li><a href="${link.url}" class="hover:text-white">${link.text}</a></li>`;
+                    }
+                });
+            });
+        }
+
+        function loadCategoriesIntoDrawer(container) {
+            // (Function code)
+        }
+
+        function setupMobileDrawers() {
+            const menuDrawer = document.getElementById('menu-drawer');
+            const mobileMenuBtn = document.getElementById('mobile-menu-btn');
+            const menuDrawerClose = document.getElementById('menu-drawer-close');
+            const menuDrawerOverlay = document.getElementById('menu-drawer-overlay');
+            
+            mobileMenuBtn?.addEventListener('click', () => menuDrawer?.classList.add('open'));
+            menuDrawerClose?.addEventListener('click', () => menuDrawer?.classList.remove('open'));
+            menuDrawerOverlay?.addEventListener('click', () => menuDrawer?.classList.remove('open'));
+
+            const desktopMenuBtn = document.getElementById('desktop-menu-btn');
+            desktopMenuBtn?.addEventListener('click', () => menuDrawer?.classList.add('open'));
+
+            const cartDrawer = document.getElementById('cart-drawer');
+            const mobileCartBtn = document.getElementById('mobile-cart-btn');
+            const desktopCartBtn = document.getElementById('desktop-cart-btn');
+            const cartDrawerClose = document.getElementById('cart-drawer-close');
+            const cartDrawerOverlay = document.getElementById('cart-drawer-overlay');
+
+            const openCart = () => cartDrawer?.classList.add('open');
+            const closeCart = () => cartDrawer?.classList.remove('open');
+
+            mobileCartBtn?.addEventListener('click', openCart);
+            desktopCartBtn?.addEventListener('click', openCart);
+            cartDrawerClose?.addEventListener('click', closeCart);
+            cartDrawerOverlay?.addEventListener('click', closeCart);
+            
+            const authDrawer = document.getElementById('account-drawer-modal');
+            const authDrawerBg = document.getElementById('account-drawer-bg');
+            const closeAuthBtn1 = document.getElementById('close-account-drawer-btn-logged-in');
+            
+            document.getElementById('desktop-account-btn')?.addEventListener('click', (e) => {
+                e.preventDefault();
+                authDrawer?.classList.remove('hidden');
+            });
+            document.getElementById('mobile-account-btn')?.addEventListener('click', (e) => {
+                e.preventDefault();
+                authDrawer?.classList.remove('hidden');
+            });
+            
+            const closeAuthDrawer = () => authDrawer?.classList.add('hidden');
+            authDrawerBg?.addEventListener('click', closeAuthDrawer);
+            closeAuthBtn1?.addEventListener('click', closeAuthDrawer);
+            
+            document.getElementById('drawer-logout-btn')?.addEventListener('click', async () => {
+                try {
+                    await signOut(auth);
+                } catch (error) {
+                    console.error("Logout Error:", error);
+                }
+            });
+            
+            document.getElementById('hamburger-logout-btn')?.addEventListener('click', async (e) => {
+                e.preventDefault();
+                try {
+                    await signOut(auth);
+                } catch (error) {
+                    console.error("Logout Error:", error);
+                }
+            });
+        }
+        
+        function attachWishlistBadgeListener(userId) {
+            if (wishlistUnsubscribe) {
+                wishlistUnsubscribe();
+            }
+            const wishlistRef = collection(db, usersPath, userId, 'wishlist');
+            wishlistUnsubscribe = onSnapshot(wishlistRef, (snapshot) => {
+                updateWishlistCountBadge(snapshot.size);
+            }, (error) => {
+                console.error("Error updating wishlist badge: ", error);
+                updateWishlistCountBadge(0);
+            });
+        }
+        
+        function updateWishlistCountBadge(count = 0) {
+            const desktopBadge = document.getElementById('wishlist-count-badge');
+            const mobileBadge = document.getElementById('mobile-wishlist-badge');
+            const countStr = String(count);
+
+            if (desktopBadge) {
+                desktopBadge.textContent = countStr;
+                if (count > 0) {
+                    desktopBadge.classList.add('pop');
+                    setTimeout(() => desktopBadge.classList.remove('pop'), 200);
+                }
+            }
+            if (mobileBadge) {
+                mobileBadge.textContent = countStr;
+            }
+        };
+
+    </script>
+
+</html>
+</body>

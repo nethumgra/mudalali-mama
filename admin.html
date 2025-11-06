@@ -6,9 +6,7 @@
     <title>Admin Panel - මුදලාලි මාමා</title>
     
     <script src="https://cdn.tailwindcss.com"></script>
-    
     <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.2/css/all.min.css">
-
     <link rel="preconnect" href="https://fonts.googleapis.com">
     <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
     <link href="https://fonts.googleapis.com/css2?family=Poppins:wght@300;400;500;600;700&display=swap" rel="stylesheet">
@@ -17,31 +15,18 @@
         tailwind.config = {
             theme: {
                 extend: {
-                    fontFamily: {
-                        sans: ['Poppins', 'sans-serif'],
-                    },
+                    fontFamily: { sans: ['Poppins', 'sans-serif'], },
                     colors: {
-                        'mudalali-green': {
-                            light: '#76b852',       
-                            DEFAULT: '#3a6a4a',      
-                            dark: '#2c5234',        
-                        },
-                        'mudalali-gold': '#bda26b',
-                        'mudalali-red': '#d93a3e',
-                        'mudalali-bg': '#f5f5f4',
-                        'mm-gray': { 
-                            light: '#f8f8f8',
-                            DEFAULT: '#e5e5e5',
-                        }
+                        'mudalali-green': { light: '#76b852', DEFAULT: '#3a6a4a', dark: '#2c5234', },
+                        'mudalali-gold': '#bda26b', 'mudalali-red': '#d93a3e',
+                        'mudalali-bg': '#f5f5f4', 'mm-gray': { light: '#f8f8f8', DEFAULT: '#e5e5e5', }
                     }
                 }
             }
         }
     </script>
     <style type="text/tailwindcss">
-        body {
-            @apply font-sans text-gray-800 bg-mudalali-bg;
-        }
+        body { @apply font-sans text-gray-800 bg-mudalali-bg; }
         .drawer-overlay { @apply fixed inset-0 bg-black bg-opacity-50 z-50 transition-opacity opacity-0 pointer-events-none; }
         .drawer-content { @apply fixed top-0 right-0 h-full bg-white shadow-xl z-50 transform translate-x-full transition-transform duration-300 ease-in-out; width: 90%; max-width: 400px; }
         .drawer-content.left { @apply left-0 right-auto transform -translate-x-full; }
@@ -54,175 +39,340 @@
         .sidebar-link i { @apply w-6 text-center; }
         .form-input { @apply mt-1 block w-full p-3 border rounded-md focus:ring-mudalali-green focus:border-mudalali-green; }
         .form-label { @apply block text-sm font-medium text-gray-700; }
-        .btn-primary { @apply w-full bg-mudalali-green text-white p-3 rounded-md hover:bg-mudalali-green-dark font-bold text-lg; }
+        .btn-primary { @apply w-full bg-mudalali-green text-white p-3 rounded-md hover:bg-mudalali-green-dark font-bold text-lg transition-colors; }
         .btn-secondary { @apply w-full bg-gray-100 text-gray-700 p-3 rounded-md hover:bg-gray-200 font-bold; }
         .modal-overlay { @apply fixed inset-0 bg-black bg-opacity-50 z-40 transition-opacity; }
         .modal-content { @apply relative bg-white rounded-lg shadow-xl p-6 w-full max-w-lg m-4 transform transition-all z-50; }
         .mobile-nav-link { @apply flex-1 flex flex-col items-center justify-center text-gray-600 hover:text-mudalali-green text-xs; }
         .mobile-nav-link.active { @apply text-mudalali-green; }
+        .stat-card { @apply bg-white p-6 rounded-lg shadow-md; }
     </style>
 </head>
 <body class="pb-20 md:pb-0"> 
     
-    <div id="auth-loader" class="fixed inset-0 bg-mudalali-bg z-[10000] flex flex-col items-center justify-center">
-        <svg class="animate-spin h-10 w-10 text-mudalali-green mx-auto" xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24">
-            <circle class="opacity-25" cx="12" cy="12" r="10" stroke="currentColor" stroke-width="4"></circle>
-            <path class="opacity-75" fill="currentColor" d="M4 12a8 8 0 018-8V0C5.373 0 0 5.373 0 12h4zm2 5.291A7.962 7.962 0 014 12H0c0 3.042 1.135 5.824 3 7.938l3-2.647z"></path>
-        </svg>
-        <p class="mt-4 text-gray-600 font-semibold">Authenticating Admin...</p>
+    <div id="admin-login-container" class="fixed inset-0 z-[100] flex items-center justify-center bg-mudalali-bg p-4">
+        <div class="w-full max-w-md bg-white p-8 rounded-lg shadow-xl">
+            <img id="login-logo" src="https://i.ibb.co/1tCywvyP/logo.png" class="h-12 mx-auto mb-4" alt="Logo">
+            <h2 class="text-2xl font-bold text-center text-gray-800 mb-2">Admin Panel Login</h2>
+            <p class="text-center text-gray-500 mb-6">Please sign in to continue.</p>
+            <form id="admin-login-form" class="space-y-4">
+                <div>
+                    <label for="admin-email" class="form-label">Email Address</label>
+                    <input type="email" id="admin-email" required class="form-input">
+                </div>
+                <div>
+                    <label for="admin-password" class="form-label">Password</label>
+                    <input type="password" id="admin-password" required class="form-input">
+                </div>
+                <button type="submit" class="btn-primary">Sign In</button>
+                <p id="admin-login-error" class="text-red-500 text-sm text-center"></p>
+            </form>
+        </div>
     </div>
-    
-    <div id="page-loader" class="fixed top-0 left-0 w-0 h-1 bg-mudalali-green z-[9999] transition-all duration-300 ease-linear"></div>
-    
-    <aside class="w-64 fixed top-0 left-0 h-full bg-white shadow-lg z-30 hidden md:flex flex-col">
-        <div class="p-4 border-b">
-            <a href="index.html" class="flex items-center gap-2">
-                <img id="logo-img" src="https://i.ibb.co/1tCywvyP/logo.png" class="h-10" alt="Logo">
-                <span class="text-xl font-bold text-mudalali-green-dark">Admin Panel</span>
-            </a>
-        </div>
-        <nav class="flex-grow p-4 space-y-2 overflow-y-auto">
-            <a href="#sellers" id="nav-sellers" class="sidebar-link active">
-                <i class="fa fa-users"></i>
-                <span class="ml-3">Seller Management</span>
-            </a>
-            <a href="#categories" id="nav-categories" class="sidebar-link">
-                <i class="fa fa-list"></i>
-                <span class="ml-3">Categories</span>
-            </a>
-            <a href="#homepage" id="nav-homepage" class="sidebar-link">
-                <i class="fa fa-tachometer-alt"></i>
-                <span class="ml-3">Homepage Content</span>
-            </a>
-        </nav>
-        <div class="p-4 border-t">
-            <button id="drawer-logout-btn" class="w-full text-left text-gray-600 p-3 rounded-lg hover:bg-gray-100 font-medium text-sm mt-2">
-                <i class="fa fa-sign-out-alt w-6"></i>
-                <span class="ml-3">Logout</span>
-            </button>
-        </div>
-    </aside>
 
-    <header class="bg-white shadow-md sticky top-0 z-40 flex md:hidden items-center justify-between p-4">
-        <button id="dashboard-menu-btn" class="text-2xl text-gray-700">
-            <i class="fa fa-bars"></i>
-        </button>
-        <h1 class="text-lg font-bold text-mudalali-green-dark" id="mobile-page-title">Seller Management</h1>
-        <div class="w-8"></div> </header>
-
-    <main class="md:ml-64 py-8 px-4 md:px-10">
+    <div id="admin-panel-container" class="hidden"> 
         
-        <div id="view-sellers" class="dashboard-view">
-            <div class="flex justify-between items-center mb-6">
-                <h1 class="text-3xl font-bold text-gray-800">Seller Management</h1>
-            </div>
-            <div id="seller-list-container" class="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-4 md:gap-6">
-                <p class="text-gray-500 col-span-full">Loading sellers awaiting approval...</p>
-            </div>
-            <h2 class="text-2xl font-bold text-gray-800 mt-12 mb-6">All Approved Sellers</h2>
-            <div id="approved-seller-list-container" class="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-4 md:gap-6">
-                <p class="text-gray-500 col-span-full">Loading approved sellers...</p>
-            </div>
-        </div>
-
-        <div id="view-categories" class="dashboard-view hidden">
-            <h1 class="text-3xl font-bold text-gray-800 mb-6">Manage Categories</h1>
-            <div class="grid grid-cols-1 lg:grid-cols-2 gap-6">
-                <div class="lg:col-span-1">
-                    <form id="category-form" class="bg-white p-6 rounded-lg shadow-md space-y-4">
-                        <input type="hidden" id="category-edit-id">
-                        <h2 id="category-form-title" class="text-xl font-bold text-gray-800">Add New Category</h2>
-                        <div>
-                            <label for="category-name" class="form-label">Category Name</label>
-                            <input type="text" id="category-name" class="form-input" required>
-                        </div>
-                        <div>
-                            <label for="category-image-url" class="form-label">Image URL</label>
-                            <input type="text" id="category-image-url" class="form-input" placeholder="https://...">
-                        </div>
-                        <div>
-                            <label for="category-color" class="form-label">Background Color (e.g., #FFFFFF)</label>
-                            <input type="text" id="category-color" class="form-input" placeholder="#f5f5f4">
-                        </div>
-                        <button id="submit-category-btn" type="submit" class="btn-primary !text-base !py-2">Save Category</button>
-                        <p id="category-upload-status" class="text-sm text-gray-600 mt-2"></p>
-                    </form>
-                </div>
-                <div class="lg:col-span-1">
-                    <h2 class="text-xl font-bold text-gray-800 mb-4">Published Categories</h2>
-                    <div id="category-list-container" class="space-y-4">
-                        <p class="text-gray-500">Loading your categories...</p>
-                    </div>
-                </div>
-            </div>
-        </div>
-
-        <div id="view-homepage" class="dashboard-view hidden">
-            <h1 class="text-3xl font-bold text-gray-800 mb-6">Homepage Content</h1>
-            <div id="homepage-settings-container" class="space-y-6">
-                <p class="text-gray-500">Loading homepage settings...</p>
-            </div>
-        </div>
+        <div id="page-loader" class="fixed top-0 left-0 w-0 h-1 bg-mudalali-green z-[9999] transition-all duration-300 ease-linear"></div>
         
-    </main>
-
-    <nav class="fixed bottom-0 left-0 right-0 h-16 bg-white border-t border-gray-200 shadow-lg flex justify-around items-center z-40 md:hidden">
-        <a href="index.html" class="mobile-nav-link">
-            <i class="fa fa-home text-xl"></i>
-            <span class="mt-1">Home</span>
-        </a>
-        <button id="nav-btn-sellers" class="mobile-nav-link active" data-hash="#sellers">
-            <i class="fa fa-users text-xl"></i>
-            <span class="mt-1">Sellers</span>
-        </button>
-        <button id="nav-btn-categories" class="mobile-nav-link" data-hash="#categories">
-            <i class="fa fa-list text-xl"></i>
-            <span class="mt-1">Categories</span>
-        </button>
-        <button id="nav-btn-homepage" class="mobile-nav-link" data-hash="#homepage">
-            <i class="fa fa-tachometer-alt text-xl"></i>
-            <span class="mt-1">Homepage</span>
-        </button>
-    </nav>
-
-    <div id="dashboard-drawer" class="drawer">
-        <div class="drawer-overlay" id="dashboard-drawer-overlay"></div>
-        <aside class="drawer-content left w-64 flex flex-col">
+        <aside class="w-64 fixed top-0 left-0 h-full bg-white shadow-lg z-30 hidden md:flex flex-col">
             <div class="p-4 border-b">
                 <a href="index.html" class="flex items-center gap-2">
-                    <img id="mobile-logo-img" src="https://i.ibb.co/1tCywvyP/logo.png" class="h-10" alt="Logo">
-                    <span class="text-xl font-bold text-mudalali-green-dark">Admin Panel</span>
+                    <img id="logo-img" src="https://i.ibb.co/1tCywvyP/logo.png" class="h-10" alt="Logo">
+                    <span class="text-xl font-bold text-mudalali-green-dark"></span>
                 </a>
             </div>
-            <nav class="flex-grow p-4 space-y-2 overflow-y-auto">
-                <a href="#sellers" id="mobile-nav-sellers" class="sidebar-link active">
+            <nav class="flex-grow p-4 space-y-2 overflow-y-auto no-scrollbar">
+                <a href="#dashboard" id="nav-dashboard" class="sidebar-link active">
+                    <i class="fa fa-tachometer-alt"></i>
+                    <span class="ml-3">Dashboard</span>
+                </a>
+                <a href="#sellers" id="nav-sellers" class="sidebar-link">
                     <i class="fa fa-users"></i>
                     <span class="ml-3">Seller Management</span>
                 </a>
-                <a href="#categories" id="mobile-nav-categories" class="sidebar-link">
+                <a href="#products" id="nav-products" class="sidebar-link">
+                    <i class="fa fa-box"></i>
+                    <span class="ml-3">Product Management</span>
+                </a>
+                <a href="#orders" id="nav-orders" class="sidebar-link">
+                    <i class="fa fa-receipt"></i>
+                    <span class="ml-3">Order Management</span>
+                </a>
+                <a href="#stories" id="nav-stories" class="sidebar-link">
+                    <i class="fa fa-book-open"></i>
+                    <span class="ml-3">Content (Stories)</span>
+                </a>
+                <a href="#financials" id="nav-financials" class="sidebar-link">
+                    <i class="fa fa-dollar-sign"></i>
+                    <span class="ml-3">Financials & Payouts</span>
+                </a>
+                <a href="#marketing" id="nav-marketing" class="sidebar-link">
+                    <i class="fa fa-bullhorn"></i>
+                    <span class="ml-3">Marketing & Promo</span>
+                </a>
+                <a href="#categories" id="nav-categories" class="sidebar-link">
                     <i class="fa fa-list"></i>
                     <span class="ml-3">Categories</span>
                 </a>
-                <a href="#homepage" id="mobile-nav-homepage" class="sidebar-link">
-                    <i class="fa fa-tachometer-alt"></i>
-                    <span class="ml-3">Homepage Content</span>
+                <a href="#settings" id="nav-settings" class="sidebar-link">
+                    <i class="fa fa-cog"></i>
+                    <span class="ml-3">Platform Settings</span>
                 </a>
             </nav>
             <div class="p-4 border-t">
-                <button id="mobile-drawer-logout-btn" class="w-full text-left text-gray-600 p-3 rounded-lg hover:bg-gray-100 font-medium text-sm mt-2">
+                <button id="drawer-logout-btn" class="w-full text-left text-gray-600 p-3 rounded-lg hover:bg-gray-100 font-medium text-sm mt-2">
                     <i class="fa fa-sign-out-alt w-6"></i>
                     <span class="ml-3">Logout</span>
                 </button>
             </div>
         </aside>
-    </div>
 
-    <script type="module">
+        <header class="bg-white shadow-md sticky top-0 z-40 flex md:hidden items-center justify-between p-4">
+            <button id="dashboard-menu-btn" class="text-2xl text-gray-700">
+                <i class="fa fa-bars"></i>
+            </button>
+            <h1 class="text-lg font-bold text-mudalali-green-dark" id="mobile-page-title">Dashboard</h1>
+            <div class="w-8"></div> 
+        </header>
+
+        <main class="md:ml-64 py-8 px-4 md:px-10">
+            
+            <div id="view-dashboard" class="dashboard-view">
+                <h1 class="text-3xl font-bold text-gray-800 mb-6">Admin Dashboard</h1>
+                
+                <div class="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-6 mb-8">
+                    <div class="stat-card">
+                        <h3 class="text-gray-500 font-semibold">Total Sales (Month)</h3>
+                        <p id="stat-total-sales" class="text-3xl font-bold text-mudalali-green">Loading...</p>
+                    </div>
+                    <div class="stat-card">
+                        <h3 class="text-gray-500 font-semibold">Commission Earned (Month)</h3>
+                        <p id="stat-total-commission" class="text-3xl font-bold text-gray-800">Loading...</p>
+                    </div>
+                    <div class="stat-card">
+                        <h3 class="text-gray-500 font-semibold">New Orders (Today)</h3>
+                        <p id="stat-new-orders" class="text-3xl font-bold text-blue-600">Loading...</p>
+                    </div>
+                    <div class="stat-card">
+                        <h3 class="text-gray-500 font-semibold">Total Customers</h3>
+                        <p id="stat-total-customers" class="text-3xl font-bold text-gray-800">Loading...</p>
+                    </div>
+                </div>
+
+                <div class="grid grid-cols-1 lg:grid-cols-3 gap-6">
+                    <div class="lg:col-span-1 bg-white p-6 rounded-lg shadow-md">
+                        <h3 class="font-bold text-xl mb-4">Action Items</h3>
+                        <div id="widget-pending-sellers" class="border-b pb-3 mb-3">
+                            <p class="text-gray-600">Loading pending sellers...</p>
+                        </div>
+                        <div id="widget-pending-products" class="border-b pb-3 mb-3">
+                            <p class="text-gray-600">Loading pending products...</p>
+                        </div>
+                        <div id="widget-pending-stories">
+                            <p class="text-gray-600">Loading pending stories...</p>
+                        </div>
+                    </div>
+                    <div class="lg:col-span-2 bg-white p-6 rounded-lg shadow-md">
+                        <h3 class="font-bold text-xl mb-4">Recent Activity</h3>
+                        <div id="widget-recent-orders" class="space-y-2">
+                            <p class="text-gray-600">Loading recent orders...</p>
+                        </div>
+                    </div>
+                </div>
+            </div>
+
+            <div id="view-sellers" class="dashboard-view hidden">
+                <h1 class="text-3xl font-bold text-gray-800 mb-6">Seller Management</h1>
+                <h2 class="text-2xl font-bold text-gray-800 mt-4 mb-4">Pending Approval</h2>
+                <div id="seller-list-container" class="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-4 md:gap-6">
+                    <p class="text-gray-500 col-span-full">Loading sellers awaiting approval...</p>
+                </div>
+                <h2 class="text-2xl font-bold text-gray-800 mt-12 mb-6">All Approved Sellers</h2>
+                <div id="approved-seller-list-container" class="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-4 md:gap-6">
+                    <p class="text-gray-500 col-span-full">Loading approved sellers...</p>
+                </div>
+            </div>
+            
+            <div id="view-products" class="dashboard-view hidden">
+                <h1 class="text-3xl font-bold text-gray-800 mb-6">Product Management</h1>
+                <h2 class="text-2xl font-bold text-gray-800 mt-4 mb-4">Pending Product Approval</h2>
+                <div id="pending-product-list" class="bg-white rounded-lg shadow-md overflow-hidden">
+                    <p class="text-gray-500 p-6">Loading pending products...</p>
+                </div>
+            </div>
+
+            <div id="view-orders" class="dashboard-view hidden">
+                <h1 class="text-3xl font-bold text-gray-800 mb-6">Order Management</h1>
+                <p class="text-gray-500">Search/Filter controls go here...</p>
+                <div id="all-orders-list" class="bg-white rounded-lg shadow-md overflow-hidden mt-4">
+                    <p class="text-gray-500 p-6">Loading all orders...</p>
+                </div>
+            </div>
+
+            <div id="view-stories" class="dashboard-view hidden">
+                <h1 class="text-3xl font-bold text-gray-800 mb-6">Content & Story Management</h1>
+                <h2 class="text-2xl font-bold text-gray-800 mt-4 mb-4">Pending Story Approval</h2>
+                <div id="pending-story-list" class="bg-white rounded-lg shadow-md overflow-hidden">
+                    <p class="text-gray-500 p-6">Loading pending stories...</p>
+                </div>
+            </div>
+
+            <div id="view-financials" class="dashboard-view hidden">
+                <h1 class="text-3xl font-bold text-gray-800 mb-6">Financials & Payouts</h1>
+                <h2 class="text-2xl font-bold text-gray-800 mt-4 mb-4">Commission Reports</h2>
+                <p class="text-gray-500">Commission charts and reports go here...</p>
+                <h2 class="text-2xl font-bold text-gray-800 mt-12 mb-6">Payouts Due</h2>
+                <div id="payouts-due-list" class="bg-white rounded-lg shadow-md overflow-hidden">
+                    <p class="text-gray-500 p-6">Loading payouts due...</p>
+                </div>
+            </div>
+
+            <div id="view-marketing" class="dashboard-view hidden">
+                <h1 class="text-3xl font-bold text-gray-800 mb-6">Marketing & Promotions</h1>
+                
+                <h2 class="text-2xl font-bold text-gray-800 mt-4 mb-4">Homepage Banners</h2>
+                <div id="homepage-banners-container" class="space-y-6">
+                    <p class="text-gray-500">Loading homepage settings...</p>
+                </div>
+                
+                <h2 class="text-2xl font-bold text-gray-800 mt-12 mb-6">Coupon Management</h2>
+                <div id="coupons-container" class="space-y-6">
+                    <p class="text-gray-500">Coupon management forms go here...</p>
+                </div>
+            </div>
+
+            <div id="view-categories" class="dashboard-view hidden">
+                <h1 class="text-3xl font-bold text-gray-800 mb-6">Manage Categories</h1>
+                <div class="grid grid-cols-1 lg:grid-cols-2 gap-6">
+                    <div class="lg:col-span-1">
+                        <form id="category-form" class="bg-white p-6 rounded-lg shadow-md space-y-4">
+                            <input type="hidden" id="category-edit-id">
+                            <h2 id="category-form-title" class="text-xl font-bold text-gray-800">Add New Category</h2>
+                            <div>
+                                <label for="category-name" class="form-label">Category Name</label>
+                                <input type="text" id="category-name" class="form-input" required>
+                            </div>
+                            <div>
+                                <label for="category-image-url" class="form-label">Image URL</label>
+                                <input type="text" id="category-image-url" class="form-input" placeholder="https://...">
+                            </div>
+                            <div>
+                                <label for="category-color" class="form-label">Background Color (e.g., #FFFFFF)</label>
+                                <input type="text" id="category-color" class="form-input" placeholder="#f5f5f4">
+                            </div>
+                            <button id="submit-category-btn" type="submit" class="btn-primary !text-base !py-2">Save Category</button>
+                            <p id="category-upload-status" class="text-sm text-gray-600 mt-2"></p>
+                        </form>
+                    </div>
+                    <div class="lg:col-span-1">
+                        <h2 class="text-xl font-bold text-gray-800 mb-4">Published Categories</h2>
+                        <div id="category-list-container" class="space-y-4">
+                            <p class="text-gray-500">Loading your categories...</p>
+                        </div>
+                    </div>
+                </div>
+            </div>
+
+            <div id="view-settings" class="dashboard-view hidden">
+                <h1 class="text-3xl font-bold text-gray-800 mb-6">Platform Settings</h1>
+                <div id="platform-settings-container" class="bg-white p-6 rounded-lg shadow-md space-y-4">
+                    <h3 class="text-xl font-bold text-gray-700">General Settings</h3>
+                    <p class="text-gray-500">Forms to edit site logo, name, commission rate, etc. go here...</p>
+                    <h3 class="text-xl font-bold text-gray-700 mt-6">Payment Gateway</h3>
+                    <p class="text-gray-500">Forms for API keys go here (WARNING: Use secure methods).</p>
+                    <h3 class="text-xl font-bold text-gray-700 mt-6">Shipping Configuration</h3>
+                    <p class="text-gray-500">Forms for shipping rates go here...</p>
+                </div>
+            </div>
+            
+        </main>
+
+        <nav class="fixed bottom-0 left-0 right-0 h-16 bg-white border-t border-gray-200 shadow-lg flex justify-around items-center z-40 md:hidden">
+            <button id="nav-btn-dashboard" class="mobile-nav-link active" data-hash="#dashboard">
+                <i class="fa fa-tachometer-alt text-xl"></i>
+                <span class="mt-1">Dashboard</span>
+            </button>
+            <button id="nav-btn-sellers" class="mobile-nav-link" data-hash="#sellers">
+                <i class="fa fa-users text-xl"></i>
+                <span class="mt-1">Sellers</span>
+            </button>
+            <button id="nav-btn-products" class="mobile-nav-link" data-hash="#products">
+                <i class="fa fa-box text-xl"></i>
+                <span class="mt-1">Products</span>
+            </button>
+            <button id="nav-btn-orders" class="mobile-nav-link" data-hash="#orders">
+                <i class="fa fa-receipt text-xl"></i>
+                <span class="mt-1">Orders</span>
+            </button>
+            <button id="nav-btn-settings" class="mobile-nav-link" data-hash="#settings">
+                <i class="fa fa-cog text-xl"></i>
+                <span class="mt-1">Settings</span>
+            </button>
+        </nav>
+
+        <div id="dashboard-drawer" class="drawer">
+            <div class="drawer-overlay" id="dashboard-drawer-overlay"></div>
+            <aside class="drawer-content left w-64 flex flex-col">
+                <div class="p-4 border-b">
+                    <a href="index.html" class="flex items-center gap-2">
+                        <img id="mobile-logo-img" src="https://i.ibb.co/1tCywvyP/logo.png" class="h-10" alt="Logo">
+                        <span class="text-xl font-bold text-mudalali-green-dark">Admin Panel</span>
+                    </a>
+                </div>
+                <nav class="flex-grow p-4 space-y-2 overflow-y-auto no-scrollbar">
+                    <a href="#dashboard" id="mobile-nav-dashboard" class="sidebar-link active">
+                        <i class="fa fa-tachometer-alt"></i>
+                        <span class="ml-3">Dashboard</span>
+                    </a>
+                    <a href="#sellers" id="mobile-nav-sellers" class="sidebar-link">
+                        <i class="fa fa-users"></i>
+                        <span class="ml-3">Seller Management</span>
+                    </a>
+                    <a href="#products" id="mobile-nav-products" class="sidebar-link">
+                        <i class="fa fa-box"></i>
+                        <span class="ml-3">Product Management</span>
+                    </a>
+                    <a href="#orders" id="mobile-nav-orders" class="sidebar-link">
+                        <i class="fa fa-receipt"></i>
+                        <span class="ml-3">Order Management</span>
+                    </a>
+                    <a href="#stories" id="mobile-nav-stories" class="sidebar-link">
+                        <i class="fa fa-book-open"></i>
+                        <span class="ml-3">Content (Stories)</span>
+                    </a>
+                    <a href="#financials" id="mobile-nav-financials" class="sidebar-link">
+                        <i class="fa fa-dollar-sign"></i>
+                        <span class="ml-3">Financials & Payouts</span>
+                    </a>
+                    <a href="#marketing" id="mobile-nav-marketing" class="sidebar-link">
+                        <i class="fa fa-bullhorn"></i>
+                        <span class="ml-3">Marketing & Promo</span>
+                    </a>
+                    <a href="#categories" id="mobile-nav-categories" class="sidebar-link">
+                        <i class="fa fa-list"></i>
+                        <span class="ml-3">Categories</span>
+                    </a>
+                    <a href="#settings" id="mobile-nav-settings" class="sidebar-link">
+                        <i class="fa fa-cog"></i>
+                        <span class="ml-3">Platform Settings</span>
+                    </a>
+                </nav>
+                <div class="p-4 border-t">
+                    <button id="mobile-drawer-logout-btn" class="w-full text-left text-gray-600 p-3 rounded-lg hover:bg-gray-100 font-medium text-sm mt-2">
+                        <i class="fa fa-sign-out-alt w-6"></i>
+                        <span class="ml-3">Logout</span>
+                    </button>
+                </div>
+            </aside>
+        </div>
+
+    </div> <script type="module">
         import { initializeApp } from "https://www.gstatic.com/firebasejs/11.6.1/firebase-app.js";
         import { 
             getAuth, 
             onAuthStateChanged, 
-            signOut 
+            signOut,
+            signInWithEmailAndPassword // <-- Aluthen import karanne
         } from "https://www.gstatic.com/firebasejs/11.6.1/firebase-auth.js";
         import { 
             getFirestore, 
@@ -239,11 +389,12 @@
             updateDoc, 
             deleteDoc, 
             serverTimestamp,
-            increment
+            increment,
+            limit,
+            writeBatch
         } from "https://www.gstatic.com/firebasejs/11.6.1/firebase-firestore.js";
 
-        // --- 8. JS (සම්පූර්ණයෙන්ම වෙනස් කළා) ---
-
+        // --- Firebase Config ---
         const firebaseConfig = {
             apiKey: "AIzaSyDIbu2qT53iGPqMCx5UdU6XY8wvXkb3ZF4",
             authDomain: "mudalali-mama.firebaseapp.com",
@@ -262,46 +413,112 @@
         const publicDataPath = `/artifacts/${appId}/public/data`;
         const usersPath = `/users`; 
 
+        // --- Global State & Element References ---
         let currentUser = null;
         let currentUserData = null;
 
-        // --- ADMIN AUTH CHECK (වැදගත්ම කොටස) ---
+        const adminLoginContainer = document.getElementById('admin-login-container');
+        const adminPanelContainer = document.getElementById('admin-panel-container');
+        const adminLoginForm = document.getElementById('admin-login-form');
+        const adminLoginError = document.getElementById('admin-login-error');
+        const loginLogo = document.getElementById('login-logo');
+
+        // --- (HEAVILY MODIFIED) Auth State Change ---
         onAuthStateChanged(auth, async (user) => {
-            const authLoader = document.getElementById('auth-loader');
             if (user) {
+                // User log wela, admin da balamu
                 currentUser = user;
                 const userDocRef = doc(db, usersPath, user.uid);
                 const userDocSnap = await getDoc(userDocRef);
 
-                // Admin ද කියලා බලනවා
-                if (!userDocSnap.exists() || !userDocSnap.data().isAdmin) {
-                    // Admin නෙවෙයි නම්, index.html එකට redirect කරනවා
-                    alert("You do not have permission to view this page.");
-                    window.location.href = 'index.html'; 
-                    return; // Function එක මෙතනින්ම නතර කරනවා
+                if (userDocSnap.exists() && userDocSnap.data().isAdmin) {
+                    // --- SUCCESS: User is an Admin ---
+                    currentUserData = userDocSnap.data();
+                    
+                    adminLoginContainer.classList.add('hidden');
+                    adminPanelContainer.classList.remove('hidden');
+                    
+                    initializeAdminDashboard(); // Admin data load karamu
+                } else {
+                    // --- FAILURE: User is NOT an Admin (Customer/Seller) ---
+                    console.warn("Auth Failed: User is not an admin.");
+                    
+                    adminLoginContainer.classList.remove('hidden');
+                    adminPanelContainer.classList.add('hidden');
+                    
+                    if(adminLoginError) adminLoginError.textContent = "You do not have permission to access this panel.";
+                    await signOut(auth); // Aulak nethiwa logout karamu
                 }
-                
-                currentUserData = userDocSnap.data();
-                initializeAdminDashboard(); // Admin නම් විතරක් dashboard එක load කරනවා
-                
-                authLoader.classList.add('hidden'); 
-
             } else {
-                // ලොග් වෙලා නැත්නම් account.html එකට යවනවා
-                window.location.href = 'account.html'; 
+                // --- User is logged out ---
+                currentUser = null;
+                currentUserData = null;
+                
+                adminLoginContainer.classList.remove('hidden');
+                adminPanelContainer.classList.add('hidden');
             }
         });
+
+        // --- (NEW) Admin Login Form Submit Handler ---
+        if (adminLoginForm) {
+            adminLoginForm.addEventListener('submit', async (e) => {
+                e.preventDefault();
+                const email = document.getElementById('admin-email').value;
+                const password = document.getElementById('admin-password').value;
+                if(adminLoginError) adminLoginError.textContent = 'Signing in...';
+                
+                try {
+                    await signInWithEmailAndPassword(auth, email, password);
+                    // Success! onAuthStateChanged eken anith tika karagani.
+                    if(adminLoginError) adminLoginError.textContent = '';
+                } catch (error) {
+                    console.error("Admin Login Error:", error);
+                    if (error.code === 'auth/user-not-found' || error.code === 'auth/wrong-password' || error.code === 'auth/invalid-credential') {
+                        if(adminLoginError) adminLoginError.textContent = 'Invalid email or password.';
+                    } else {
+                        if(adminLoginError) adminLoginError.textContent = 'An error occurred. Please try again.';
+                    }
+                }
+            });
+        }
+        
+        // --- (MODIFIED) Logout Buttons ---
+        function setupLogoutButtons() {
+            const logoutBtns = [
+                document.getElementById('drawer-logout-btn'),
+                document.getElementById('mobile-drawer-logout-btn')
+            ];
+            logoutBtns.forEach(btn => {
+                btn?.addEventListener('click', async () => {
+                    await signOut(auth);
+                    // onAuthStateChanged eken login screen eka pennai
+                });
+            });
+        }
 
         // --- Dashboard Initialization ---
         function initializeAdminDashboard() {
             console.log("Admin Dashboard Initialized for:", currentUser.uid);
             loadSiteConfig();
             setupDashboardNavigation();
-            loadSellersForApproval(); // Default view's data
-            loadAllApprovedSellers();
-            loadCategoryManagement(); // Background load
-            loadHomepageSettings();   // Background load
             setupLogoutButtons();
+            
+            // Load data for all views
+            loadDashboardStats();
+            loadWidgetPendingSellers();
+            loadWidgetPendingProducts();
+            loadWidgetPendingStories();
+            loadWidgetRecentOrders();
+
+            loadSellersForApproval(); 
+            loadAllApprovedSellers();
+            loadProductManagement();
+            loadOrderManagement();
+            loadStoryManagement();
+            loadFinancials();
+            loadMarketing();
+            loadCategoryManagement(); 
+            loadPlatformSettings();
 
             document.getElementById('page-loader').style.width = '100%';
             setTimeout(() => document.getElementById('page-loader').style.display = 'none', 500);
@@ -317,52 +534,163 @@
             const dashboardDrawer = document.getElementById('dashboard-drawer');
 
             function switchView(hash) {
-                if (!hash || hash === '#') hash = '#sellers'; // Default view
+                if (!hash || hash === '#') hash = '#dashboard'; // Default view
                 window.location.hash = hash;
 
                 views.forEach(view => view.classList.add('hidden'));
                 const activeView = document.getElementById(`view-${hash.substring(1)}`);
-                activeView?.classList.remove('hidden');
+                if (activeView) {
+                    activeView.classList.remove('hidden');
+                } else {
+                    console.warn(`View not found: ${hash}`);
+                    document.getElementById('view-dashboard').classList.remove('hidden'); // Fallback
+                }
 
-                let activeLinkTitle = 'Seller Management';
+                let activeLinkTitle = 'Dashboard';
                 navLinks.forEach(link => {
-                    if (link.hash === hash) {
-                        link.classList.add('active');
-                        activeLinkTitle = link.querySelector('span').textContent;
-                    } else {
-                        link.classList.remove('active');
-                    }
+                    const isActive = link.hash === hash;
+                    link.classList.toggle('active', isActive);
+                    if(isActive) activeLinkTitle = link.querySelector('span').textContent;
                 });
                 
                 mobileNavLinks.forEach(link => {
-                    if (link.hash === hash) link.classList.add('active');
-                    else link.classList.remove('active');
+                    const isActive = link.hash === hash;
+                    link.classList.toggle('active', isActive);
                 });
 
                 mobileBottomNavLinks.forEach(link => {
-                    if (link.dataset.hash === hash) link.classList.add('active');
-                    else link.classList.remove('active');
+                    const isActive = link.dataset.hash === hash;
+                    link.classList.toggle('active', isActive);
                 });
                 
-                mobilePageTitle.textContent = activeLinkTitle;
+                if(mobilePageTitle) mobilePageTitle.textContent = activeLinkTitle;
                 dashboardDrawer.classList.remove('open');
             }
 
-            navLinks.forEach(link => link.addEventListener('click', (e) => switchView(e.currentTarget.hash)));
-            mobileNavLinks.forEach(link => link.addEventListener('click', (e) => switchView(e.currentTarget.hash)));
-            mobileBottomNavLinks.forEach(link => link.addEventListener('click', (e) => switchView(e.currentTarget.dataset.hash)));
+            document.querySelectorAll('a.sidebar-link').forEach(link => {
+                link.addEventListener('click', (e) => switchView(e.currentTarget.hash));
+            });
+            document.querySelectorAll('button.mobile-nav-link').forEach(btn => {
+                btn.addEventListener('click', (e) => switchView(e.currentTarget.dataset.hash));
+            });
 
             document.getElementById('dashboard-menu-btn').addEventListener('click', () => dashboardDrawer.classList.add('open'));
             document.getElementById('dashboard-drawer-overlay').addEventListener('click', () => dashboardDrawer.classList.remove('open'));
             
-            switchView(window.location.hash);
+            switchView(window.location.hash || '#dashboard');
         }
 
-        // --- Section 1: Seller Management ---
+        // --- MODULE 1: DASHBOARD FUNCTIONS ---
+        async function loadDashboardStats() {
+            const salesEl = document.getElementById('stat-total-sales');
+            const commissionEl = document.getElementById('stat-total-commission');
+            const ordersEl = document.getElementById('stat-new-orders');
+            const customersEl = document.getElementById('stat-total-customers');
+
+            salesEl.textContent = 'Loading...';
+            commissionEl.textContent = 'Loading...';
+            ordersEl.textContent = 'Loading...';
+            customersEl.textContent = 'Loading...';
+
+            try {
+                const usersSnap = await getDocs(query(collection(db, usersPath), where("isSeller", "==", false)));
+                customersEl.textContent = usersSnap.size.toLocaleString();
+
+                const last30Days = new Date(Date.now() - 30 * 24 * 60 * 60 * 1000);
+                const ordersRef = collection(db, publicDataPath, 'orders');
+                
+                const ordersSnap = await getDocs(query(ordersRef, where("createdAt", ">=", last30Days)));
+                
+                let totalSales = 0;
+                let totalCommission = 0;
+                ordersSnap.forEach(doc => {
+                    totalSales += doc.data().totalAmount || 0;
+                    totalCommission += doc.data().platformFee || 0;
+                });
+                
+                salesEl.textContent = `Rs. ${totalSales.toLocaleString('en-US', { minimumFractionDigits: 2 })}`;
+                commissionEl.textContent = `Rs. ${totalCommission.toLocaleString('en-US', { minimumFractionDigits: 2 })}`;
+                
+                const todayStart = new Date();
+                todayStart.setHours(0, 0, 0, 0);
+                const todayOrdersSnap = await getDocs(query(ordersRef, where("createdAt", ">=", todayStart)));
+                ordersEl.textContent = todayOrdersSnap.size.toLocaleString();
+
+            } catch (e) {
+                console.error("Error loading dashboard stats:", e);
+                salesEl.textContent = 'Error'; commissionEl.textContent = 'Error';
+                ordersEl.textContent = 'Error'; customersEl.textContent = 'Error';
+            }
+        }
+        
+        async function loadWidgetPendingSellers() {
+            const container = document.getElementById('widget-pending-sellers');
+            try {
+                const q = query(collection(db, usersPath), where("isSeller", "==", true), where("isApproved", "==", false));
+                const snap = await getDocs(q);
+                if (snap.size > 0) {
+                    container.innerHTML = `<a href="#sellers" class="font-bold text-lg text-yellow-600 hover:underline">${snap.size} Seller(s)</a> waiting for approval.`;
+                } else {
+                    container.innerHTML = `<p class="text-gray-500">No pending sellers.</p>`;
+                }
+            } catch (e) { container.innerHTML = `<p class="text-red-500">Error loading sellers.</p>`; }
+        }
+        
+        async function loadWidgetPendingProducts() {
+            const container = document.getElementById('widget-pending-products');
+             try {
+                const q = query(collection(db, publicDataPath, 'products'), where("isApproved", "==", false));
+                const snap = await getDocs(q);
+                if (snap.size > 0) {
+                    container.innerHTML = `<a href="#products" class="font-bold text-lg text-yellow-600 hover:underline">${snap.size} Product(s)</a> waiting for approval.`;
+                } else {
+                    container.innerHTML = `<p class="text-gray-500">No pending products.</p>`;
+                }
+            } catch (e) { container.innerHTML = `<p class="text-red-500">Error loading products.</p>`; }
+        }
+        
+        async function loadWidgetPendingStories() {
+            const container = document.getElementById('widget-pending-stories');
+             try {
+                const q = query(collection(db, publicDataPath, 'stories'), where("isApproved", "==", false));
+                const snap = await getDocs(q);
+                if (snap.size > 0) {
+                    container.innerHTML = `<a href="#stories" class="font-bold text-lg text-yellow-600 hover:underline">${snap.size} Storie(s)</a> waiting for approval.`;
+                } else {
+                    container.innerHTML = `<p class="text-gray-500">No pending stories.</p>`;
+                }
+            } catch (e) { container.innerHTML = `<p class="text-red-500">Error loading stories.</p>`; }
+        }
+        
+        async function loadWidgetRecentOrders() {
+            const container = document.getElementById('widget-recent-orders');
+            try {
+                const q = query(collection(db, publicDataPath, 'orders'), orderBy("createdAt", "desc"), limit(5));
+                const snap = await getDocs(q);
+                if (snap.empty) {
+                    container.innerHTML = '<p class="text-gray-500">No recent orders.</p>';
+                    return;
+                }
+                container.innerHTML = snap.docs.map(doc => {
+                    const order = doc.data();
+                    const date = order.createdAt ? order.createdAt.toDate().toLocaleTimeString() : '';
+                    return `
+                        <div class="text-sm border-b pb-1">
+                            <p class="font-semibold">${order.customerInfo?.name || 'N/A'} placed an order for <span class="text-mudalali-green">Rs. ${order.totalAmount.toFixed(2)}</span>.</p>
+                            <p class="text-xs text-gray-500">${date}</p>
+                        </div>
+                    `;
+                }).join('');
+            } catch (e) {
+                console.error("Error loading widget orders:", e);
+                container.innerHTML = '<p class="text-red-500">Error loading recent orders.</video>';
+            }
+        }
+
+        // --- MODULE 2: SELLER FUNCTIONS ---
         async function loadSellersForApproval() {
             const container = document.getElementById('seller-list-container');
             container.innerHTML = '<p class="text-gray-500 col-span-full">Loading sellers awaiting approval...</p>';
-
             const usersRef = collection(db, usersPath);
             const q = query(usersRef, where("isSeller", "==", true), where("isApproved", "==", false));
 
@@ -372,15 +700,10 @@
                     container.innerHTML = '<p class="text-gray-500 col-span-full">No new seller registrations.</p>';
                     return;
                 }
-                
-                container.innerHTML = ''; // Clear loading text
+                container.innerHTML = '';
                 querySnapshot.forEach(doc => {
                     const seller = doc.data();
                     const sellerId = doc.id;
-                    
-                    // account.html එකේ register වෙනකොට storeName එකක් save වෙන්න ඕන
-                    // අපි ඒකත් user doc එකේම save කරගමු (ඔයාගේ logic එක අනුව)
-                    // දැනට අපි seller.name එක පාවිච්චි කරමු
                     let storeName = seller.storeName || seller.name || 'N/A';
                     
                     container.innerHTML += `
@@ -388,25 +711,19 @@
                             <h3 class="font-bold text-lg">${storeName}</h3>
                             <p class="text-sm text-gray-600">Owner: ${seller.name || 'N/A'}</p>
                             <p class="text-sm text-gray-600">Email: ${seller.email}</p>
+                            <p class="text-sm text-blue-600">
+                                <a href="${seller.nicUrl || '#'}" target="_blank" class="hover:underline">View NIC</a> |
+                                <a href="${seller.brUrl || '#'}" target="_blank" class="hover:underline">View BR</a>
+                            </p>
                             <div class="flex gap-2 mt-4">
-                                <button class="approve-seller-btn flex-1 bg-mudalali-green text-white px-3 py-2 rounded font-semibold text-sm" data-id="${sellerId}">
-                                    Approve
-                                </button>
-                                <button class="reject-seller-btn flex-1 bg-red-600 text-white px-3 py-2 rounded font-semibold text-sm" data-id="${sellerId}">
-                                    Reject
-                                </button>
+                                <button class="approve-seller-btn flex-1 bg-mudalali-green text-white px-3 py-2 rounded font-semibold text-sm" data-id="${sellerId}">Approve</button>
+                                <button class="reject-seller-btn flex-1 bg-red-600 text-white px-3 py-2 rounded font-semibold text-sm" data-id="${sellerId}">Reject</button>
                             </div>
                         </div>
                     `;
                 });
-
-                container.querySelectorAll('.approve-seller-btn').forEach(btn => {
-                    btn.addEventListener('click', (e) => approveSeller(e.target.dataset.id));
-                });
-                container.querySelectorAll('.reject-seller-btn').forEach(btn => {
-                    btn.addEventListener('click', (e) => rejectSeller(e.target.dataset.id));
-                });
-
+                container.querySelectorAll('.approve-seller-btn').forEach(btn => btn.addEventListener('click', (e) => approveSeller(e.target.dataset.id)));
+                container.querySelectorAll('.reject-seller-btn').forEach(btn => btn.addEventListener('click', (e) => rejectSeller(e.target.dataset.id)));
             } catch (err) {
                 console.error("Error loading pending sellers: ", err);
                 container.innerHTML = '<p class="text-red-500 col-span-full">Error loading sellers.</p>';
@@ -416,7 +733,6 @@
         async function loadAllApprovedSellers() {
             const container = document.getElementById('approved-seller-list-container');
             container.innerHTML = '<p class="text-gray-500 col-span-full">Loading approved sellers...</p>';
-
             const usersRef = collection(db, usersPath);
             const q = query(usersRef, where("isSeller", "==", true), where("isApproved", "==", true), orderBy("name"));
 
@@ -426,34 +742,24 @@
                     container.innerHTML = '<p class="text-gray-500 col-span-full">No approved sellers found.</p>';
                     return;
                 }
-                
-                container.innerHTML = ''; // Clear loading text
+                container.innerHTML = '';
                 querySnapshot.forEach(doc => {
                     const seller = doc.data();
                     const sellerId = doc.id;
                     let storeName = seller.storeName || seller.name || 'N/A';
-                    
                     container.innerHTML += `
                         <div class="col-span-1 bg-white p-4 rounded shadow border-l-4 border-green-500">
                             <h3 class="font-bold text-lg">${storeName}</h3>
                             <p class="text-sm text-gray-600">Owner: ${seller.name || 'N/A'}</p>
                             <p class="text-sm text-gray-600">Email: ${seller.email}</p>
                              <div class="flex gap-2 mt-4">
-                                <a href="store.html?id=${sellerId}" target="_blank" class="flex-1 text-center bg-gray-100 text-gray-700 px-3 py-2 rounded font-semibold text-sm hover:bg-gray-200">
-                                    View Store
-                                </a>
-                                <button class="reject-seller-btn flex-1 bg-red-100 text-red-600 px-3 py-2 rounded font-semibold text-sm" data-id="${sellerId}">
-                                    Revoke
-                                </button>
+                                <a href="store.html?id=${sellerId}" target="_blank" class="flex-1 text-center bg-gray-100 text-gray-700 px-3 py-2 rounded font-semibold text-sm hover:bg-gray-200">View Store</a>
+                                <button class="reject-seller-btn flex-1 bg-red-100 text-red-600 px-3 py-2 rounded font-semibold text-sm" data-id="${sellerId}">Revoke</button>
                             </div>
                         </div>
                     `;
                 });
-
-                container.querySelectorAll('.reject-seller-btn').forEach(btn => {
-                    btn.addEventListener('click', (e) => rejectSeller(e.target.dataset.id, true));
-                });
-
+                container.querySelectorAll('.reject-seller-btn').forEach(btn => btn.addEventListener('click', (e) => rejectSeller(e.target.dataset.id, true)));
             } catch (err) {
                 console.error("Error loading approved sellers: ", err);
                 container.innerHTML = '<p class="text-red-500 col-span-full">Error loading sellers.</p>';
@@ -462,17 +768,19 @@
 
         async function approveSeller(sellerId) {
             if (!confirm('Are you sure you want to approve this seller?')) return;
-            
             const userDocRef = doc(db, usersPath, sellerId);
             const storeDocRef = doc(db, publicDataPath, 'stores', sellerId);
             
             try {
-                await updateDoc(userDocRef, { isApproved: true });
-                await updateDoc(storeDocRef, { isApproved: true });
+                const batch = writeBatch(db);
+                batch.update(userDocRef, { isApproved: true });
+                batch.update(storeDocRef, { isApproved: true });
+                await batch.commit();
                 
                 alert('Seller Approved!');
-                loadSellersForApproval(); // Refresh pending list
-                loadAllApprovedSellers(); // Refresh approved list
+                loadSellersForApproval(); 
+                loadAllApprovedSellers(); 
+                loadWidgetPendingSellers();
             } catch (err) {
                 console.error("Error approving seller: ", err);
                 alert('Approval failed.');
@@ -482,105 +790,285 @@
         async function rejectSeller(sellerId, isRevoke = false) {
             const action = isRevoke ? 'revoke approval for' : 'reject';
             if (!confirm(`Are you sure you want to ${action} this seller?`)) return;
-
             const userDocRef = doc(db, usersPath, sellerId);
             const storeDocRef = doc(db, publicDataPath, 'stores', sellerId);
-
             try {
-                // For a simple rejection/revoke, we just set isApproved to false.
-                // You could also delete the user, but that's riskier.
-                await updateDoc(userDocRef, { isApproved: false });
-                await updateDoc(storeDocRef, { isApproved: false });
+                const batch = writeBatch(db);
+                batch.update(userDocRef, { isApproved: false });
+                batch.update(storeDocRef, { isApproved: false });
+                await batch.commit();
                 
                 alert(`Seller ${isRevoke ? 'access revoked' : 'rejected'}.`);
-                loadSellersForApproval(); // Refresh pending list
-                loadAllApprovedSellers(); // Refresh approved list
+                loadSellersForApproval(); 
+                loadAllApprovedSellers(); 
+                loadWidgetPendingSellers();
             } catch (err) {
                 console.error(`Error ${action}ing seller: `, err);
                 alert('Action failed.');
             }
         }
 
-        // --- Section 2: Category Management ---
-        function loadCategoryManagement() {
-            const form = document.getElementById('category-form');
-            form.addEventListener('submit', saveCategory);
-
-            const listContainer = document.getElementById('category-list-container');
-            listContainer.innerHTML = '<p class="text-gray-500">Loading categories...</p>';
+        // --- MODULE 3: PRODUCT MANAGEMENT FUNCTIONS ---
+        async function loadProductManagement() {
+            const container = document.getElementById('pending-product-list');
+            container.innerHTML = '<p class="text-gray-500 p-6">Loading pending products...</p>';
             
-            const categoriesRef = collection(db, publicDataPath, 'categories');
-            onSnapshot(query(categoriesRef, orderBy("name")), (snapshot) => {
-                if (snapshot.empty) {
-                    listContainer.innerHTML = '<p class="text-gray-500">No categories found.</p>';
+            try {
+                const q = query(collection(db, publicDataPath, 'products'), where("isApproved", "==", false));
+                const snap = await getDocs(q);
+                
+                if (snap.empty) {
+                    container.innerHTML = '<p class="text-gray-500 p-6">No products waiting for approval.</p>';
                     return;
                 }
-                listContainer.innerHTML = snapshot.docs.map(doc => `
-                    <div class="bg-white p-3 rounded shadow flex justify-between items-center">
-                        <div class="flex items-center gap-3">
-                            <div class="w-10 h-10 rounded-full flex items-center justify-center" style="background-color: ${doc.data().color || '#eee'}">
-                                <img src="${doc.data().imageUrl || 'https://placehold.co/40x40'}" class="w-8 h-8 object-contain">
-                            </div>
-                            <strong class="text-gray-700">${doc.data().name}</strong>
-                        </div>
-                        <div>
-                            <button class="delete-category-btn text-red-500 hover:text-red-700 font-semibold" data-id="${doc.id}">Delete</button>
-                        </div>
-                    </div>
-                `).join('');
-
-                listContainer.querySelectorAll('.delete-category-btn').forEach(btn => {
-                    btn.addEventListener('click', (e) => deleteCategory(e.target.dataset.id));
-                });
-            });
-        }
-
-        async function saveCategory(e) {
-            e.preventDefault();
-            const name = document.getElementById('category-name').value;
-            const imageUrl = document.getElementById('category-image-url').value;
-            const color = document.getElementById('category-color').value;
-            const statusEl = document.getElementById('category-upload-status');
-
-            if (!name) {
-                statusEl.textContent = 'Category name is required.';
-                return;
-            }
-            
-            statusEl.textContent = 'Saving...';
-            try {
-                const docId = name.toLowerCase().replace(/\s+/g, '-').replace(/&/g, 'and'); 
-                const docRef = doc(db, publicDataPath, 'categories', docId);
                 
-                await setDoc(docRef, {
-                    name: name,
-                    imageUrl: imageUrl,
-                    color: color
+                container.innerHTML = '';
+                snap.forEach(doc => {
+                    const product = doc.data();
+                    const productId = doc.id;
+                    container.innerHTML += `
+                        <div class="flex items-center justify-between p-4 border-b">
+                            <div class="flex items-center gap-4">
+                                <img src="${product.imageUrl || 'https://placehold.co/80'}" class="w-16 h-16 object-cover rounded-md border">
+                                <div>
+                                    <h4 class="font-bold text-lg">${product.name}</h4>
+                                    <p class="text-sm text-gray-600">By: ${product.storeName || 'N/A'}</p>
+                                    <a href="product.html?id=${productId}" target="_blank" class="text-sm text-blue-600 hover:underline">Preview</a>
+                                </div>
+                            </div>
+                            <div class="flex gap-2">
+                                <button class="approve-product-btn bg-mudalali-green text-white px-3 py-2 rounded font-semibold text-sm" data-id="${productId}">Approve</button>
+                                <button class="reject-product-btn bg-red-600 text-white px-3 py-2 rounded font-semibold text-sm" data-id="${productId}">Reject</button>
+                            </div>
+                        </div>
+                    `;
+                });
+                
+                container.querySelectorAll('.approve-product-btn').forEach(btn => btn.addEventListener('click', (e) => approveProduct(e.target.dataset.id)));
+                container.querySelectorAll('.reject-product-btn').forEach(btn => btn.addEventListener('click', (e) => rejectProduct(e.target.dataset.id)));
+                
+            } catch (e) {
+                console.error("Error loading pending products:", e);
+                container.innerHTML = '<p class="text-red-500 p-6">Error loading products.</p>';
+            }
+        }
+        
+        async function approveProduct(productId) {
+            if (!confirm('Approve this product? It will be visible on the site.')) return;
+            try {
+                const docRef = doc(db, publicDataPath, 'products', productId);
+                await updateDoc(docRef, { isApproved: true });
+                loadProductManagement(); 
+                loadWidgetPendingProducts();
+            } catch (e) { console.error(e); alert("Error approving product."); }
+        }
+        
+        async function rejectProduct(productId) {
+            if (!confirm('Reject this product? It will be hidden.')) return;
+            try {
+                // We'll just set it to false. Deleting is also an option.
+                const docRef = doc(db, publicDataPath, 'products', productId);
+                await updateDoc(docRef, { isApproved: false, rejectionReason: "Rejected by admin" });
+                alert("Product Rejected.");
+                loadProductManagement(); 
+                loadWidgetPendingProducts();
+            } catch (e) { console.error(e); alert("Error rejecting product."); }
+        }
+
+        // --- MODULE 4: ORDER MANAGEMENT FUNCTIONS ---
+        async function loadOrderManagement() {
+            const container = document.getElementById('all-orders-list');
+            container.innerHTML = '<p class="text-gray-500 p-6">Loading all orders...</p>';
+            try {
+                const q = query(collection(db, publicDataPath, 'orders'), orderBy("createdAt", "desc"), limit(50));
+                const snap = await getDocs(q);
+                
+                if (snap.empty) {
+                    container.innerHTML = '<p class="text-gray-500 p-6">No orders found.</p>';
+                    return;
+                }
+                
+                container.innerHTML = snap.docs.map(doc => {
+                     const order = doc.data();
+                     const date = order.createdAt ? order.createdAt.toDate().toLocaleDateString() : 'N/A';
+                     return `
+                        <div class="p-4 border-b">
+                            <div class="flex justify-between items-center">
+                                <div>
+                                    <p class="text-sm font-semibold text-gray-500">Order ID: ${doc.id}</p>
+                                    <h3 class="text-lg font-bold text-gray-800">${order.customerInfo?.name || 'N/A'}</h3>
+                                </div>
+                                <div class="text-right">
+                                    <p class="text-xl font-bold text-mudalali-green">Rs. ${order.totalAmount.toFixed(2)}</p>
+                                    <span class="px-3 py-1 text-xs font-semibold rounded-full bg-green-100 text-green-700">${order.status || 'Pending'}</span>
+                                </div>
+                            </div>
+                            <p class="text-sm text-gray-500">Date: ${date}</p>
+                        </div>
+                     `;
+                }).join('');
+                
+            } catch (e) {
+                 console.error("Error loading all orders:", e);
+                container.innerHTML = '<p class="text-red-500 p-6">Error loading orders.</p>';
+            }
+        }
+
+        // --- MODULE 5: STORY MANAGEMENT FUNCTIONS ---
+        async function loadStoryManagement() {
+            const container = document.getElementById('pending-story-list');
+            container.innerHTML = '<p class="text-gray-500 p-6">Loading pending stories...</p>';
+            
+            try {
+                const q = query(collection(db, publicDataPath, 'stories'), where("isApproved", "==", false));
+                const snap = await getDocs(q);
+                
+                if (snap.empty) {
+                    container.innerHTML = '<p class="text-gray-500 p-6">No stories waiting for approval.</p>';
+                    return;
+                }
+                
+                container.innerHTML = '';
+                snap.forEach(doc => {
+                    const story = doc.data();
+                    const storyId = doc.id;
+                    container.innerHTML += `
+                        <div class="flex items-center justify-between p-4 border-b">
+                            <div class="flex items-center gap-4">
+                                <img src="${story.imageUrl || 'https://placehold.co/80'}" class="w-16 h-16 object-cover rounded-md border">
+                                <div>
+                                    <h4 class="font-bold text-lg">${story.storeName || 'N/A'}</h4>
+                                    <p class="text-sm text-gray-600 line-clamp-1">${story.content || 'No content'}</p>
+                                    <a href="story-detail.html?id=${storyId}" target="_blank" class="text-sm text-blue-600 hover:underline">Preview</a>
+                                </div>
+                            </div>
+                            <div class="flex gap-2">
+                                <button class="approve-story-btn bg-mudalali-green text-white px-3 py-2 rounded font-semibold text-sm" data-id="${storyId}">Approve</button>
+                                <button class="reject-story-btn bg-red-600 text-white px-3 py-2 rounded font-semibold text-sm" data-id="${storyId}">Reject</button>
+                            </div>
+                        </div>
+                    `;
+                });
+                
+                container.querySelectorAll('.approve-story-btn').forEach(btn => btn.addEventListener('click', (e) => approveStory(e.target.dataset.id)));
+                container.querySelectorAll('.reject-story-btn').forEach(btn => btn.addEventListener('click', (e) => rejectStory(e.target.dataset.id)));
+                
+            } catch (e) {
+                console.error("Error loading pending stories:", e);
+                container.innerHTML = '<p class="text-red-500 p-6">Error loading stories.</p>';
+            }
+        }
+        
+        async function approveStory(storyId) {
+            if (!confirm('Approve this story?')) return;
+            try {
+                await updateDoc(doc(db, publicDataPath, 'stories', storyId), { isApproved: true });
+                loadStoryManagement(); loadWidgetPendingStories();
+            } catch (e) { console.error(e); alert("Error approving story."); }
+        }
+        
+        async function rejectStory(storyId) {
+            if (!confirm('Reject and delete this story?')) return;
+            try {
+                await deleteDoc(doc(db, publicDataPath, 'stories', storyId));
+                loadStoryManagement(); loadWidgetPendingStories();
+            } catch (e) { console.error(e); alert("Error rejecting story."); }
+        }
+
+        // --- MODULE 6: FINANCIAL FUNCTIONS ---
+        async function loadFinancials() {
+            const container = document.getElementById('payouts-due-list');
+            container.innerHTML = '<p class="text-gray-500 p-6">Loading payouts due...</p>';
+            
+            try {
+                const q = query(collection(db, publicDataPath, 'orders'), 
+                    where("status", "==", "Delivered"), 
+                    where("payoutComplete", "==", false)
+                );
+                const snap = await getDocs(q);
+
+                if (snap.empty) {
+                    container.innerHTML = '<p class="text-gray-500 p-6">No payouts due.</p>';
+                    return;
+                }
+
+                const payouts = {};
+                snap.forEach(doc => {
+                    const order = doc.data();
+                    order.items.forEach(item => {
+                        const sellerId = item.sellerUid;
+                        if (!sellerId) return;
+                        if (!payouts[sellerId]) {
+                            payouts[sellerId] = { 
+                                storeName: item.storeName || 'Unknown Seller', 
+                                totalSales: 0, 
+                                totalCommission: 0, 
+                                totalShipping: 0,
+                                orderDocs: [] 
+                            };
+                        }
+                        
+                        const itemTotal = item.price * item.quantity;
+                        const itemCommission = itemTotal * ( (order.platformFee / order.subtotal) || 0.04); // Calculate item-wise commission
+                        const itemShipping = item.shippingCost || 0;
+
+                        payouts[sellerId].totalSales += itemTotal;
+                        payouts[sellerId].totalCommission += itemCommission;
+                        payouts[sellerId].totalShipping += itemShipping;
+                        payouts[sellerId].orderDocs.push(doc.id);
+                    });
+                });
+                
+                container.innerHTML = '';
+                for (const sellerId in payouts) {
+                    const data = payouts[sellerId];
+                    const amountDue = (data.totalSales - data.totalCommission) + data.totalShipping;
+                    container.innerHTML += `
+                        <div class="p-4 border-b">
+                            <h4 class="font-bold text-lg">${data.storeName} (ID: ${sellerId})</h4>
+                            <p>Total Sales: Rs. ${data.totalSales.toFixed(2)}</p>
+                            <p>Shipping Collected: Rs. ${data.totalShipping.toFixed(2)}</p>
+                            <p>Commission (-): Rs. ${data.totalCommission.toFixed(2)}</p>
+                            <p class="font-bold text-xl text-mudalali-green">Amount Due: Rs. ${amountDue.toFixed(2)}</p>
+                            <p class="text-xs text-gray-500">${data.orderDocs.length} order(s)</p>
+                            <button class="mark-paid-btn mt-2 bg-blue-600 text-white px-3 py-1 rounded text-sm" data-seller-id="${sellerId}">Mark as Paid</button>
+                        </div>
+                    `;
+                }
+                
+                container.querySelectorAll('.mark-paid-btn').forEach(btn => {
+                    btn.addEventListener('click', async (e) => {
+                        const sellerId = e.target.dataset.sellerId;
+                        const orderIds = payouts[sellerId].orderDocs;
+                        if (!confirm(`Mark ${orderIds.length} order(s) as paid for ${sellerId}?`)) return;
+                        
+                        try {
+                            const batch = writeBatch(db);
+                            orderIds.forEach(orderId => {
+                                const orderRef = doc(db, publicDataPath, 'orders', orderId);
+                                batch.update(orderRef, { payoutComplete: true });
+                            });
+                            await batch.commit();
+                            alert("Payout marked as complete!");
+                            loadFinancials();
+                        } catch (err) { console.error(err); alert("Error marking as paid."); }
+                    });
                 });
 
-                statusEl.textContent = 'Category Saved!';
-                document.getElementById('category-form').reset();
-            } catch (err) {
-                console.error(err);
-                statusEl.textContent = 'Error saving category.';
-            }
-            setTimeout(() => statusEl.textContent = '', 3000);
-        }
-
-        async function deleteCategory(docId) {
-            if (!confirm('Are you sure you want to delete this category? This cannot be undone.')) return;
-            try {
-                const docRef = doc(db, publicDataPath, 'categories', docId);
-                await deleteDoc(docRef);
-            } catch (err) {
-                console.error(err);
-                alert('Error deleting category.');
+            } catch (e) {
+                console.error("Error loading financials:", e);
+                container.innerHTML = '<p class="text-red-500 p-6">Error loading financials.</p>';
             }
         }
+        
+        // --- MODULE 7: MARKETING ---
+        function loadMarketing() {
+            loadMarketingBanners();
+            // loadCoupons() (meka passe hadamu)
+        }
 
-        // --- Section 3: Homepage Settings ---
-        async function loadHomepageSettings() {
-            const viewContainer = document.getElementById('homepage-settings-container');
+        async function loadMarketingBanners() {
+            const viewContainer = document.getElementById('homepage-banners-container');
             viewContainer.innerHTML = '';
             
             const settingsToLoad = [
@@ -617,7 +1105,7 @@
                 form.addEventListener('submit', saveHomepageContent);
             });
         }
-
+        
         async function saveHomepageContent(e) {
             e.preventDefault();
             const form = e.currentTarget;
@@ -641,11 +1129,126 @@
                 console.error(err);
                 saveBtn.textContent = 'Error!';
             }
-            
             setTimeout(() => {
                 saveBtn.disabled = false;
                 saveBtn.textContent = originalBtnText;
             }, 2000);
+        }
+
+        // --- MODULE 8: CATEGORY MANAGEMENT ---
+        function loadCategoryManagement() {
+            const form = document.getElementById('category-form');
+            form.addEventListener('submit', saveCategory);
+            const listContainer = document.getElementById('category-list-container');
+            listContainer.innerHTML = '<p class="text-gray-500">Loading categories...</p>';
+            
+            const categoriesRef = collection(db, publicDataPath, 'categories');
+            onSnapshot(query(categoriesRef, orderBy("name")), (snapshot) => {
+                if (snapshot.empty) {
+                    listContainer.innerHTML = '<p class="text-gray-500">No categories found.</p>';
+                    return;
+                }
+                listContainer.innerHTML = snapshot.docs.map(doc => `
+                    <div class="bg-white p-3 rounded shadow flex justify-between items-center">
+                        <div class="flex items-center gap-3">
+                            <div class="w-10 h-10 rounded-full flex items-center justify-center" style="background-color: ${doc.data().color || '#eee'}">
+                                <img src="${doc.data().imageUrl || 'https://placehold.co/40x40'}" class="w-8 h-8 object-contain">
+                            </div>
+                            <strong class="text-gray-700">${doc.data().name}</strong>
+                        </div>
+                        <div>
+                            <button class="delete-category-btn text-red-500 hover:text-red-700 font-semibold" data-id="${doc.id}">Delete</button>
+                        </div>
+                    </div>
+                `).join('');
+                listContainer.querySelectorAll('.delete-category-btn').forEach(btn => btn.addEventListener('click', (e) => deleteCategory(e.target.dataset.id)));
+            });
+        }
+
+        async function saveCategory(e) {
+            e.preventDefault();
+            const name = document.getElementById('category-name').value;
+            const imageUrl = document.getElementById('category-image-url').value;
+            const color = document.getElementById('category-color').value;
+            const statusEl = document.getElementById('category-upload-status');
+            if (!name) { statusEl.textContent = 'Category name is required.'; return; }
+            statusEl.textContent = 'Saving...';
+            try {
+                const docId = name.toLowerCase().replace(/\s+/g, '-').replace(/&/g, 'and'); 
+                const docRef = doc(db, publicDataPath, 'categories', docId);
+                await setDoc(docRef, { name: name, imageUrl: imageUrl, color: color });
+                statusEl.textContent = 'Category Saved!';
+                document.getElementById('category-form').reset();
+            } catch (err) {
+                console.error(err); statusEl.textContent = 'Error saving category.';
+            }
+            setTimeout(() => statusEl.textContent = '', 3000);
+        }
+
+        async function deleteCategory(docId) {
+            if (!confirm('Are you sure you want to delete this category?')) return;
+            try {
+                await deleteDoc(doc(db, publicDataPath, 'categories', docId));
+            } catch (err) { console.error(err); alert('Error deleting category.'); }
+        }
+        
+        // --- MODULE 9: PLATFORM SETTINGS ---
+        async function loadPlatformSettings() {
+            const container = document.getElementById('platform-settings-container');
+            container.innerHTML = `
+                <form id="general-settings-form" class="space-y-4">
+                    <h3 class="text-xl font-bold text-gray-700">General Settings</h3>
+                    <div>
+                        <label class="form-label">Site Name (Logo Text)</label>
+                        <input type="text" id="setting-logo-text" class="form-input" placeholder="මුදලාලි මාමා">
+                    </div>
+                    <div>
+                        <label class="form-label">Logo Image URL</label>
+                        <input type="text" id="setting-logo-url" class="form-input" placeholder="https://...">
+                    </div>
+                     <div>
+                        <label class="form-label">Global Commission Rate (%)</label>
+                        <input type="number" id="setting-commission" class="form-input" placeholder="10">
+                    </div>
+                    <button type="submit" class="btn-primary !text-base !py-2 !w-auto !px-6">Save General Settings</button>
+                    <p id="settings-status" class="text-sm"></p>
+                </form>
+            `;
+            
+            try {
+                const configRef = doc(db, publicDataPath, 'siteContent', 'config');
+                const docSnap = await getDoc(configRef);
+                if (docSnap.exists()) {
+                    const config = docSnap.data();
+                    document.getElementById('setting-logo-text').value = config.logoText || '';
+                    document.getElementById('setting-logo-url').value = config.logoImageUrl || '';
+                    document.getElementById('setting-commission').value = config.globalCommissionRate || '';
+                }
+            } catch (e) { console.error("Error loading config:", e); }
+            
+            document.getElementById('general-settings-form').addEventListener('submit', async (e) => {
+                e.preventDefault();
+                const statusEl = document.getElementById('settings-status');
+                statusEl.textContent = 'Saving...';
+                
+                const dataToSave = {
+                    logoText: document.getElementById('setting-logo-text').value,
+                    logoImageUrl: document.getElementById('setting-logo-url').value,
+                    globalCommissionRate: Number(document.getElementById('setting-commission').value)
+                };
+                
+                try {
+                    const configRef = doc(db, publicDataPath, 'siteContent', 'config');
+                    await setDoc(configRef, dataToSave, { merge: true });
+                    statusEl.textContent = 'Settings Saved!';
+                    statusEl.className = 'text-sm text-green-600';
+                } catch (e) {
+                    console.error("Error saving config:", e);
+                    statusEl.textContent = 'Error saving settings.';
+                    statusEl.className = 'text-sm text-red-500';
+                }
+                 setTimeout(() => statusEl.textContent = '', 3000);
+            });
         }
 
         // --- General Functions ---
@@ -658,26 +1261,16 @@
                 
                 const logoImg = document.getElementById('logo-img');
                 const mobileLogoImg = document.getElementById('mobile-logo-img');
+                const loginLogoImg = document.getElementById('login-logo');
 
-                if (config.logoImageUrl && logoImg && mobileLogoImg) {
-                    logoImg.src = config.logoImageUrl;
-                    mobileLogoImg.src = config.logoImageUrl;
+                if (config.logoImageUrl) {
+                    if(logoImg) logoImg.src = config.logoImageUrl;
+                    if(mobileLogoImg) mobileLogoImg.src = config.logoImageUrl;
+                    if(loginLogoImg) loginLogoImg.src = config.logoImageUrl;
                 }
             } catch (e) {
                 console.error("Error loading site config: ", e);
             }
-        }
-
-        function setupLogoutButtons() {
-            const logoutBtns = [
-                document.getElementById('drawer-logout-btn'),
-                document.getElementById('mobile-drawer-logout-btn')
-            ];
-            logoutBtns.forEach(btn => {
-                btn?.addEventListener('click', () => {
-                    signOut(auth).catch(error => console.error("Logout Error:", error));
-                });
-            });
         }
 
     </script>

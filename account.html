@@ -81,6 +81,9 @@
         .menu-tab-btn.active {
             @apply border-mudalali-green text-mudalali-green;
         }
+        .user-type-label {
+            @apply flex-1 text-center p-2 rounded-md cursor-pointer has-[:checked]:bg-white has-[:checked]:shadow font-medium text-sm;
+        }
     </style>
 </head>
 <body class="pb-20 md:pb-0" style="background-color: #f5f5f4;"> 
@@ -162,14 +165,18 @@
                         <div id="register-form-container" class="hidden">
                             <h2 class="text-2xl font-bold text-gray-800 mb-6">Create an Account</h2>
                             
-                            <div class="flex gap-4 mb-4 p-2 bg-gray-100 rounded-lg">
-                                <label class="flex-1 text-center p-2 rounded-md cursor-pointer has-[:checked]:bg-white has-[:checked]:shadow font-medium">
+                            <div class="flex flex-col md:flex-row gap-2 mb-4 p-2 bg-gray-100 rounded-lg">
+                                <label class="user-type-label">
                                     <input type="radio" name="userType" value="customer" class="hidden" checked> I'm a Customer
                                 </label>
-                                <label class="flex-1 text-center p-2 rounded-md cursor-pointer has-[:checked]:bg-white has-[:checked]:shadow font-medium">
+                                <label class="user-type-label">
                                     <input type="radio" name="userType" value="seller" class="hidden"> I'm a Seller
                                 </label>
+                                <label class="user-type-label">
+                                    <input type="radio" name="userType" value="affiliate" class="hidden"> I'm an Affiliate
+                                </label>
                             </div>
+
 
                             <form id="register-form" class="space-y-4">
                                 <div>
@@ -199,6 +206,23 @@
                                         <label for="reg-categories" class="block text-sm font-medium text-gray-700">Product Categories</label>
                                         <input type="text" id="reg-categories" placeholder="e.g. Food, Crafts, Tea" class="mt-1 block w-full p-3 border rounded-md focus:ring-mudalali-green focus:border-mudalali-green">
                                         <p class="text-xs text-gray-500 mt-1">Separate categories with a comma (,)</p>
+                                    </div>
+                                </div>
+                                
+                                <div id="affiliate-fields" class="hidden space-y-4 pt-4 border-t border-gray-200">
+                                    <h3 class="text-lg font-semibold text-mudalali-green">Affiliate Information</h3>
+                                    <p class="text-sm text-gray-600">Please provide your social media links for verification.</p>
+                                    <div>
+                                        <label for="reg-youtube" class="block text-sm font-medium text-gray-700">YouTube Channel Link (Optional)</label>
+                                        <input type="url" id="reg-youtube" placeholder="https://youtube.com/..." class="mt-1 block w-full p-3 border rounded-md focus:ring-mudalali-green focus:border-mudalali-green">
+                                    </div>
+                                    <div>
+                                        <label for="reg-facebook" class="block text-sm font-medium text-gray-700">Facebook Page Link (Optional)</label>
+                                        <input type="url" id="reg-facebook" placeholder="https://facebook.com/..." class="mt-1 block w-full p-3 border rounded-md focus:ring-mudalali-green focus:border-mudalali-green">
+                                    </div>
+                                    <div>
+                                        <label for="reg-tiktok-insta" class="block text-sm font-medium text-gray-700">TikTok or Instagram Link (Optional)</label>
+                                        <input type="url" id="reg-tiktok-insta" placeholder="https://tiktok.com/..." class="mt-1 block w-full p-3 border rounded-md focus:ring-mudalali-green focus:border-mudalali-green">
                                     </div>
                                 </div>
 
@@ -358,34 +382,61 @@
 
         let currentUser = null;
 
+        function captureAffiliateRef() {
+            const urlParams = new URLSearchParams(window.location.search);
+            const affiliateId = urlParams.get('ref');
+            if (affiliateId) {
+                // ID ekak URL eke thibboth, eka browser eke save karanawa
+                console.log(`Affiliate ID captured: ${affiliateId}`);
+                localStorage.setItem('affiliateRef', affiliateId);
+            }
+        }
+
         document.addEventListener('DOMContentLoaded', () => {
             console.log("Mudalali Mama Account Page Initialized");
             document.getElementById('page-loader').style.width = '30%';
             loadSiteConfig();
             setupMobileDrawers(); 
+            captureAffiliateRef();
             updateWishlistCountBadge();
             setupPageSpecificLogic();
             document.getElementById('page-loader').style.width = '100%';
             setTimeout(() => document.getElementById('page-loader').style.display = 'none', 500);
         });
 
+        // =====================================
+        // ======== JS WENAS KALE 1/3 (FIXED) ========
+        // =====================================
+        // onAuthStateChanged eka update kara
         onAuthStateChanged(auth, async (user) => {
             currentUser = user;
             if (user) {
-                const userDocRef = doc(db, usersPath, user.uid);
-                const userDocSnap = await getDoc(userDocRef);
-                
-                if (userDocSnap.exists() && userDocSnap.data().isSeller) {
-                    window.location.href = 'seller-profile.html'; 
-                } else {
-                   window.location.href = 'customer-account.html';
-                }
+                // User log wela innawa nam, eyage role eka check karala redirect karamu
+                // Me timer eka danne login form eka submit karanakota
+                // me listener eka activate wenawata wada, 
+                // form submit ekenma redirect wenna ida denna.
+                setTimeout(() => {
+                    // Check karanna user thama log welada kiyala
+                    // CurrentUser null wela natham (log out wela natham)
+                    if (auth.currentUser) {
+                        // Koiweleth login page ekata log wela awoth,
+                        // eyage adala dashboard ekata yawanna.
+                        console.log("User is already logged in, checking roles for redirect...");
+                        // forceRedirect=false danawa, e kiyanne form eka penawa nam redirect karanna epa
+                        redirectUserBasedOnRole(auth.currentUser, false);
+                    }
+                }, 500); // Miliseconds 500k delay eka
 
             } else {
+                // Log wela natham me page eke innawa, cart eka null karanawa
                 attachCartDrawerListener(null); 
             }
         });
 
+        // =====================================
+        // ======== JS WENAS KALE 2/3 (FIXED) ========
+        // =====================================
+        // setupPageSpecificLogic eka update kara aluth fields walata
         function setupPageSpecificLogic() {
             const loginTab = document.getElementById('login-tab-btn');
             const registerTab = document.getElementById('register-tab-btn');
@@ -407,24 +458,42 @@
             });
 
             const userTypeRadios = document.querySelectorAll('input[name="userType"]');
+            
+            // Aluth field containers tika gaththa
             const sellerFields = document.getElementById('seller-fields');
+            const affiliateFields = document.getElementById('affiliate-fields'); // Aluth
+            
+            // Seller field inputs
             const regStoreName = document.getElementById('reg-store-name');
             const regLocation = document.getElementById('reg-location');
             const regCategories = document.getElementById('reg-categories');
 
+            // Affiliate field inputs (Aluth)
+            // (Mewa optional nisa 'required' set karanna one ne)
+            
             userTypeRadios.forEach(radio => {
                 radio.addEventListener('change', (e) => {
-                    if (e.target.value === 'seller') {
+                    const userType = e.target.value;
+
+                    // Mulimma okkoma hide karamu
+                    sellerFields.classList.add('hidden');
+                    affiliateFields.classList.add('hidden');
+                    
+                    // Okkoma 'required' ain karamu
+                    regStoreName.required = false;
+                    regLocation.required = false;
+                    regCategories.required = false;
+                    
+                    if (userType === 'seller') {
                         sellerFields.classList.remove('hidden');
                         regStoreName.required = true;
                         regLocation.required = true;
                         regCategories.required = true;
-                    } else {
-                        sellerFields.classList.add('hidden');
-                        regStoreName.required = false;
-                        regLocation.required = false;
-                        regCategories.required = false;
+                    } else if (userType === 'affiliate') {
+                        affiliateFields.classList.remove('hidden');
+                        // Social media optional, e nisa required danne ne
                     }
+                    // Customer nam, dekama hidden
                 });
             });
 
@@ -440,8 +509,13 @@
             errorP.textContent = 'Logging in...';
 
             try {
-                await signInWithEmailAndPassword(auth, email, password);
-                errorP.textContent = '';
+                const userCredential = await signInWithEmailAndPassword(auth, email, password);
+                // --- ALUTH KOTASA ---
+                // onAuthStateChanged eka balan inne nethuwa, 
+                // login wuna gaman adala page ekata yawamu
+                // forceRedirect = true karala yawanne, form eka pennuwath redirect karanna kiyala.
+                await redirectUserBasedOnRole(userCredential.user, true);
+                // --- IWARAI ---
                 
             } catch (error) {
                 console.error("Login Error:", error);
@@ -449,6 +523,10 @@
             }
         }
 
+        // =====================================
+        // ======== JS WENAS KALE 3/3 (FIXED) ========
+        // =====================================
+        // onRegisterSubmit eka update kara aluth affiliate logic ekata
         async function onRegisterSubmit(e) {
             e.preventDefault();
             const errorP = document.getElementById('register-error');
@@ -471,11 +549,13 @@
                         name: name,
                         email: email,
                         isSeller: false,
+                        isAffiliate: false, // Default
+                        wantsToBeAffiliate: false, // Default
                         role: "customer",
                         createdAt: serverTimestamp()
                     });
 
-                } else {
+                } else if (userType === 'seller') {
                     const storeName = document.getElementById('reg-store-name').value;
                     const location = document.getElementById('reg-location').value;
                     const categoriesStr = document.getElementById('reg-categories').value;
@@ -485,6 +565,8 @@
                         name: name, 
                         email: email,
                         isSeller: true, 
+                        isAffiliate: false, // Default
+                        wantsToBeAffiliate: false, // Default
                         role: "seller",
                         storeId: user.uid,
                         createdAt: serverTimestamp()
@@ -501,10 +583,44 @@
                         description: `Welcome to ${storeName}!`,
                         createdAt: serverTimestamp()
                     });
+                
+                } else if (userType === 'affiliate') {
+                    // Aluth Affiliate Logic
+                    const youtube = document.getElementById('reg-youtube').value;
+                    const facebook = document.getElementById('reg-facebook').value;
+                    const tiktokInsta = document.getElementById('reg-tiktok-insta').value;
+
+                    batch.set(userDocRef, {
+                        name: name,
+                        email: email,
+                        isSeller: false,
+                        role: "customer", // Affiliate kenek kiyanneth customer kenek
+                        isAffiliate: false, // Admin approve karana kam FALSE
+                        wantsToBeAffiliate: true, // Admin panel eke pennanna
+                        affiliateCode: user.uid, // Eyage user ID eka thamai code eka
+                        socialMedia: {
+                            youtube: youtube || null,
+                            facebook: facebook || null,
+                            tiktok_insta: tiktokInsta || null
+                        },
+                        createdAt: serverTimestamp()
+                    });
                 }
                 
+                // --- ALUTH KOTASA ---
+                // 1. Mulimma Database eke save wenakan inna
                 await batch.commit();
                 errorP.textContent = '';
+                
+                // 2. Dan manually adala page ekata redirect karanna
+                if (userType === 'seller') {
+                    window.location.href = 'seller-profile.html';
+                } else if (userType === 'affiliate') {
+                    window.location.href = 'affiliate-dashboard.html';
+                } else {
+                    window.location.href = 'customer-account.html';
+                }
+                // --- IWARAI ---
 
             } catch (error) {
                 console.error("Signup Error:", error);
@@ -512,47 +628,82 @@
             }
         }
         
-     async function loadSiteConfig() {
-    try {
-        const docRef = doc(db, publicDataPath, 'siteContent', 'config');
-        const docSnap = await getDoc(docRef);
-        let config = {};
-        if (docSnap.exists()) config = docSnap.data();
-        
-        const logoText = config.logoText || 'මුදලාලි මාමා';
-        const logoImg = document.getElementById('logo-img');
-        const mobileLogoImg = document.getElementById('mobile-logo-img');
-        const logoLink = document.getElementById('logo-link');
-        const mobileLogoLink = document.getElementById('mobile-logo-link');
+        // --- ALUTH FUNCTION EKAK (FIXED) ---
+        // Me function eka onAuthStateChanged eken witharak call wenne
+        async function redirectUserBasedOnRole(user, forceRedirect = false) {
+            if (!user) return; // User nathnam mukuth karanna epa
+            
+            // Check karanna login/register form eka pennanawada kiyala
+            const loginContainer = document.getElementById('login-form-container');
+            const registerContainer = document.getElementById('register-form-container');
+            
+            // User login/register form eke innawa nam, auto-redirect karanna epa.
+            // Form eka submit kalama ekenma redirect wei.
+            // forceRedirect = true nam (login/register button eka obapu gaman) me check eka skip karanna.
+            if (!forceRedirect && (!loginContainer.classList.contains('hidden') || !registerContainer.classList.contains('hidden'))) {
+                console.log("User is on the login/register page, auto-redirect skipped.");
+                return;
+            }
 
-        // Firestore එකේ logo URL එකක් තිබ්බොත් විතරක් update කරන්න
-        if (config.logoImageUrl && logoImg && mobileLogoImg) {
-            logoImg.src = config.logoImageUrl;
-            mobileLogoImg.src = config.logoImageUrl;
-        } else {
-            // නැත්නම් HTML එකේ තියෙන image එකට මුකුත් කරන්න එපා.
-            // Text-only fallback එකක් විදියට මේක තියමු
-            if (logoLink && !logoImg) logoLink.textContent = logoText;
-            if (mobileLogoLink && !mobileLogoImg) mobileLogoLink.textContent = logoText;
+            console.log("Redirecting user based on role...");
+            const userDocRef = doc(db, usersPath, user.uid);
+            const userDocSnap = await getDoc(userDocRef);
+            
+            if (userDocSnap.exists()) {
+                const userData = userDocSnap.data();
+                if (userData.isSeller) {
+                    window.location.href = 'seller-profile.html';
+                } else if (userData.isAffiliate === true || userData.wantsToBeAffiliate === true) {
+                    window.location.href = 'affiliate-dashboard.html';
+                } else {
+                    window.location.href = 'customer-account.html';
+                }
+            } else {
+                // User doc eka nathi awasthawak unoth (e.g. race condition)
+                console.warn("User document not found, redirecting to customer account.");
+                window.location.href = 'customer-account.html';
+            }
         }
-        
-        // Hotline එක load කරන්න (මේක index.html එකේ නැතත්, මෙතන තිබ්බට කමක් නෑ)
-        if (document.getElementById('header-hotline')) {
-            document.getElementById('header-hotline').textContent = config.headerHotline || '...';
+
+     async function loadSiteConfig() {
+        try {
+            const docRef = doc(db, publicDataPath, 'siteContent', 'config');
+            const docSnap = await getDoc(docRef);
+            let config = {};
+            if (docSnap.exists()) config = docSnap.data();
+            
+            const logoText = config.logoText || 'මුදලාලි මාමා';
+            const logoImg = document.getElementById('logo-img');
+            const mobileLogoImg = document.getElementById('mobile-logo-img');
+            const logoLink = document.getElementById('logo-link');
+            const mobileLogoLink = document.getElementById('mobile-logo-link');
+
+            if (config.logoImageUrl && logoImg && mobileLogoImg) {
+                logoImg.src = config.logoImageUrl;
+                mobileLogoImg.src = config.logoImageUrl;
+            } else {
+                if (logoLink && !logoImg) logoLink.textContent = logoText;
+                if (mobileLogoLink && !mobileLogoImg) mobileLogoLink.textContent = logoText;
+            }
+            
+            if (document.getElementById('header-hotline')) {
+                document.getElementById('header-hotline').textContent = config.headerHotline || '...';
+            }
+        } catch (e) {
+            console.error("Error loading site config: ", e);
         }
-    } catch (e) {
-        console.error("Error loading site config: ", e);
-        // Error එකක් වුණත්, HTML එකේ logo එක පේන නිසා අවුලක් නෑ
     }
-}
 
         function updateWishlistCountBadge() {
-            document.getElementById('mobile-wishlist-badge').textContent = '0';
+            const badge = document.getElementById('mobile-wishlist-badge');
+            if(badge) badge.textContent = '0';
         };
 
         function attachCartDrawerListener(userId) {
             const container = document.getElementById('cart-drawer-items-container');
             const totalEl = document.getElementById('cart-drawer-total');
+            if (!container || !totalEl) return;
+            
             if (!userId) {
                 container.innerHTML = '<p class="text-gray-500">Please log in to see your cart.</p>';
                 totalEl.textContent = 'Rs. 0.00';
@@ -577,8 +728,10 @@
         }
 
         function updateCartCounters(count) {
-            document.getElementById('cart-count-badge').textContent = count;
-            document.getElementById('mobile-cart-badge').textContent = count;
+            const desktopBadge = document.getElementById('cart-count-badge');
+            const mobileBadge = document.getElementById('mobile-cart-badge');
+            if(desktopBadge) desktopBadge.textContent = count;
+            if(mobileBadge) mobileBadge.textContent = count;
         }
 
         function setupMobileDrawers() {
@@ -615,12 +768,14 @@
                 if(currentUser) {
                     authDrawer?.classList.remove('hidden');
                 }
+                // Log wela nathnam, me page eke login form eka thiyenawa
             });
             document.getElementById('mobile-account-btn')?.addEventListener('click', (e) => {
                 e.preventDefault();
                 if(currentUser) {
                     authDrawer?.classList.remove('hidden');
                 }
+                // Log wela nathnam, me page eke login form eka thiyenawa
             });
         }
 
