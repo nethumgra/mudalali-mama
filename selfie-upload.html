@@ -57,18 +57,23 @@
             aspect-ratio: 4 / 5;
             object-fit: cover;
         }
-        /* Shutter Button Style */
+        
+        /* ===== ALUTH SHUTTER BUTTON STYLE ===== */
+        #shutter-button-container {
+            @apply absolute bottom-0 left-0 w-full h-24 flex items-center justify-center;
+            background: linear-gradient(to top, rgba(0,0,0,0.4), rgba(0,0,0,0));
+        }
         #take-selfie-btn {
-            @apply w-20 h-20 bg-white border-4 border-gray-300 rounded-full mx-auto flex items-center justify-center transition-all duration-200;
-            box-shadow: 0 5px 10px rgba(0,0,0,0.1);
+            @apply w-16 h-16 bg-white rounded-full flex items-center justify-center transition-all duration-200;
+            box-shadow: 0 0px 15px rgba(0,0,0,0.2);
         }
-        #take-selfie-btn div {
-            @apply w-16 h-16 bg-mudalali-green rounded-full transition-all duration-200;
+        #take-selfie-btn i {
+            @apply text-gray-700 text-2xl;
         }
-        #take-selfie-btn:active div {
-            @apply w-14 h-14 bg-mudalali-green-dark;
+        #take-selfie-btn:active {
+            @apply bg-gray-200;
         }
-        /* --- END ALUTH Styles --- */
+        /* =================================== */
     </style>
 </head>
 <body class="bg-mudalali-bg flex items-center justify-center min-h-screen p-4">
@@ -87,13 +92,17 @@
             
             <div id="video-container">
                 <video id="selfie-video" autoplay playsinline></video>
+                
+                <div id="shutter-button-container">
+                    <button id="take-selfie-btn" title="Take Photo">
+                        <i class="fa fa-camera"></i>
+                    </button>
+                </div>
                 </div>
             <canvas id="selfie-canvas" class="hidden"></canvas>
             <img id="selfie-preview" class="hidden">
             
             <div class="space-y-3 mt-4">
-                <button id="take-selfie-btn">
-                    <div></div> </button>
                 <div class="flex gap-4 hidden" id="selfie-controls">
                     <button id="retake-selfie-btn" class="btn-secondary">Retake</button>
                     <button id="selfie-upload-btn" class="btn-primary">Upload</button>
@@ -152,8 +161,7 @@
         const controls = document.getElementById('selfie-controls');
         const statusEl = document.getElementById('selfie-upload-status');
         const cameraError = document.getElementById('camera-error');
-
-        // --- Animation variables okkoma ain kala ---
+        const shutterContainer = document.getElementById('shutter-button-container'); // <-- ALUTH
 
         document.addEventListener('DOMContentLoaded', () => {
             const urlParams = new URLSearchParams(window.location.search);
@@ -172,7 +180,6 @@
             uploadBtn.addEventListener('click', uploadPhoto);
         });
 
-        // --- Animation code okkoma ain karapu `startWebcam` function eka ---
         async function startWebcam() {
             if (webcamStream) {
                 stopWebcam();
@@ -186,13 +193,11 @@
                 console.error("Error accessing webcam: ", err);
                 cameraError.classList.remove('hidden');
                 takeBtn.disabled = true;
-                takeBtn.classList.add('opacity-50'); // Button eka disable pennanna
+                takeBtn.classList.add('opacity-50'); 
             }
         }
-        // =================================================================
 
         function stopWebcam() {
-            // Animation code nathi nisa meka simple una
             if (webcamStream) {
                 webcamStream.getTracks().forEach(track => track.stop());
                 webcamStream = null;
@@ -200,7 +205,6 @@
         }
 
         function takePhoto() {
-            // Camera eken ena niyamitha size ekata canvas eka hadanawa
             canvas.width = video.videoWidth;
             canvas.height = video.videoHeight;
             canvas.getContext('2d').drawImage(video, 0, 0, canvas.width, canvas.height);
@@ -209,7 +213,7 @@
             
             videoContainer.classList.add('hidden'); // Video eka hide karanawa
             preview.classList.remove('hidden'); // Gaththa photo eka pennanawa
-            takeBtn.classList.add('hidden'); // Capture button eka hide karanawa
+            shutterContainer.classList.add('hidden'); // <-- ALUTH: Shutter button eka hide karanawa
             controls.classList.remove('hidden'); // "Retake" / "Upload" pennanawa
             
             stopWebcam(); // Camera eka off karanawa
@@ -218,7 +222,7 @@
         function retakePhoto() {
             videoContainer.classList.remove('hidden'); // Video eka pennanawa
             preview.classList.add('hidden'); // Gaththa photo eka hide karanawa
-            takeBtn.classList.remove('hidden'); // Capture button eka pennanawa
+            shutterContainer.classList.remove('hidden'); // <-- ALUTH: Shutter button eka pennanawa
             controls.classList.add('hidden'); // "Retake" / "Upload" hide karanawa
             statusEl.textContent = '';
             startWebcam(); // Camera eka ayeth on karanawa
@@ -242,13 +246,12 @@
                         selfieUploadedAt: serverTimestamp()
                     });
                     
-                    // --- ALUTH: Success View eka pennala, redirect karanawa ---
                     document.getElementById('selfie-view').classList.add('hidden');
                     document.getElementById('success-view').classList.remove('hidden');
                     
                     setTimeout(() => {
                         window.location.href = 'index.html'; // index.html ekata redirect karanawa
-                    }, 3000); // Thathpara 3kin
+                    }, 3000); 
                     
                 }, 'image/jpeg', 0.9); 
 
