@@ -3,7 +3,7 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Shop All Products - මුදලාලි මාමා</title>
+    <title>Shop - මුදලාලි මාමා</title>
     
     <script src="https://cdn.tailwindcss.com"></script>
     
@@ -42,6 +42,7 @@
         body {
             @apply font-sans text-gray-800;
         }
+        /* All common styles from other pages (drawers, pop, etc) */
         .dropdown-menu { @apply hidden; }
         .group:hover .dropdown-menu { @apply block; }
         .drawer-overlay { @apply fixed inset-0 bg-black bg-opacity-50 z-50 transition-opacity opacity-0 pointer-events-none; }
@@ -56,23 +57,11 @@
         .menu-tab-btn.active { @apply border-mudalali-green text-mudalali-green; }
         @keyframes pop { 0% { transform: scale(1); } 50% { transform: scale(1.3); } 100% { transform: scale(1); } }
         .pop { animation: pop 0.2s ease-out; }
-        .line-clamp-2 { display: -webkit-box; -webkit-line-clamp: 2; -webkit-box-orient: vertical; overflow: hidden; }
-        .like-button.liked { @apply text-mudalali-red; }
-        
-        .price-slider-container { @apply relative w-full h-8 flex items-center; }
-        .price-slider-track { @apply absolute w-full h-1 bg-gray-200 rounded-full; }
-        .price-slider-range { @apply absolute h-1 bg-mudalali-green rounded-full; }
-        .price-slider-container input[type=range] {
-            @apply absolute w-full -top-1 h-1 bg-transparent pointer-events-none;
-            -webkit-appearance: none;
-        }
-        .price-slider-container input[type=range]::-webkit-slider-thumb {
-            @apply h-5 w-5 bg-mudalali-green rounded-full border-2 border-white shadow-md cursor-pointer pointer-events-auto;
-            -webkit-appearance: none;
-            margin-top: -8px; 
-        }
-        .price-slider-container input[type=range]::-moz-range-thumb {
-            @apply h-5 w-5 bg-mudalali-green rounded-full border-2 border-white shadow-md cursor-pointer pointer-events-auto;
+        .line-clamp-2 {
+            display: -webkit-box;
+            -webkit-line-clamp: 2;
+            -webkit-box-orient: vertical;  
+            overflow: hidden;
         }
     </style>
 </head>
@@ -82,9 +71,10 @@
     
     <header class="bg-white shadow-md sticky top-0 z-40 hidden md:block">
         <div class="container mx-auto px-4 py-3 flex justify-between items-center">
-            <a href="/" id="logo-link" class="text-3xl font-bold text-mudalali-green-dark">
-                <img id="logo-img" src="https://i.ibb.co/1tCywvyP/logo.png" class="h-10" alt="Mudalali Mama Logo">
+             <a href="/" id="logo-link" class="text-3xl font-bold text-mudalali-green-dark">
+              <img id="logo-img" src="https://i.ibb.co/1tCywvyP/logo.png" class="h-10" alt="Mudalali Mama Logo">
             </a>
+
             <div class="flex-grow max-w-xl mx-4">
                 <form class="flex">
                     <input type="text" placeholder="Search for anything..." class="w-full px-4 py-2 border border-mm-gray-DEFAULT rounded-l-md focus:outline-none focus:ring-2 focus:ring-mudalali-green">
@@ -93,6 +83,7 @@
                     </button>
                 </form>
             </div>
+
             <div class="flex items-center space-x-6">
                 <div class="text-right">
                     <div class="text-sm font-semibold">Support Hotline</div>
@@ -121,9 +112,13 @@
             <div id="desktop-nav-links-container" class="flex space-x-6">
                 <div class="relative group">
                     <a href="#" class="flex items-center bg-mudalali-green text-white px-4 py-2.5 rounded-t-md font-bold">
-                        <i class="fa fa-bars mr-2"></i> Categories <i class="fa fa-chevron-down text-xs ml-2"></i>
+                        <i class="fa fa-bars mr-2"></i>
+                        Categories
+                        <i class="fa fa-chevron-down text-xs ml-2"></i>
                     </a>
-                    <div class="dropdown-menu absolute left-0 top-full w-56 bg-white shadow-lg rounded-b-md z-40"></div>
+                    
+                    <div class="dropdown-menu absolute left-0 top-full w-56 bg-white shadow-lg rounded-b-md z-40">
+                    </div>
                 </div>
             </div>
             <a href="#" class="bg-mudalali-green-dark text-white px-4 py-2 rounded-md text-sm font-semibold hover:bg-mudalali-green">
@@ -144,159 +139,230 @@
         </a>
     </header>
 
-    <main class="container mx-auto px-4 py-8">
-        <h1 class="text-3xl font-bold text-gray-800 mb-6">Shop All Products</h1>
-
-        <div class="md:hidden mb-4">
-            <button id="mobile-filter-btn" class="w-full bg-white shadow p-3 rounded-lg font-semibold text-gray-700 flex justify-between items-center">
-                <span>Show Filters</span>
-                <i class="fa fa-sliders-h"></i>
-            </button>
+    <main class="container mx-auto p-4 md:p-8" style="min-height: calc(100vh - 200px);">
+        <div class="mb-4 text-sm text-gray-500">
+            <a href="index.html" class="hover:text-mudalali-green">Home</a> &gt; 
+            <span id="breadcrumb-category">Shop</span>
         </div>
-
-        <div class="flex flex-col md:flex-row md:gap-8">
-            
-            <aside class="w-full md:w-1/4 lg:w-1/5 md:sticky md:top-24 md:self-start hidden md:block">
-                <div id="pc-filters-container" class="bg-white rounded-lg shadow-md p-6 space-y-6">
-                    <div>
-                        <label for="sort-by" class="block text-sm font-medium text-gray-700 mb-1">Sort by</label>
-                        <select id="sort-by" class="w-full rounded-md border-gray-300 shadow-sm focus:border-mudalali-green focus:ring-mudalali-green">
-                            <option value="price-asc">Price: Low to High</option>
-                            <option value="price-desc">Price: High to Low</option>
-                        </select>
-                    </div>
-                    
-                    <div>
-                        <label for="category-filter" class="block text-sm font-medium text-gray-700 mb-1">Category</label>
-                        <select id="category-filter" class="w-full rounded-md border-gray-300 shadow-sm focus:border-mudalali-green focus:ring-mudalali-green">
-                            <option value="all">All Categories</option>
-                            </select>
-                    </div>
+        <h1 id="shop-title" class="text-3xl font-bold text-gray-800 mb-6">Shop</h1>
         
-                    <div>
-                        <label class="block text-sm font-medium text-gray-700 mb-1">Price Range</label>
-                        <div class="price-slider-container">
-                            <div class="price-slider-track"></div>
-                            <div id="pc-price-slider-range" class="price-slider-range"></div>
-                            <input type="range" id="pc-price-slider-min" min="0" max="50000" value="0" class="slider-min">
-                            <input type="range" id="pc-price-slider-max" min="0" max="50000" value="50000" class="slider-max">
-                        </div>
-                        <div class="flex justify-between text-xs text-gray-600 mt-2">
-                            <span id="pc-price-min-val">Rs. 0</span>
-                            <span id="pc-price-max-val">Rs. 50,000</span>
-                        </div>
-                    </div>
-                </div>
-            </aside>
-
-            <div class="flex-1">
-                <div id="shop-product-grid" class="grid grid-cols-2 md:grid-cols-2 lg:grid-cols-3 gap-4 md:gap-6">
-                    <div id="shop-loader" class="col-span-full text-center py-10 text-gray-500">
-                        <svg class="animate-spin h-8 w-8 text-mudalali-green mx-auto" xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24">
-                            <circle class="opacity-25" cx="12" cy="12" r="10" stroke="currentColor" stroke-width="4"></circle>
-                            <path class="opacity-75" fill="currentColor" d="M4 12a8 8 0 018-8V0C5.373 0 0 5.373 0 12h4zm2 5.291A7.962 7.962 0 014 12H0c0 3.042 1.135 5.824 3 7.938l3-2.647z"></path>
-                        </svg>
-                        <p class="mt-2 font-semibold">Loading products...</p>
-                    </div>
-                    </div>
-        
-                <div class="text-center mt-8">
-                    <button id="load-more-btn" class="bg-mudalali-green text-white px-8 py-3 rounded-lg font-bold hover:bg-mudalali-green-dark transition-colors hidden">
-                        Load More Products
-                    </button>
-                </div>
+        <div id="product-grid" class="grid grid-cols-2 sm:grid-cols-3 md:grid-cols-4 lg:grid-cols-5 gap-4 md:gap-6">
+            <div id="shop-loader" class="col-span-full text-center py-10">
+                <svg class="animate-spin h-8 w-8 text-mudalali-green mx-auto" xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24">
+                    <circle class="opacity-25" cx="12" cy="12" r="10" stroke="currentColor" stroke-width="4"></circle>
+                    <path class="opacity-75" fill="currentColor" d="M4 12a8 8 0 018-8V0C5.373 0 0 5.373 0 12h4zm2 5.291A7.962 7.962 0 014 12H0c0 3.042 1.135 5.824 3 7.938l3-2.647z"></path>
+                </svg>
+                <p class="mt-2 text-gray-500 font-semibold">Loading Products...</p>
             </div>
-
-        </div>
+            
+            </div>
     </main>
+
     <footer class="bg-gray-800 text-gray-300 pt-16 pb-8 hidden md:block">
         <div id="footer-container" class="container mx-auto px-4">
+            
             <div class="bg-gray-700 p-8 rounded-lg -mt-28 mb-16 relative z-10 shadow-xl flex items-center justify-between">
-                <div><h3 class="text-2xl font-bold text-white mb-2">SUBSCRIBE TO US</h3><p class="text-gray-300">Get the first look at exclusive offers, promotions, and more.</p></div>
-                <form class="flex w-full max-w-md"><input type="email" placeholder="Email Address" class="w-full px-4 py-3 rounded-l-md text-gray-800 focus:outline-none focus:ring-2 focus:ring-mudalali-green"><button type="submit" class="bg-mudalali-green text-white px-6 py-3 rounded-r-md font-bold hover:bg-mudalali-green-dark">SUBSCRIBE</button></form>
+                <div>
+                    <h3 class="text-2xl font-bold text-white mb-2">SUBSCRIBE TO US</h3>
+                    <p class="text-gray-300">Get the first look at exclusive offers, promotions, and more.</p>
+                </div>
+                <form class="flex w-full max-w-md">
+                    <input type="email" placeholder="Email Address" class="w-full px-4 py-3 rounded-l-md text-gray-800 focus:outline-none focus:ring-2 focus:ring-mudalali-green">
+                    <button type="submit" class="bg-mudalali-green text-white px-6 py-3 rounded-r-md font-bold hover:bg-mudalali-green-dark">
+                        SUBSCRIBE
+                    </button>
+                </form>
             </div>
+
             <div class="grid grid-cols-2 md:grid-cols-5 gap-8 mb-8">
-                <div><h4 class="font-bold text-white mb-4">මුදලාලි මාමා</h4><ul id="footer-col-tsmgroup" class="space-y-2"><li>Loading...</li></ul></div>
-                <div><h4 class="font-bold text-white mb-4">INFO</h4><ul id="footer-col-info" class="space-y-2"><li>Loading...</li></ul></div>
-                <div><h4 class="font-bold text-white mb-4">QUICK LINKS</h4><ul id="footer-col-quicklinks" class="space-y-2"><li>Loading...</li></ul></div>
-                <div class="col-span-2 md:col-span-1"><h4 class="font-bold text-white mb-4">COLOMBO HEAD OFFICE</h4><address id="footer-address" class="not-italic">Loading...</address><p class="mt-2">Email: <a id="footer-email" href="#" class="hover:text-white">...</a></p><p>Hotline: <a id="footer-hotline" href="#" class="hover:text-white">...</a></p></div>
-                <div class="col-span-2 md:col-span-1"><h4 class="font-bold text-white mb-4">KEEP IN TOUCH</h4><div id="footer-socials" class="flex space-x-4 mb-4"></div><h4 class="font-bold text-white mb-4 mt-6">PAYMENTS</h4><div class="flex space-x-2"><img src="https://i.ibb.co/fDYrL3g/visa.png" alt="Visa" class="h-6"><img src="https://i.ibb.co/7rmXz4F/mastercard.png" alt="Mastercard" class="h-6"><img src="https://i.ibb.co/C0W2LFr/amex.png" alt="Amex" class="h-6"></div></div>
+                <div>
+                    <h4 class="font-bold text-white mb-4">මුදලාලි මාමා</h4>
+                    <ul id="footer-col-tsmgroup" class="space-y-2"><li>Loading...</li></ul>
+                </div>
+                <div>
+                    <h4 class="font-bold text-white mb-4">INFO</h4>
+                    <ul id="footer-col-info" class="space-y-2"><li>Loading...</li></ul>
+                </div>
+                <div>
+                    <h4 class="font-bold text-white mb-4">QUICK LINKS</h4>
+                    <ul id="footer-col-quicklinks" class="space-y-2"><li>Loading...</li></ul>
+                </div>
+                <div class="col-span-2 md:col-span-1">
+                    <h4 class="font-bold text-white mb-4">COLOMBO HEAD OFFICE</h4>
+                    <address id="footer-address" class="not-italic">Loading...</address>
+                    <p class="mt-2">Email: <a id="footer-email" href="#" class="hover:text-white">...</a></p>
+                    <p>Hotline: <a id="footer-hotline" href="#" class="hover:text-white">...</a></p>
+                </div>
+                <div class="col-span-2 md:col-span-1">
+                    <h4 class="font-bold text-white mb-4">KEEP IN TOUCH</h4>
+                    <div id="footer-socials" class="flex space-x-4 mb-4">
+                    </div>
+                    <h4 class="font-bold text-white mb-4 mt-6">PAYMENTS</h4>
+                    <div class="flex space-x-2">
+                        <img src="https://i.ibb.co/fDYrL3g/visa.png" alt="Visa" class="h-6">
+                        <img src="https://i.ibb.co/7rmXz4F/mastercard.png" alt="Mastercard" class="h-6">
+                        <img src="https://i.ibb.co/C0W2LFr/amex.png" alt="Amex" class="h-6">
+                    </div>
+                </div>
             </div>
-            <div class="border-t border-gray-700 pt-6 text-sm text-center md:flex justify-between"><p>&copy; 2025 Mudalali Mama. All Rights reserved.</p><div class="space-x-4 mt-4 md:mt-0"><a href="#" class="hover:text-white">TERMS & CONDITIONS</a><span>|</span><a href="#" class="hover:text-white">PRIVACY POLICY</a></div></div>
+
+            <div class="border-t border-gray-700 pt-6 text-sm text-center md:flex justify-between">
+                <p>&copy; 2025 Mudalali Mama. All Rights reserved.</p>
+                <div class="space-x-4 mt-4 md:mt-0">
+                    <a href="#" class="hover:text-white">TERMS & CONDITIONS</a>
+                    <span>|</span>
+                    <a href="#" class="hover:text-white">PRIVACY POLICY</a>
+                </div>
+            </div>
         </div>
     </footer>
 
     <nav class="fixed bottom-0 left-0 right-0 h-16 bg-white border-t border-gray-200 shadow-lg flex justify-around items-center z-40 md:hidden">
-        <a href="index.html" class="mobile-nav-link active flex-1 flex flex-col items-center justify-center text-gray-600 hover:text-mudalali-green text-xs"><i class="fa fa-store text-xl"></i><span class="mt-1">Shop</span></a>
-        <a href="stories.html" class="mobile-nav-link flex-1 flex flex-col items-center justify-center text-gray-600 hover:text-mudalali-green text-xs"><i class="fa fa-book-open text-xl"></i><span class="mt-1">Stories</span></a>
-        <a href="wishlist.html" class="mobile-nav-link flex-1 flex flex-col items-center justify-center text-gray-600 hover:text-mudalali-green text-xs relative"><div class="relative"><i class="fa fa-heart text-xl"></i><span id="mobile-wishlist-badge" class="absolute -top-1 -right-2.5 bg-mudalali-red text-white text-xs font-semibold rounded-full h-4 w-4 flex items-center justify-center">0</span></div><span class="mt-1">Wishlist</span></a>
-        <button id="mobile-cart-btn" class="mobile-nav-link flex-1 flex flex-col items-center justify-center text-gray-600 hover:text-mudalali-green text-xs relative"><div class="relative"><i class="fa fa-shopping-bag text-xl"></i><span id="mobile-cart-badge" class="absolute -top-1 -right-2.5 bg-mudalali-red text-white text-xs font-semibold rounded-full h-4 w-4 flex items-center justify-center">0</span></div><span class="mt-1">Cart</span></button>
-        <a href="account.html" id="mobile-account-btn-nav" class="mobile-nav-link flex-1 flex flex-col items-center justify-center text-gray-600 hover:text-mudalali-green text-xs"><i class="fa fa-user text-xl"></i><span class="mt-1">My account</span></a>
+        <a href="index.html" class="mobile-nav-link flex-1 flex flex-col items-center justify-center text-gray-600 hover:text-mudalali-green text-xs">
+            <i class="fa fa-store text-xl"></i>
+            <span class="mt-1">Shop</span>
+        </a>
+        <a href="stories.html" class="mobile-nav-link flex-1 flex flex-col items-center justify-center text-gray-600 hover:text-mudalali-green text-xs">
+            <i class="fa fa-book-open text-xl"></i>
+            <span class="mt-1">Stories</span>
+        </a>
+        <a href="wishlist.html" class="mobile-nav-link flex-1 flex flex-col items-center justify-center text-gray-600 hover:text-mudalali-green text-xs relative">
+            <div class="relative">
+                <i class="fa fa-heart text-xl"></i>
+                <span id="mobile-wishlist-badge" class="absolute -top-1 -right-2.5 bg-mudalali-red text-white text-xs font-semibold rounded-full h-4 w-4 flex items-center justify-center">0</span>
+            </div>
+            <span class="mt-1">Wishlist</span>
+        </a>
+        <button id="mobile-cart-btn" class="mobile-nav-link flex-1 flex flex-col items-center justify-center text-gray-600 hover:text-mudalali-green text-xs relative">
+            <div class="relative">
+                <i class="fa fa-shopping-bag text-xl"></i>
+                <span id="mobile-cart-badge" class="absolute -top-1 -right-2.5 bg-mudalali-red text-white text-xs font-semibold rounded-full h-4 w-4 flex items-center justify-center">0</span>
+            </div>
+            <span class="mt-1">Cart</span>
+        </button>
+        <a href="account.html" id="mobile-account-btn" class="mobile-nav-link flex-1 flex flex-col items-center justify-center text-gray-600 hover:text-mudalali-green text-xs">
+            <i class="fa fa-user text-xl"></i>
+            <span class="mt-1">My account</span>
+        </a>
     </nav>
 
     <div id="account-drawer-modal" class="drawer drawer-modal fixed inset-0 z-50 hidden">
         <div id="account-drawer-bg" class="drawer-bg fixed inset-0 bg-black bg-opacity-50 opacity-0 transition-opacity"></div>
         <div id="account-drawer" class="drawer-content fixed top-0 right-0 h-full bg-white shadow-xl w-full max-w-md flex flex-col">
-            <div id="account-drawer-logged-in" class="hidden flex flex-col h-full"><div class="p-4 flex justify-between items-center border-b flex-shrink-0"><h2 class="text-xl font-semibold text-gray-800">My Account</h2><button id="close-account-drawer-btn-logged-in" class="text-gray-500 hover:text-gray-800 text-sm flex items-center gap-1"><i class="fas fa-times"></i> Close</button></div><div class="flex-grow p-6 overflow-y-auto"><p class="text-gray-600 mb-2">Welcome back,</p><h3 id="account-drawer-user-email" class="text-lg font-semibold text-gray-800 mb-6 break-words"></h3><a href="account.html" class="w-full text-center bg-mudalali-green text-white p-3 rounded-lg hover:bg-mudalali-green-dark font-bold text-base">Go to My Account</a><button id="drawer-logout-btn" class="w-full text-center bg-gray-100 text-gray-700 p-3 rounded-lg hover:bg-gray-200 font-bold text-base mt-4">Logout</button></div></div>
-            <div id="account-drawer-logged-out" class="hidden flex flex-col h-full"><div class="p-4 border-b"><div class="flex justify-between items-center"><h2 class="text-xl font-bold text-gray-700">Welcome!</h2><button id="close-account-drawer-btn-logged-out" class="text-gray-500 hover:text-gray-800 text-sm flex items-center gap-1"><i class="fas fa-times"></i> Close</button></div></div><div class="p-2 bg-gray-100 flex gap-2"><button id="drawer-login-tab-btn" class="tab-button active flex-1 bg-white p-2 rounded-md font-semibold border-b-2">Login</button><button id="drawer-signup-tab-btn" class="tab-button flex-1 bg-white p-2 rounded-md font-semibold text-gray-500 border-b-2 border-transparent">Sign Up</button></div><div class="p-6" style="max-height: 70vh; overflow-y: auto;"><form id="drawer-login-form" class="space-y-4"><input type="email" id="drawer-login-email" placeholder="Email" required class="w-full p-3 border rounded-md focus:ring-mudalali-green focus:border-mudalali-green"><input type="password" id="drawer-login-password" placeholder="Password" required class="w-full p-3 border rounded-md focus:ring-mudalali-green focus:border-mudalali-green"><button type="submit" class="w-full bg-mudalali-green text-white p-3 rounded-md hover:bg-mudalali-green-dark font-bold">Login</button><p id="drawer-login-error" class="text-red-500 text-sm text-center"></p></form><form id="drawer-signup-form" class="space-y-4 hidden"><div class="flex items-center"><input id="drawer-signup-is-seller" type="checkbox" class="h-4 w-4 text-mudalali-green focus:ring-mudalali-green border-gray-300 rounded"><label for="drawer-signup-is-seller" class="ml-2 block text-sm text-gray-900">I want to register as a Seller</label></div><input type="text" id="drawer-signup-name" placeholder="Full Name or Store Name" required class="w-full p-3 border rounded-md focus:ring-mudalali-green focus:border-mudalali-green"><input type="email" id="drawer-signup-email" placeholder="Email" required class="w-full p-3 border rounded-md focus:ring-mudalali-green focus:border-mudalali-green"><input type="password" id="drawer-signup-password" placeholder="Password" required class="w-full p-3 border rounded-md focus:ring-mudalali-green focus:border-mudalali-green"><button type="submit" class="w-full bg-mudalali-green text-white p-3 rounded-md hover:bg-mudalali-green-dark font-bold">Create Account</button><p id="drawer-signup-error" class="text-red-500 text-sm text-center"></p></form></div></div>
+            
+            <div id="account-drawer-logged-in" class="hidden flex flex-col h-full">
+                <div class="p-4 flex justify-between items-center border-b flex-shrink-0">
+                    <h2 class="text-xl font-semibold text-gray-800">My Account</h2>
+                    <button id="close-account-drawer-btn-logged-in" class="text-gray-500 hover:text-gray-800 text-sm flex items-center gap-1"><i class="fas fa-times"></i> Close</button>
+                </div>
+                <div class="flex-grow p-6 overflow-y-auto">
+                    <p class="text-gray-600 mb-2">Welcome back,</p>
+                    <h3 id="account-drawer-user-email" class="text-lg font-semibold text-gray-800 mb-6 break-words"></h3>
+                    <a href="account.html" class="w-full text-center bg-mudalali-green text-white p-3 rounded-lg hover:bg-mudalali-green-dark font-bold text-base">Go to My Account</a>
+                    <button id="drawer-logout-btn" class="w-full text-center bg-gray-100 text-gray-700 p-3 rounded-lg hover:bg-gray-200 font-bold text-base mt-4">Logout</button>
+                </div>
+            </div>
+            
+            <div id="account-drawer-logged-out" class="hidden flex flex-col h-full">
+                <div class="p-4 border-b">
+                    <div class="flex justify-between items-center">
+                        <h2 class="text-xl font-bold text-gray-700">Welcome!</h2>
+                        <button id="close-account-drawer-btn-logged-out" class="text-gray-500 hover:text-gray-800 text-sm flex items-center gap-1"><i class="fas fa-times"></i> Close</button>
+                    </div>
+                </div>
+                <div class="p-2 bg-gray-100 flex gap-2">
+                    <button id="drawer-login-tab-btn" class="tab-button active flex-1 bg-white p-2 rounded-md font-semibold border-b-2">Login</button>
+                    <button id="drawer-signup-tab-btn" class="tab-button flex-1 bg-white p-2 rounded-md font-semibold text-gray-500 border-b-2 border-transparent">Sign Up</button>
+                </div>
+                <div class="p-6" style="max-height: 80vh; overflow-y: auto;">
+                    <form id="drawer-login-form" class="space-y-4">
+                        <input type="email" id="drawer-login-email" placeholder="Email" required class="w-full p-3 border rounded-md focus:ring-mudalali-green focus:border-mudalali-green">
+                        <input type="password" id="drawer-login-password" placeholder="Password" required class="w-full p-3 border rounded-md focus:ring-mudalali-green focus:border-mudalali-green">
+                        <button type="submit" class="w-full bg-mudalali-green text-white p-3 rounded-md hover:bg-mudalali-green-dark font-bold">Login</button>
+                        <p id="drawer-login-error" class="text-red-500 text-sm text-center"></p>
+                    </form>
+                    <form id="drawer-signup-form" class="space-y-4 hidden">
+                        <div class="flex items-center">
+                            <input id="drawer-signup-is-seller" type="checkbox" class="h-4 w-4 text-mudalali-green focus:ring-mudalali-green border-gray-300 rounded">
+                            <label for="drawer-signup-is-seller" class="ml-2 block text-sm text-gray-900">I want to register as a Seller</label>
+                        </div>
+                        <input type="text" id="drawer-signup-name" placeholder="Full Name or Store Name" required class="w-full p-3 border rounded-md focus:ring-mudalali-green focus:border-mudalali-green">
+                        <input type="email" id="drawer-signup-email" placeholder="Email" required class="w-full p-3 border rounded-md focus:ring-mudalali-green focus:border-mudalali-green">
+                        <input type="password" id="drawer-signup-password" placeholder="Password" required class="w-full p-3 border rounded-md focus:ring-mudalali-green focus:border-mudalali-green">
+                        <button type="submit" class="w-full bg-mudalali-green text-white p-3 rounded-md hover:bg-mudalali-green-dark font-bold">Create Account</button>
+                        <p id="drawer-signup-error" class="text-red-500 text-sm text-center"></p>
+                    </form>
+                </div>
+            </div>
         </div>
     </div>
+
+
     <div id="menu-drawer" class="drawer">
         <div class="drawer-overlay" id="menu-drawer-overlay"></div>
-        <div class="drawer-content left flex flex-col"><div class="flex justify-between items-center p-4 border-b"><h2 class="text-xl font-bold">MENU</h2><button id="menu-drawer-close" class="text-xl">&times;</button></div><div class="p-4 border-b"><form class="flex"><input type="text" placeholder="Search for products" class="w-full px-4 py-2 border border-r-0 border-gray-300 rounded-l-md focus:outline-none"><button type="submit" class="bg-gray-100 border border-gray-300 px-4 rounded-r-md text-gray-600"><i class="fa fa-search"></i></button></form></div><div class="flex border-b"><button id="menu-tab-menu" class="menu-tab-btn active flex-1 py-3 font-semibold border-b-2">MENU</button><button id="menu-tab-categories" class="menu-tab-btn flex-1 py-3 font-semibold text-gray-500 border-b-2 border-transparent">CATEGORIES</button></div><div id="menu-tab-menu-content" class="flex-col flex-grow overflow-y-auto"><a href="index.html" class="block p-4 border-b text-gray-700">HOME</a><a href="stories.html" class="block p-4 border-b text-gray-700">SELLER STORIES</a><a href="shop.html" class="block p-4 border-b font-semibold text-mudalali-green">SHOP</a><a href="#" class="block p-4 border-b text-gray-700">ABOUT US</a><a href="#" class="block p-4 border-b text-gray-700">CONTACT US</a><div class="p-4 bg-gray-100 font-bold text-gray-600">MY ACCOUNT</div><a href="wishlist.html" class="block p-4 border-b text-gray-700"><i class="fa fa-heart w-6 mr-1"></i> WISHLIST</a><a href="#" class="block p-4 border-b text-gray-700"><i class="fa fa-exchange-alt w-6 mr-1"></i> COMPARE</a><a href="account.html" id="drawer-my-account-btn" class="block w-full text-left p-4 border-b text-gray-700"><i class="fa fa-user w-6 mr-1"></i> MY ACCOUNT</a></div><div id="menu-tab-categories-content" class="hidden flex-col flex-grow overflow-y-auto"></div></div>
-    </div>
-    <div id="cart-drawer" class="drawer">
-        <div class="drawer-overlay" id="cart-drawer-overlay"></div>
-        <div class="drawer-content flex flex-col"><div class="flex justify-between items-center p-4 border-b"><h2 class="text-xl font-bold">Shopping cart</h2><button id="cart-drawer-close" class="text-xl">&times;</button></div><div id="cart-drawer-items-container" class="flex-grow p-6 overflow-y-auto text-center"><p class="text-gray-500">Your cart is empty.</p></div><div class="p-6 border-t bg-gray-50"><div class="flex justify-between items-center mb-2"><span class="text-lg font-medium text-gray-600">Subtotal:</span><span id="cart-drawer-total" class="text-xl font-bold text-mudalali-green-dark">Rs. 0.00</span></div><p class="text-sm text-center text-gray-500 mb-4">Shipping & taxes calculated at checkout.</p><div class="flex flex-col gap-3"><a href="cart.html" class="w-full text-center bg-white border-2 border-mudalali-green text-mudalali-green p-3 rounded-lg hover:bg-gray-50 font-bold text-base">VIEW CART</a><a href="checkout.html" class="w-full text-center bg-mudalali-green text-white p-3 rounded-lg hover:bg-mudalali-green-dark font-bold text-base">CHECKOUT</a></div></div></div>
-    </div>
-    
-    <div id="filter-drawer" class="drawer">
-        <div class="drawer-overlay" id="filter-drawer-overlay"></div>
-        <aside class="drawer-content left flex flex-col">
+        <div class="drawer-content left flex flex-col">
             <div class="flex justify-between items-center p-4 border-b">
-                <h2 class="text-xl font-bold">Filters</h2>
-                <button id="filter-drawer-close" class="text-xl">&times;</button>
+                <h2 class="text-xl font-bold">MENU</h2>
+                <button id="menu-drawer-close" class="text-xl">&times;</button>
             </div>
-            <div id="mobile-filter-content" class="p-6 space-y-6 overflow-y-auto flex-grow">
-                <div>
-                    <label for="mobile-sort-by" class="block text-sm font-medium text-gray-700 mb-1">Sort by</label>
-                    <select id="mobile-sort-by" class="w-full rounded-md border-gray-300 shadow-sm focus:border-mudalali-green focus:ring-mudalali-green">
-                        <option value="price-asc">Price: Low to High</option>
-                        <option value="price-desc">Price: High to Low</option>
-                    </select>
-                </div>
-                
-                <div>
-                    <label for="mobile-category-filter" class="block text-sm font-medium text-gray-700 mb-1">Category</label>
-                    <select id="mobile-category-filter" class="w-full rounded-md border-gray-300 shadow-sm focus:border-mudalali-green focus:ring-mudalali-green">
-                        <option value="all">All Categories</option>
-                        </select>
-                </div>
-    
-                <div>
-                    <label class="block text-sm font-medium text-gray-700 mb-1">Price Range</label>
-                    <div class="price-slider-container">
-                        <div class="price-slider-track"></div>
-                        <div id="mobile-price-slider-range" class="price-slider-range"></div>
-                        <input type="range" id="mobile-price-slider-min" min="0" max="50000" value="0" class="slider-min">
-                        <input type="range" id="mobile-price-slider-max" min="0" max="50000" value="50000" class="slider-max">
-                    </div>
-                    <div class="flex justify-between text-xs text-gray-600 mt-2">
-                        <span id="mobile-price-min-val">Rs. 0</span>
-                        <span id="mobile-price-max-val">Rs. 50,000</span>
-                    </div>
-                </div>
+            <div class="p-4 border-b">
+                <form class="flex">
+                    <input type="text" placeholder="Search for products" class="w-full px-4 py-2 border border-r-0 border-gray-300 rounded-l-md focus:outline-none">
+                    <button type="submit" class="bg-gray-100 border border-gray-300 px-4 rounded-r-md text-gray-600">
+                        <i class="fa fa-search"></i>
+                    </button>
+                </form>
             </div>
-            <div class="p-4 border-t bg-gray-50">
-                <button id="apply-filters-btn" class="w-full bg-mudalali-green text-white p-3 rounded-lg font-bold">
-                    Apply Filters
-                </button>
+            <div class="flex border-b">
+                <button id="menu-tab-menu" class="menu-tab-btn active flex-1 py-3 font-semibold border-b-2">MENU</button>
+                <button id="menu-tab-categories" class="menu-tab-btn flex-1 py-3 font-semibold text-gray-500 border-b-2 border-transparent">CATEGORIES</button>
             </div>
-        </aside>
+            <div id="menu-tab-menu-content" class="flex-col flex-grow overflow-y-auto">
+                <a href="index.html" class="block p-4 border-b text-gray-700">HOME</a>
+                <a href="stories.html" class="block p-4 border-b text-gray-700">SELLER STORIES</a>
+                <a href="shop.html" class="block p-4 border-b font-semibold text-mudalali-green">SHOP</a>
+                <a href="#" class="block p-4 border-b text-gray-700">ABOUT US</a>
+                <a href="#" class="block p-4 border-b text-gray-700">CONTACT US</a>
+                <div class="p-4 bg-gray-100 font-bold text-gray-600">MY ACCOUNT</div>
+                <a href="wishlist.html" class="block p-4 border-b text-gray-700"><i class="fa fa-heart w-6 mr-1"></i> WISHLIST</a>
+                <a href="#" class="block p-4 border-b text-gray-700"><i class="fa fa-exchange-alt w-6 mr-1"></i> COMPARE</a>
+                <a href="account.html" id="drawer-my-account-btn" class="block w-full text-left p-4 border-b text-gray-700"><i class="fa fa-user w-6 mr-1"></i> MY ACCOUNT</a>
+            </div>
+            <div id="menu-tab-categories-content" class="hidden flex-col flex-grow overflow-y-auto">
+            </div>
+        </div>
     </div>
 
+    <div id="cart-drawer" class="drawer">
+        <div class="drawer-overlay" id="cart-drawer-overlay"></div>
+        <div class="drawer-content flex flex-col">
+            <div class="flex justify-between items-center p-4 border-b">
+                <h2 class="text-xl font-bold">Shopping cart</h2>
+                <button id="cart-drawer-close" class="text-xl">&times;</button>
+            </div>
+            <div id="cart-drawer-items-container" class="flex-grow p-6 overflow-y-auto text-center">
+                <p class="text-gray-500">Your cart is empty.</p>
+            </div>
+            <div class="p-6 border-t bg-gray-50">
+                <div class="flex justify-between items-center mb-2">
+                    <span class="text-lg font-medium text-gray-600">Subtotal:</span>
+                    <span id="cart-drawer-total" class="text-xl font-bold text-mudalali-green-dark">Rs. 0.00</span>
+                </div>
+                <p class="text-sm text-center text-gray-500 mb-4">Shipping & taxes calculated at checkout.</p>
+                <div class="flex flex-col gap-3">
+                    <a href="cart.html" class="w-full text-center bg-white border-2 border-mudalali-green text-mudalali-green p-3 rounded-lg hover:bg-gray-50 font-bold text-base">
+                        VIEW CART
+                    </a>
+                    <a href="checkout.html" class="w-full text-center bg-mudalali-green text-white p-3 rounded-lg hover:bg-mudalali-green-dark font-bold text-base">
+                        CHECKOUT
+                    </a>
+                </div>
+            </div>
+        </div>
+    </div>
     
     <script type="module">
+        
         import { initializeApp } from "https://www.gstatic.com/firebasejs/11.6.1/firebase-app.js";
         import { 
             getAuth, 
@@ -316,16 +382,16 @@
             where,
             orderBy,
             limit,
-            startAfter,
             setDoc,
             addDoc,
             updateDoc, 
             deleteDoc, 
             increment, 
-            serverTimestamp 
+            serverTimestamp,
+            runTransaction,
+            setLogLevel
         } from "https://www.gstatic.com/firebasejs/11.6.1/firebase-firestore.js";
 
-        // --- Firebase Config ---
         const firebaseConfig = {
             apiKey: "AIzaSyDIbu2qT53iGPqMCx5UdU6XY8wvXkb3ZF4",
             authDomain: "mudalali-mama.firebaseapp.com",
@@ -336,7 +402,6 @@
             measurementId: "G-GC1CP1LRFD"
         };
 
-        // --- Firebase Init ---
         const app = initializeApp(firebaseConfig);
         const db = getFirestore(app);
         const auth = getAuth(app); 
@@ -345,69 +410,34 @@
         const publicDataPath = `/artifacts/${appId}/public/data`;
         const usersPath = `/users`; 
 
-        // --- Global State ---
         let currentUser = null;
         let currentUserData = null;
-        let userWishlist = new Set();
-        let wishlistUnsubscribe = null;
-        
-        // --- Shop Page State ---
-        let lastVisibleProduct = null;
-        const PRODUCTS_PER_PAGE = 12;
-        let isFetching = false; 
-        let loadProductsTimeout; // For debouncing
-
         const pageLoader = document.getElementById('page-loader');
 
-        // --- `DOMContentLoaded` ---
         document.addEventListener('DOMContentLoaded', () => {
             console.log("Mudalali Mama Shop Page Initialized");
             
             if (pageLoader) pageLoader.style.width = '30%';
+            
             localStorage.setItem('selectedCurrency', 'LKR');
 
-            // Load all common elements
             loadSiteConfig();
             loadDesktopNavCategories();
             loadFooter();
             setupMobileDrawers(); 
+            updateWishlistCountBadge();
             
-            // --- Shop Specific Listeners ---
-            loadShopFilters(); // <-- This loads categories
-            
-            // Setup PC Price Slider
-            setupPriceSlider(
-                '#pc-price-slider-min', 
-                '#pc-price-slider-max', 
-                '#pc-price-min-val', 
-                '#pc-price-max-val', 
-                '#pc-price-slider-range',
-                true // Auto-load on change for PC
-            );
-            // Setup Mobile Price Slider
-            setupPriceSlider(
-                '#mobile-price-slider-min', 
-                '#mobile-price-slider-max', 
-                '#mobile-price-min-val', 
-                '#mobile-price-max-val', 
-                '#mobile-price-slider-range',
-                false // No auto-load for mobile
-            );
-            
-            setupFilterDrawer();
-            attachShopListeners();
-            attachGridListeners(); 
-            loadProducts(true); // Initial product load
+            // Aluthin add karapu function eka call karanawa
+            loadShopProducts(); 
         });
 
-        // --- `onAuthStateChanged` ---
         onAuthStateChanged(auth, async (user) => {
             currentUser = user;
             const loggedInView = document.getElementById('account-drawer-logged-in');
             const loggedOutView = document.getElementById('account-drawer-logged-out');
             
             const desktopAccountBtn = document.getElementById('desktop-account-btn');
-            const mobileAccountBtn = document.getElementById('mobile-account-btn-nav');
+            const mobileAccountBtn = document.getElementById('mobile-account-btn');
             const drawerMyAccountBtn = document.getElementById('drawer-my-account-btn');
 
             if (user) {
@@ -424,16 +454,18 @@
                 document.getElementById('account-drawer-user-email').textContent = user.email;
                 attachCartDrawerListener(user.uid);
 
-                desktopAccountBtn.href = "customer-account.html";
-                drawerMyAccountBtn.href = "customer-account.html";
+                desktopAccountBtn.href = "#";
+                desktopAccountBtn.addEventListener('click', (e) => {
+                    e.preventDefault();
+                    document.getElementById('account-drawer-modal')?.classList.remove('hidden');
+                });
+                drawerMyAccountBtn.href = "#";
 
                 if (currentUserData && currentUserData.isSeller) {
                     mobileAccountBtn.href = 'seller-profile.html';
                 } else {
                     mobileAccountBtn.href = 'customer-account.html';
                 }
-                
-                updateUserWishlist(); // Start listening for wishlist changes
 
             } else {
                 currentUserData = null;
@@ -446,478 +478,129 @@
                 desktopAccountBtn.href = "account.html";
                 mobileAccountBtn.href = "account.html";
                 drawerMyAccountBtn.href = "account.html";
-                
-                // Clear wishlist
-                if (wishlistUnsubscribe) wishlistUnsubscribe();
-                userWishlist.clear();
-                updateWishlistCountBadge(0);
-                document.querySelectorAll('.like-button').forEach(btn => btn.classList.remove('liked'));
+                desktopAccountBtn.replaceWith(desktopAccountBtn.cloneNode(true)); 
+            }
+            
+            if (pageLoader) {
+                pageLoader.style.width = '100%';
+                setTimeout(() => { pageLoader.classList.add('hidden'); }, 500);
             }
         });
         
-        // --- Shop Page Main Functions ---
+        // ===================================
+        // ===== ALUTH SHOP PAGE FUNCTIONS =====
+        // ===================================
 
-        /**
-         * Loads categories into BOTH filter dropdowns.
-         * This function "auto loads" the categories as requested.
-         */
-        async function loadShopFilters() {
-            const pcSelect = document.getElementById('category-filter');
-            const mobileSelect = document.getElementById('mobile-category-filter');
-            
-            try {
-                const collRef = collection(db, publicDataPath, 'categories');
-                const q = query(collRef, orderBy("name", "asc"));
-                const querySnapshot = await getDocs(q);
-                
-                querySnapshot.forEach((doc) => {
-                    const category = doc.data();
-                    const option = document.createElement('option');
-                    option.value = category.name; 
-                    option.textContent = category.name;
-                    
-                    pcSelect.appendChild(option);
-                    mobileSelect.appendChild(option.cloneNode(true)); // Clone for mobile
-                });
-            } catch (e) {
-                console.error("Error loading categories: ", e);
-            }
-        }
-        
-        /**
-         * Reusable function to set up a price slider.
-         */
-        function setupPriceSlider(minSliderId, maxSliderId, minValId, maxValId, rangeId, triggerLoadOnRelease) {
-            const minSlider = document.querySelector(minSliderId);
-            const maxSlider = document.querySelector(maxSliderId);
-            const minValText = document.querySelector(minValId);
-            const maxValText = document.querySelector(maxValId);
-            const rangeFill = document.querySelector(rangeId);
-            
-            const minGap = 1000;
-
-            function updateSliderVisuals() {
-                let minVal = parseInt(minSlider.value);
-                let maxVal = parseInt(maxSlider.value);
-
-                if (maxVal - minVal < minGap) {
-                    if (this && this.id === minSlider.id) {
-                        minVal = maxVal - minGap;
-                        minSlider.value = minVal;
-                    } else {
-                        maxVal = minVal + minGap;
-                        maxSlider.value = maxVal;
-                    }
-                }
-                
-                minValText.textContent = `Rs. ${minVal.toLocaleString()}`;
-                maxValText.textContent = `Rs. ${maxVal.toLocaleString()}`;
-                
-                const minPercent = (minVal / minSlider.max) * 100;
-                const maxPercent = (maxVal / maxSlider.max) * 100;
-                rangeFill.style.left = `${minPercent}%`;
-                rangeFill.style.width = `${maxPercent - minPercent}%`;
-            }
-            
-            // Initial render
-            updateSliderVisuals();
-
-            // Update visuals on input (dragging)
-            minSlider.addEventListener('input', updateSliderVisuals);
-            maxSlider.addEventListener('input', updateSliderVisuals);
-
-            if (triggerLoadOnRelease) {
-                // Re-run query on change (mouse release)
-                minSlider.addEventListener('change', () => debouncedLoadProducts(true));
-                maxSlider.addEventListener('change', () => debouncedLoadProducts(true));
-            }
-        }
-        
-        /**
-         * Attaches listeners to PC filter/sort dropdowns.
-         */
-        function attachShopListeners() {
-            document.getElementById('category-filter').addEventListener('change', (e) => {
-                loadProducts(true); // New query, reset
-            });
-            document.getElementById('sort-by').addEventListener('change', (e) => {
-                loadProducts(true); // New query, reset
-            });
-            document.getElementById('load-more-btn').addEventListener('click', () => {
-                loadProducts(false); // Not a new query, just load more
-            });
-        }
-        
-        /**
-         * Sets up the mobile filter drawer buttons.
-         */
-        function setupFilterDrawer() {
-            const drawer = document.getElementById('filter-drawer');
-            const openBtn = document.getElementById('mobile-filter-btn');
-            const closeBtn = document.getElementById('filter-drawer-close');
-            const overlay = document.getElementById('filter-drawer-overlay');
-            const applyBtn = document.getElementById('apply-filters-btn');
-
-            openBtn.addEventListener('click', () => drawer.classList.add('open'));
-            closeBtn.addEventListener('click', () => drawer.classList.remove('open'));
-            overlay.addEventListener('click', () => drawer.classList.remove('open'));
-
-            applyBtn.addEventListener('click', () => {
-                // 1. Read all mobile filter values
-                const mobileSort = document.getElementById('mobile-sort-by').value;
-                const mobileCategory = document.getElementById('mobile-category-filter').value;
-                const mobileMinPrice = document.getElementById('mobile-price-slider-min').value;
-                const mobileMaxPrice = document.getElementById('mobile-price-slider-max').value;
-                
-                // 2. Sync PC filters to match mobile
-                document.getElementById('sort-by').value = mobileSort;
-                document.getElementById('category-filter').value = mobileCategory;
-                document.getElementById('pc-price-slider-min').value = mobileMinPrice;
-                document.getElementById('pc-price-slider-max').value = mobileMaxPrice;
-                
-                // 3. Manually update PC slider visuals
-                setupPriceSlider(
-                    '#pc-price-slider-min', 
-                    '#pc-price-slider-max', 
-                    '#pc-price-min-val', 
-                    '#pc-price-max-val', 
-                    '#pc-price-slider-range',
-                    true
-                );
-                
-                // 4. Trigger product load
-                loadProducts(true);
-                
-                // 5. Close drawer
-                drawer.classList.remove('open');
-            });
-        }
-        
-        /**
-         * Debounces the product load function to avoid spamming Firestore.
-         */
-        function debouncedLoadProducts(isNewQuery) {
-            clearTimeout(loadProductsTimeout);
-            loadProductsTimeout = setTimeout(() => {
-                loadProducts(isNewQuery);
-            }, 300); // 300ms delay
-        }
-
-        /**
-         * Attaches delegated event listeners to the product grid.
-         */
-        function attachGridListeners() {
-            const grid = document.getElementById('shop-product-grid');
-            grid.addEventListener('click', (e) => {
-                const cartBtn = e.target.closest('.add-to-cart-btn');
-                if (cartBtn) {
-                    e.preventDefault();
-                    e.stopPropagation();
-                    const productData = JSON.parse(cartBtn.dataset.product);
-                    addToCart(productData, 1);
-                    return;
-                }
-                
-                const wishlistBtn = e.target.closest('.like-button');
-                if (wishlistBtn) {
-                    e.preventDefault();
-                    e.stopPropagation();
-                    const productId = wishlistBtn.dataset.productId;
-                    const productData = JSON.parse(wishlistBtn.dataset.product);
-                    toggleWishlistGrid(productId, productData, wishlistBtn);
-                    return;
-                }
-            });
-        }
-
-        /**
-         * Fetches and displays products based on current filters and pagination.
-         */
-        async function loadProducts(isNewQuery) {
-            if (isFetching) return;
-            isFetching = true;
-            
-            const grid = document.getElementById('shop-product-grid');
+        async function loadShopProducts() {
+            const gridEl = document.getElementById('product-grid');
             const loader = document.getElementById('shop-loader');
-            const loadMoreBtn = document.getElementById('load-more-btn');
-            
-            if (isNewQuery) {
-                grid.innerHTML = '';
-                lastVisibleProduct = null;
-                loader.classList.remove('hidden');
-                grid.appendChild(loader);
+            const titleEl = document.getElementById('shop-title');
+            const breadcrumbEl = document.getElementById('breadcrumb-category');
+
+            const urlParams = new URLSearchParams(window.location.search);
+            const categoryName = urlParams.get('category') ? decodeURIComponent(urlParams.get('category')) : null;
+
+            if (categoryName) {
+                titleEl.textContent = categoryName;
+                breadcrumbEl.textContent = categoryName;
+            } else {
+                titleEl.textContent = "All Products";
+                breadcrumbEl.textContent = "Shop";
             }
-            
-            loadMoreBtn.classList.add('hidden');
-            loadMoreBtn.disabled = true;
+
+            gridEl.innerHTML = ''; // Clear grid
+            loader.classList.remove('hidden');
 
             try {
-                // 1. Get current filter values from PC controls
-                const currentCategory = document.getElementById('category-filter').value;
-                const currentSort = document.getElementById('sort-by').value;
-                const currentMinPrice = parseInt(document.getElementById('pc-price-slider-min').value);
-                const currentMaxPrice = parseInt(document.getElementById('pc-price-slider-max').value);
-                
-                // 2. Build Query
-                let q = collection(db, publicDataPath, 'products');
-                
-                // 3. Add Filters
-                let conditions = [
-                    where("isApproved", "==", true),
-                    where("price", ">=", currentMinPrice),
-                    where("price", "<=", currentMaxPrice)
-                ];
-                
-                // ** This is the fix for your "categories" field **
-                if (currentCategory !== 'all') {
-                    // This assumes "categories" is an ARRAY in Firestore
-                    // If your seller-profile saves it as a single string "category", 
-                    // you must change that save function first.
-                    conditions.push(where("categories", "array-contains", currentCategory));
+                const productsRef = collection(db, publicDataPath, 'products');
+                let q;
+
+                if (categoryName) {
+                    // Category name eken filter karanawa
+                    // Oyage anith file wala "categories" kiyana field eka string ekak widiyata use karala thibba
+                    q = query(productsRef, where("categories", "==", categoryName), limit(40));
+                } else {
+                    // Filter ekak nathnam, aluthma ewa pennanawa
+                    q = query(productsRef, orderBy("createdAt", "desc"), limit(40));
                 }
                 
-                // 4. Add Sorting
-                const sortDirection = (currentSort === 'price-asc') ? 'asc' : 'desc';
+                const querySnapshot = await getDocs(q); 
                 
-                // 5. Construct the query
-                q = query(q, ...conditions, orderBy("price", sortDirection), limit(PRODUCTS_PER_PAGE));
-                
-                // 6. Add Pagination
-                if (!isNewQuery && lastVisibleProduct) {
-                    q = query(q, startAfter(lastVisibleProduct));
-                }
-                
-                // 7. Execute Query
-                const snapshot = await getDocs(q);
-                
-                // 8. Hide loader
                 loader.classList.add('hidden');
                 
-                if (snapshot.empty && isNewQuery) {
-                    grid.innerHTML = '<p class="col-span-full text-center py-10 text-gray-500">No products found matching your criteria.</p>';
-                    isFetching = false;
+                if (querySnapshot.empty) {
+                    gridEl.innerHTML = '<p class="col-span-full text-center text-gray-500">No products found in this category.</p>';
                     return;
                 }
-                
-                // 9. Render Products
-                snapshot.forEach(doc => {
+
+                querySnapshot.forEach((doc) => {
                     const product = doc.data();
                     const productId = doc.id;
-                    const productHtml = createProductCardHtml(product, productId);
-                    grid.insertAdjacentHTML('beforeend', productHtml);
+                    renderProductCard(product, productId, gridEl);
                 });
-                
-                // 10. Update Pagination State
-                if (snapshot.size > 0) {
-                    lastVisibleProduct = snapshot.docs[snapshot.docs.length - 1];
-                }
-                
-                // 11. Show/Hide "Load More" button
-                if (snapshot.size === PRODUCTS_PER_PAGE) {
-                    loadMoreBtn.classList.remove('hidden');
-                    loadMoreBtn.disabled = false;
-                } else {
-                    loadMoreBtn.classList.add('hidden');
-                }
 
-            } catch (e) {
-                console.error("Error loading products: ", e);
+            } catch (error) {
+                console.error("Error loading products: ", error);
                 loader.classList.add('hidden');
-                
-                // ** This is the Index Error! **
-                if (e.code === 'failed-precondition') {
-                     grid.innerHTML = `<p class="col-span-full text-center py-10 text-red-500 font-semibold">
-                        FILTER ERROR: A database index is required.<br>
-                        Please go to your Firestore settings and create this index.<br>
-                        <span class="text-sm text-gray-700 font-normal">
-                           Collection: <b>products</b><br>
-                           Fields: <b>isApproved (Asc)</b>, <b>categories (Array)</b>, <b>price (Asc)</b>
-                        </span>
-                        <br>
-                        <span class="text-sm text-gray-700 font-normal">
-                           And another index: <b>isApproved (Asc)</b>, <b>categories (Array)</b>, <b>price (Desc)</b>
-                        </span>
-                     </p>`;
+                if (error.code === 'failed-precondition') {
+                        gridEl.innerHTML = `<p class="col-span-full text-center text-red-500"><b>Firebase Error:</b> A database index is required for this query. 
+                        <br>Please create an index on the 'products' collection for the 'categories' field (ascending).</p>`;
                 } else {
-                    grid.innerHTML = `<p class="col-span-full text-center py-10 text-red-500">Error loading products. ${e.message}</p>`;
+                        gridEl.innerHTML = '<p class="col-span-full text-center text-red-500">Error loading products.</p>';
                 }
-            } finally {
-                isFetching = false;
             }
         }
-        
-        /**
-         * Creates the HTML string for a single product card.
-         */
-        function createProductCardHtml(product, productId) {
+
+        function renderProductCard(product, productId, container) {
             let badgeHtml = product.saleTag 
                 ? `<div class="absolute top-4 left-4 z-10 rounded-full bg-red-600 px-3 py-1 text-xs font-bold text-white">${product.saleTag}</div>`
                 : `<div class="absolute top-4 left-4 z-10 rounded-full bg-mudalali-green px-3 py-1 text-xs font-bold text-white">NEW</div>`;
             
             let priceHtml = formatPrice(product); 
             const imageUrl = product.imageUrl || 'https://placehold.co/400x400';
+            const imageHtml = `
+                <img src="${imageUrl}" alt="${product.name}" class="absolute h-full w-full object-cover transition-opacity duration-500 ease-in-out opacity-100 group-hover:opacity-0" />
+                <img src="${imageUrl}" alt="${product.name} hover" class="absolute h-full w-full object-cover transition-opacity duration-500 ease-in-out opacity-0 group-hover:opacity-100" />
+            `;
             
-            const productDataForActions = { 
-                id: productId, 
-                name: product.name, 
-                price: product.price, 
-                priceUSDT: product.priceUSDT || null,
-                imageUrl: product.imageUrl,
-                addedAt: serverTimestamp() 
-            };
-            const productJson = JSON.stringify(productDataForActions).replace(/"/g, '&quot;');
+            const productEl = document.createElement('div');
+            productEl.className = "group relative overflow-hidden rounded-lg bg-white shadow-md transition-all duration-300 ease-in-out hover:shadow-xl w-[38vw] flex-shrink-0 md:w-auto scroll-snap-align-start";
             
-            const isLiked = userWishlist.has(productId);
-            
-            return `
-            <div class="group relative overflow-hidden rounded-lg bg-white shadow-md transition-all duration-300 ease-in-out hover:shadow-xl w-full">
+            productEl.innerHTML = `
                 <a href="product.html?id=${productId}" class="block product-link">
                     <div class="relative h-48 md:h-64 overflow-hidden">
-                        <img src="${imageUrl}" alt="${product.name}" class="absolute h-full w-full object-cover transition-transform duration-500 ease-in-out group-hover:scale-110" />
-                        ${badgeHtml}
-                        <div class="absolute top-4 right-4 z-10 flex flex-col gap-2 opacity-0 transition-all duration-300 ease-in-out md:group-hover:opacity-100">
-                            <a href="product.html?id=${productId}" class="flex h-10 w-10 items-center justify-center rounded-full bg-white shadow-md transition-all hover:bg-gray-100" title="Quick View">
-                                <svg xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" stroke-width="1.5" stroke="currentColor" class="h-5 w-5 text-gray-700"><path stroke-linecap="round" stroke-linejoin="round" d="m21 21-5.197-5.197m0 0A7.5 7.5 0 1 0 5.196 5.196a7.5 7.5 0 0 0 10.607 10.607Z" /></svg>
-                            </a>
-                        </div>
+                        ${imageHtml} ${badgeHtml}
                     </div>
                 </a>
                 <div class="p-4 text-center">
-                    <p class="text-sm text-gray-500 truncate hidden md:block">${(product.categories && product.categories.length > 0) ? product.categories[0] : 'Mudalali Mama'}</p>
+                    <p class="text-sm text-gray-500 truncate hidden md:block">${product.categories || 'Mudalali Mama'}</p>
                     <a href="product.html?id=${productId}" class="block product-link">
                         <h3 class="my-1 text-sm font-semibold text-gray-800 hover:text-mudalali-green md:text-lg line-clamp-2">${product.name}</h3>
                     </a>
                     ${priceHtml}
-                    
-                    <div class="pt-4 md:max-h-0 md:overflow-hidden md:opacity-0 md:transition-all md:duration-500 md:ease-in-out md:group-hover:max-h-screen md:group-hover:opacity-100">
-                        <button class="add-to-cart-btn w-full rounded-full bg-mudalali-green py-2.5 text-sm font-bold uppercase text-white transition-all duration-300 hover:bg-mudalali-green-dark" 
-                                data-product='${productJson}'>
+                    <div class="max-h-0 overflow-hidden transition-all duration-500 ease-in-out group-hover:max-h-screen">
+                        <button class="add-to-cart-btn mt-4 w-full rounded-full bg-mudalali-green py-2.5 text-sm font-bold uppercase text-white transition-all duration-300 hover:bg-mudalali-green-dark" data-product-id="${productId}">
                             Add to Cart
                         </button>
-                        <div class="mt-4 flex justify-center gap-4">
-                            <button class="like-button text-gray-400 transition-all hover:text-red-500 ${isLiked ? 'liked' : ''}" 
-                                    title="Add to Wishlist" 
-                                    data-product-id="${productId}"
-                                    data-product='${productJson}'>
-                                <svg xmlns="http://www.w3.org/2000/svg" fill="${isLiked ? 'currentColor' : 'none'}" viewBox="0 0 24 24" stroke-width="1.5" stroke="currentColor" class="h-6 w-6"><path stroke-linecap="round" stroke-linejoin="round" d="M21 8.25c0-2.485-2.099-4.5-4.688-4.5-1.935 0-3.597 1.126-4.312 2.733-.715-1.607-2.377-2.733-4.313-2.733C5.1 3.75 3 5.765 3 8.25c0 7.22 9 12 9 12s9-4.78 9-12Z" /></svg>
-                            </button>
-                        </div>
                     </div>
                 </div>
-            </div>
             `;
-        }
-        
-        /**
-         * Formats the price (copied from index.html)
-         */
-        function formatPrice(product) {
-            const currency = 'LKR'; 
-            let prices = {
-                price: `Rs. ${parseFloat(product.price).toFixed(2)}`,
-                originalPrice: (product.originalPrice && product.originalPrice > product.price) ? `Rs. ${parseFloat(product.originalPrice).toFixed(2)}` : null,
-                priceClass: 'text-mudalali-green-dark'
+            
+            const productDataForCart = { 
+                id: productId, 
+                name: product.name, 
+                price: product.price, 
+                priceUSDT: product.priceUSDT || null,
+                imageUrl: product.imageUrl 
             };
-
-            if (prices.originalPrice) {
-                prices.priceClass = 'text-red-600';
-            }
             
-            const priceHtml = `
-                <div class="flex justify-center items-baseline gap-2">
-                    <p class="text-lg font-bold ${prices.priceClass}">${prices.price}</p>
-                    ${prices.originalPrice ? `<p class="text-sm text-gray-400 line-through">${prices.originalPrice}</p>` : ''}
-                </div>
-            `;
-            
-            return priceHtml;
-        }
-
-        // --- Wishlist Functions ---
-        
-        /**
-         * Populates the global `userWishlist` Set and attaches a snapshot listener.
-         */
-        function updateUserWishlist() {
-            if (!currentUser) {
-                userWishlist.clear();
-                return;
-            }
-            // Detach old listener if it exists
-            if (wishlistUnsubscribe) wishlistUnsubscribe();
-
-            const wishlistRef = collection(db, usersPath, currentUser.uid, 'wishlist');
-            wishlistUnsubscribe = onSnapshot(wishlistRef, (snapshot) => {
-                userWishlist.clear();
-                snapshot.forEach(doc => {
-                    userWishlist.add(doc.id);
-                });
-                
-                // Re-style all visible buttons
-                document.querySelectorAll('.like-button').forEach(btn => {
-                    const isLiked = userWishlist.has(btn.dataset.productId);
-                    btn.classList.toggle('liked', isLiked);
-                    btn.querySelector('svg').setAttribute('fill', isLiked ? 'currentColor' : 'none');
-                });
-                
-                // Update header badge
-                updateWishlistCountBadge(snapshot.size);
+            productEl.querySelector('.add-to-cart-btn').addEventListener('click', (e) => {
+                e.preventDefault(); e.stopPropagation(); 
+                addToCart(productDataForCart, 1); 
             });
-        }
-        
-        /**
-         * Toggles a product in the user's wishlist from the grid.
-         */
-        async function toggleWishlistGrid(productId, productData, buttonEl) {
-            if (!currentUser) {
-                document.getElementById('account-drawer-modal')?.classList.remove('hidden');
-                return;
-            }
             
-            buttonEl.disabled = true;
-            const wishlistRef = doc(db, usersPath, currentUser.uid, 'wishlist', productId);
-
-            try {
-                if (userWishlist.has(productId)) { // Already liked, so remove
-                    await deleteDoc(wishlistRef);
-                    // The onSnapshot listener will automatically update the UI
-                } else { // Not liked, so add
-                    await setDoc(wishlistRef, {
-                        productId: productId,
-                        name: productData.name,
-                        price: productData.price,
-                        priceUSDT: productData.priceUSDT || null,
-                        imageUrl: productData.imageUrl,
-                        addedAt: serverTimestamp()
-                    });
-                    // The onSnapshot listener will automatically update the UI
-                }
-            } catch (e) {
-                console.error("Error toggling wishlist: ", e);
-            } finally {
-                buttonEl.disabled = false;
-            }
+            container.appendChild(productEl);
         }
-
-        /**
-         * Updates the header wishlist badge count.
-         */
-        function updateWishlistCountBadge(count) {
-            const desktopBadge = document.getElementById('wishlist-count-badge');
-            const mobileBadge = document.getElementById('mobile-wishlist-badge');
-            const countStr = String(count);
-
-            if (desktopBadge) {
-                desktopBadge.textContent = countStr;
-                desktopBadge.classList.add('pop');
-                setTimeout(() => desktopBadge.classList.remove('pop'), 200);
-            }
-            if (mobileBadge) {
-                mobileBadge.textContent = countStr;
-            }
-        }
-
-        // --- COMMON FUNCTIONS (Cart, Drawers, Config, Footer) ---
 
         const addToCart = async (product, quantity = 1) => {
             if (!currentUser) {
@@ -929,8 +612,11 @@
             
             try {
                 const docSnap = await getDoc(cartItemRef);
+                
                 if (docSnap.exists()) {
-                    await updateDoc(cartItemRef, { quantity: increment(quantity) });
+                    await updateDoc(cartItemRef, { 
+                        quantity: increment(quantity) 
+                    });
                 } else {
                     await setDoc(cartItemRef, {
                         productId: product.id, 
@@ -942,132 +628,63 @@
                         addedAt: serverTimestamp()
                     });
                 }
+                
                 document.getElementById('cart-drawer').classList.add('open');
+
             } catch (error) {
                 console.error("Error adding to cart: ", error);
             }
         };
 
-        function updateCartCounters(count) {
-            const countStr = String(count);
-            const badges = [
-                document.getElementById('cart-count-badge'),
-                document.getElementById('mobile-cart-badge')
-            ];
-            badges.forEach(badge => {
-                if(badge) {
-                    badge.textContent = countStr;
-                    badge.classList.add('pop');
-                    setTimeout(() => badge.classList.remove('pop'), 200);
-                }
-            });
+        function getSelectedCurrency() {
+            return localStorage.getItem('selectedCurrency') || 'LKR';
         }
 
-        function attachCartDrawerListener(userId) {
-            const container = document.getElementById('cart-drawer-items-container');
-            const totalEl = document.getElementById('cart-drawer-total');
-            if (!container || !totalEl) return;
-            
-            if (!userId) {
-                container.innerHTML = '<p class="text-gray-500">Please log in to see your cart.</p>';
-                totalEl.textContent = 'Rs. 0.00';
-                updateCartCounters(0);
-                return;
+        function formatPrice(product) {
+            const currency = getSelectedCurrency();
+            let prices = {
+                price: `Rs. ${parseFloat(product.price).toFixed(2)}`,
+                originalPrice: product.originalPrice ? `Rs. ${parseFloat(product.originalPrice).toFixed(2)}` : null,
+                priceClass: 'text-mudalali-green-dark'
+            };
+
+            if (currency === 'USDT') {
+                if (product.priceUSDT) {
+                    prices.price = `$${parseFloat(product.priceUSDT).toFixed(2)}`;
+                    if (product.originalPriceUSDT) {
+                        prices.originalPrice = `$${parseFloat(product.originalPriceUSDT).toFixed(2)}`;
+                    }
+                } else {
+                    prices.price = 'USDT N/A';
+                }
             }
 
-            const cartRef = collection(db, usersPath, userId, 'cart');
+            if (prices.originalPrice) {
+                prices.priceClass = 'text-red-600';
+            }
             
-            onSnapshot(cartRef, (snapshot) => {
-                updateCartCounters(snapshot.size); 
-                let subtotalLKR = 0;
-                let subtotalUSDT = 0;
-                let cartHasUSDT = false;
-                
-                if (snapshot.empty) {
-                    container.innerHTML = '<p class="text-gray-500">Your cart is empty.</p>';
-                } else {
-                    container.innerHTML = ''; 
-                    snapshot.forEach(doc => {
-                        const item = { id: doc.id, ...doc.data() };
-                        const quantity = parseInt(item.quantity) || 1;
-                        const priceLKR = parseFloat(item.price) || 0;
-                        const itemTotalLKR = priceLKR * quantity;
-                        subtotalLKR += itemTotalLKR;
-                        let priceString = `Rs. ${itemTotalLKR.toFixed(2)}`;
-                        if (item.priceUSDT) {
-                            cartHasUSDT = true;
-                            const priceUSDT = parseFloat(item.priceUSDT) || 0;
-                            const itemTotalUSDT = priceUSDT * quantity;
-                            subtotalUSDT += itemTotalUSDT;
-                            priceString = `Rs. ${itemTotalLKR.toFixed(2)} / $${itemTotalUSDT.toFixed(2)}`;
-                        }
-                        container.innerHTML += `
-                        <div class="flex items-center gap-4 py-4 border-b">
-                            <img src="${item.imageUrl || 'https://placehold.co/64'}" alt="${item.name}" class="w-16 h-16 rounded object-contain border p-1">
-                            <div class="flex-grow text-left">
-                                <h4 class="font-semibold text-sm text-slate-800">${item.name}</h4>
-                                <div class="flex items-center gap-2 my-1">
-                                    <button data-id="${item.id}" class="cart-qty-decrease w-6 h-6 font-bold rounded bg-slate-100 hover:bg-slate-200 flex items-center justify-center">-</button>
-                                    <span class="w-6 text-center font-bold text-sm text-slate-700">${quantity}</span>
-                                    <button data-id="${item.id}" class="cart-qty-increase w-6 h-6 font-bold rounded bg-slate-100 hover:bg-slate-200 flex items-center justify-center">+</button>
-                                </div>
-                                <p class="text-sm text-mudalali-green-dark font-bold">${priceString}</p>
-                            </div>
-                            <button data-id="${item.id}" class="cart-remove-item text-slate-400 hover:text-red-500" title="Remove Item">
-                                <i class="fas fa-times text-lg"></i>
-                            </button>
-                        </div>`;
-                    });
-                }
-                
-                let totalString = `Rs. ${subtotalLKR.toFixed(2)}`;
-                if (cartHasUSDT) {
-                    totalString += ` / $${subtotalUSDT.toFixed(2)}`;
-                }
-                totalEl.textContent = totalString;
-                addCartDrawerButtonListeners(userId);
-            }, (error) => {
-                console.error("Error in cart drawer listener: ", error);
-                container.innerHTML = '<p class="text-red-500">Error loading cart.</p>';
-            });
+            const priceHtml = `
+                <p class="text-sm font-bold ${prices.priceClass} md:hidden">${prices.price}</p>
+                <div class="hidden md:flex justify-center items-baseline gap-2">
+                    <p class="text-lg font-bold ${prices.priceClass}">${prices.price}</p>
+                    ${prices.originalPrice ? `<p class="text-sm text-gray-400 line-through">${prices.originalPrice}</p>` : ''}
+                </div>
+            `;
+            
+            return priceHtml;
         }
 
-        function addCartDrawerButtonListeners(userId) {
-            const container = document.getElementById('cart-drawer-items-container');
-            if (!container) return;
-            
-            container.querySelectorAll('.cart-qty-decrease, .cart-qty-increase, .cart-remove-item').forEach(button => {
-                const newButton = button.cloneNode(true);
-                button.parentNode.replaceChild(newButton, button);
-                newButton.addEventListener('click', async (e) => {
-                    const itemId = newButton.dataset.id;
-                    const itemRef = doc(db, usersPath, userId, 'cart', itemId);
-                    try {
-                        if (newButton.classList.contains('cart-remove-item')) {
-                            await deleteDoc(itemRef);
-                        } else if (newButton.classList.contains('cart-qty-increase')) {
-                            await updateDoc(itemRef, { quantity: increment(1) });
-                        } else if (newButton.classList.contains('cart-qty-decrease')) {
-                            const docSnap = await getDoc(itemRef);
-                            if (docSnap.exists() && docSnap.data().quantity > 1) {
-                                await updateDoc(itemRef, { quantity: increment(-1) });
-                            } else {
-                                await deleteDoc(itemRef);
-                            }
-                        }
-                    } catch (error) {
-                        console.error("Error updating cart item: ", error);
-                    }
-                });
-            });
-        }
+        // ===================================
+        // ===== COMMON HELPER FUNCTIONS =====
+        // ===================================
 
         async function loadSiteConfig() {
+            const docRef = doc(db, publicDataPath, 'siteContent', 'config');
             try {
-                const docRef = doc(db, publicDataPath, 'siteContent', 'config');
                 const docSnap = await getDoc(docRef);
                 let config = {};
                 if (docSnap.exists()) config = docSnap.data();
+                
                 const logoText = config.logoText || 'මුදලාලි මාමා';
                 const logoImg = document.getElementById('logo-img');
                 const mobileLogoImg = document.getElementById('mobile-logo-img');
@@ -1078,37 +695,53 @@
                     logoImg.src = config.logoImageUrl;
                     mobileLogoImg.src = config.logoImageUrl;
                 } else {
-                    if (logoLink && !logoImg) logoLink.textContent = logoText;
-                    if (mobileLogoLink && !mobileLogoImg) mobileLogoLink.textContent = logoText;
+                    const logoImgHasSrc = logoImg && (logoImg.getAttribute('src') && logoImg.getAttribute('src') !== '');
+                    const mobileLogoImgHasSrc = mobileLogoImg && (mobileLogoImg.getAttribute('src') && mobileLogoImg.getAttribute('src') !== '');
+
+                    if (!logoImgHasSrc && logoLink) {
+                        logoImg?.remove();
+                        logoLink.textContent = logoText;
+                    }
+                    if (!mobileLogoImgHasSrc && mobileLogoLink) {
+                        mobileLogoImg?.remove();
+                        mobileLogoLink.textContent = logoText;
+                    }
                 }
-                if (document.getElementById('header-hotline')) {
-                    document.getElementById('header-hotline').textContent = config.headerHotline || '...';
-                }
+                
+                document.getElementById('header-hotline').textContent = config.headerHotline || '...';
+                
             } catch (e) {
                 console.error("Error loading site config: ", e);
             }
         }
-        
+
         async function loadDesktopNavCategories() {
             const container = document.getElementById('desktop-nav-links-container');
             if (!container) return;
+            
             const collRef = collection(db, publicDataPath, 'categories');
             onSnapshot(collRef, (querySnapshot) => {
+                
                 const dropdownContainer = container.querySelector('.dropdown-menu');
                 if (dropdownContainer) dropdownContainer.innerHTML = '';
+                
                 const existingLinks = container.querySelectorAll('a:not(.group > a)');
                 existingLinks.forEach(link => link.remove());
+
                 if (querySnapshot.empty) return;
+                
                 let count = 0;
                 querySnapshot.forEach((doc) => {
                     const category = doc.data();
+                    
                     if (count < 6) { 
-                        const linkHtml = `<a href="shop.html?category=${category.name}" class="font-semibold text-gray-700 hover:text-mudalali-green-dark px-3 py-2.5 hidden md:block">${category.name}</a>`;
+                        const linkHtml = `<a href="shop.html?category=${encodeURIComponent(category.name)}" class="font-semibold text-gray-700 hover:text-mudalali-green-dark px-3 py-2.5 hidden md:block">${category.name}</a>`;
                         container.insertAdjacentHTML('beforeend', linkHtml);
                         count++;
                     }
+                    
                     if (dropdownContainer) {
-                         const dropdownLink = `<a href="shop.html?category=${category.name}" class="font-semibold text-gray-700 hover:text-mudalali-green-dark px-4 py-3 block border-b">${category.name}</a>`;
+                         const dropdownLink = `<a href="shop.html?category=${encodeURIComponent(category.name)}" class="font-semibold text-gray-700 hover:text-mudalali-green-dark px-4 py-3 block border-b">${category.name}</a>`;
                          dropdownContainer.innerHTML += dropdownLink;
                     }
                 });
@@ -1130,6 +763,7 @@
                     const hotlineEl = document.getElementById('footer-hotline');
                     hotlineEl.textContent = data.hotline || '...';
                     hotlineEl.href = `tel:${data.hotline}`;
+                    
                     const socialsContainer = document.getElementById('footer-socials');
                     socialsContainer.innerHTML = '';
                     if (data.facebookUrl) socialsContainer.innerHTML += `<a href="${data.facebookUrl}" target="_blank" class="bg-gray-700 w-10 h-10 flex items-center justify-center rounded-full text-xl hover:bg-mudalali-green"><i class="fab fa-facebook-f"></i></a>`;
@@ -1146,6 +780,7 @@
                     col_quicklinks: document.getElementById('footer-col-quicklinks')
                 };
                 Object.values(lists).forEach(list => { if(list) list.innerHTML = ''; }); 
+
                 querySnapshot.forEach((doc) => {
                     const link = doc.data();
                     if (lists[link.column]) {
@@ -1165,7 +800,7 @@
                 }
                 querySnapshot.forEach((doc) => {
                     const category = doc.data();
-                    container.innerHTML += `<a href="shop.html?category=${category.name}" class="block p-4 border-b text-gray-700">${category.name}</a>`;
+                    container.innerHTML += `<a href="shop.html?category=${encodeURIComponent(category.name)}" class="block p-4 border-b text-gray-700">${category.name}</a>`;
                 });
             }, (error) => {
                 container.innerHTML = '<p class="p-4 text-red-500">Error loading categories.</p>';
@@ -1177,13 +812,16 @@
             const mobileMenuBtn = document.getElementById('mobile-menu-btn');
             const menuDrawerClose = document.getElementById('menu-drawer-close');
             const menuDrawerOverlay = document.getElementById('menu-drawer-overlay');
+            
             mobileMenuBtn?.addEventListener('click', () => menuDrawer?.classList.add('open'));
             menuDrawerClose?.addEventListener('click', () => menuDrawer?.classList.remove('open'));
             menuDrawerOverlay?.addEventListener('click', () => menuDrawer?.classList.remove('open'));
+
             const menuTabMenu = document.getElementById('menu-tab-menu');
             const menuTabCategories = document.getElementById('menu-tab-categories');
             const menuContent = document.getElementById('menu-tab-menu-content');
             const categoriesContent = document.getElementById('menu-tab-categories-content');
+
             menuTabMenu?.addEventListener('click', () => {
                 menuContent?.classList.remove('hidden');
                 categoriesContent?.classList.add('hidden');
@@ -1199,21 +837,26 @@
                     loadCategoriesIntoDrawer(categoriesContent);
                 }
             });
+
             const cartDrawer = document.getElementById('cart-drawer');
             const mobileCartBtn = document.getElementById('mobile-cart-btn');
             const desktopCartBtn = document.getElementById('desktop-cart-btn');
             const cartDrawerClose = document.getElementById('cart-drawer-close');
             const cartDrawerOverlay = document.getElementById('cart-drawer-overlay');
+
             const openCart = () => cartDrawer?.classList.add('open');
             const closeCart = () => cartDrawer?.classList.remove('open');
+
             mobileCartBtn?.addEventListener('click', openCart);
             desktopCartBtn?.addEventListener('click', openCart);
             cartDrawerClose?.addEventListener('click', closeCart);
             cartDrawerOverlay?.addEventListener('click', closeCart);
+            
             const authDrawer = document.getElementById('account-drawer-modal');
             const authDrawerBg = document.getElementById('account-drawer-bg');
             const closeAuthBtn1 = document.getElementById('close-account-drawer-btn-logged-in');
             const closeAuthBtn2 = document.getElementById('close-account-drawer-btn-logged-out');
+            
             document.getElementById('drawer-my-account-btn')?.addEventListener('click', (e) => {
                 e.preventDefault();
                 document.getElementById('menu-drawer')?.classList.remove('open'); 
@@ -1223,14 +866,17 @@
                     window.location.href = 'account.html';
                 }
             });
+            
             const closeAuthDrawer = () => authDrawer?.classList.add('hidden');
             authDrawerBg?.addEventListener('click', closeAuthDrawer);
             closeAuthBtn1?.addEventListener('click', closeAuthDrawer);
             closeAuthBtn2?.addEventListener('click', closeAuthDrawer);
+
             const loginTab = document.getElementById('drawer-login-tab-btn');
             const signupTab = document.getElementById('drawer-signup-tab-btn');
             const loginForm = document.getElementById('drawer-login-form');
             const signupForm = document.getElementById('drawer-signup-form');
+
             loginTab?.addEventListener('click', () => {
                 loginTab.classList.add('active');
                 signupTab.classList.remove('active');
@@ -1243,6 +889,7 @@
                 signupForm.classList.remove('hidden');
                 loginForm.classList.add('hidden');
             });
+
             loginForm?.addEventListener('submit', async (e) => {
                 e.preventDefault();
                 const email = document.getElementById('drawer-login-email').value;
@@ -1258,6 +905,7 @@
                     errorP.textContent = error.message.replace('Firebase: ', '');
                 }
             });
+
             signupForm?.addEventListener('submit', async (e) => {
                 e.preventDefault();
                 const name = document.getElementById('drawer-signup-name').value;
@@ -1266,9 +914,11 @@
                 const isSeller = document.getElementById('drawer-signup-is-seller').checked;
                 const errorP = document.getElementById('drawer-signup-error');
                 errorP.textContent = 'Creating account...';
+                
                 try {
                     const userCredential = await createUserWithEmailAndPassword(auth, email, password);
                     const user = userCredential.user;
+                    
                     const userDocRef = doc(db, usersPath, user.uid);
                     await setDoc(userDocRef, {
                         name: name, 
@@ -1277,34 +927,172 @@
                         role: isSeller ? "seller" : "customer",
                         createdAt: serverTimestamp()
                     });
-                    if (isSeller) {
-                        const storeDocRef = doc(db, publicDataPath, 'stores', user.uid);
-                        await setDoc(storeDocRef, {
-                            storeName: name,
-                            ownerUid: user.uid,
-                            email: email,
-                            profileUrl: '',
-                            coverUrl: '',
-                            createdAt: serverTimestamp(),
-                            isApproved: false
-                        });
-                    }
-                    errorP.textContent = '';
-                    closeAuthDrawer();
-                } catch (error) {
-                    console.error("Signup Error:", error);
-                    errorP.textContent = error.message.replace('Firebase: ', '');
+
+
+                 if (isSeller) {
+                    const storeDocRef = doc(db, publicDataPath, 'stores', user.uid);
+                    await setDoc(storeDocRef, {
+                        storeName: name,
+                        ownerUid: user.uid,
+                        email: email,
+                        profileUrl: '',
+                        coverUrl: '', 
+                        createdAt: serverTimestamp(),
+                        isApproved: false 
+                    });
                 }
-            });
-            document.getElementById('drawer-logout-btn')?.addEventListener('click', async () => {
-                try {
-                    await signOut(auth);
-                    closeAuthDrawer();
-                } catch (error) {
-                    console.error("Logout Error:", error);
-                }
-            });
+                
+                errorP.textContent = '';
+                closeAuthDrawer();
+
+            } catch (error) {
+                console.error("Signup Error:", error);
+                errorP.textContent = error.message.replace('Firebase: ', '');
+            }
+        });
+
+        document.getElementById('drawer-logout-btn')?.addEventListener('click', async () => {
+            try {
+                await signOut(auth);
+                closeAuthDrawer();
+            } catch (error) {
+                console.error("Logout Error:", error);
+            }
+        });
+    }
+
+    const updateWishlistCountBadge = () => {
+        const desktopBadge = document.getElementById('wishlist-count-badge');
+        const mobileBadge = document.getElementById('mobile-wishlist-badge');
+
+        if (desktopBadge) desktopBadge.textContent = '0';
+        if (mobileBadge) mobileBadge.textContent = '0';
+    };
+
+    function updateCartCounters(count) {
+        const countStr = String(count);
+        const badges = [
+            document.getElementById('cart-count-badge'),
+            document.getElementById('mobile-cart-badge')
+        ];
+        badges.forEach(badge => {
+            if(badge) {
+                badge.textContent = countStr;
+                badge.classList.add('pop');
+                setTimeout(() => badge.classList.remove('pop'), 200);
+            }
+        });
+    }
+
+    function attachCartDrawerListener(userId) {
+        const container = document.getElementById('cart-drawer-items-container');
+        const totalEl = document.getElementById('cart-drawer-total');
+        if (!container || !totalEl) return;
+        
+        if (!userId) {
+            container.innerHTML = '<p class="text-gray-500">Please log in to see your cart.</p>';
+            totalEl.textContent = 'Rs. 0.00';
+            updateCartCounters(0);
+            return;
         }
+
+        const cartRef = collection(db, usersPath, userId, 'cart');
+        
+        onSnapshot(cartRef, (snapshot) => {
+            updateCartCounters(snapshot.size); 
+            
+            let subtotalLKR = 0;
+            let subtotalUSDT = 0;
+            let cartHasUSDT = false;
+            
+            if (snapshot.empty) {
+                container.innerHTML = '<p class="text-gray-500">Your cart is empty.</p>';
+            } else {
+                container.innerHTML = ''; 
+                snapshot.forEach(doc => {
+                    const item = { id: doc.id, ...doc.data() };
+                    const quantity = parseInt(item.quantity) || 1;
+                    
+                    const priceLKR = parseFloat(item.price) || 0;
+                    const itemTotalLKR = priceLKR * quantity;
+                    subtotalLKR += itemTotalLKR;
+                    
+                    let priceString = `Rs. ${itemTotalLKR.toFixed(2)}`;
+                    
+                    if (item.priceUSDT) {
+                        cartHasUSDT = true;
+                        const priceUSDT = parseFloat(item.priceUSDT) || 0;
+                        const itemTotalUSDT = priceUSDT * quantity;
+                        subtotalUSDT += itemTotalUSDT;
+                        
+                        priceString = `Rs. ${itemTotalLKR.toFixed(2)} / $${itemTotalUSDT.toFixed(2)}`;
+                    }
+                    
+                    container.innerHTML += `
+                    <div class="flex items-center gap-4 py-4 border-b">
+                        <img src="${item.imageUrl || 'https://placehold.co/64'}" alt="${item.name}" class="w-16 h-16 rounded object-contain border p-1">
+                        <div class="flex-grow text-left">
+                            <h4 class="font-semibold text-sm text-slate-800">${item.name}</h4>
+                            <div class="flex items-center gap-2 my-1">
+                                <button data-id="${item.id}" class="cart-qty-decrease w-6 h-6 font-bold rounded bg-slate-100 hover:bg-slate-200 flex items-center justify-center">-</button>
+                                <span class="w-6 text-center font-bold text-sm text-slate-700">${quantity}</span>
+                                <button data-id="${item.id}" class="cart-qty-increase w-6 h-6 font-bold rounded bg-slate-100 hover:bg-slate-200 flex items-center justify-center">+</button>
+                            </div>
+                            <p class="text-sm text-mudalali-green-dark font-bold">${priceString}</p>
+                        </div>
+                        <button data-id="${item.id}" class="cart-remove-item text-slate-400 hover:text-red-500" title="Remove Item">
+                            <i class="fas fa-times text-lg"></i>
+                        </button>
+                    </div>`;
+                });
+            }
+            
+            let totalString = `Rs. ${subtotalLKR.toFixed(2)}`;
+            if (cartHasUSDT) {
+                totalString += ` / $${subtotalUSDT.toFixed(2)}`;
+            }
+            totalEl.textContent = totalString;
+            
+            addCartDrawerButtonListeners(userId);
+            
+        }, (error) => {
+            console.error("Error in cart drawer listener: ", error);
+            container.innerHTML = '<p class="text-red-500">Error loading cart.</p>';
+        });
+    }
+
+    function addCartDrawerButtonListeners(userId) {
+        const container = document.getElementById('cart-drawer-items-container');
+        if (!container) return;
+        
+        container.querySelectorAll('.cart-qty-decrease, .cart-qty-increase, .cart-remove-item').forEach(button => {
+            const newButton = button.cloneNode(true);
+            button.parentNode.replaceChild(newButton, button);
+            
+            newButton.addEventListener('click', async (e) => {
+                const itemId = newButton.dataset.id;
+                const itemRef = doc(db, usersPath, userId, 'cart', itemId);
+
+                try {
+                    if (newButton.classList.contains('cart-remove-item')) {
+                        await deleteDoc(itemRef);
+                    } else if (newButton.classList.contains('cart-qty-increase')) {
+                        await updateDoc(itemRef, { quantity: increment(1) });
+                    } else if (newButton.classList.contains('cart-qty-decrease')) {
+                        const docSnap = await getDoc(itemRef);
+                        if (docSnap.exists() && docSnap.data().quantity > 1) {
+                            await updateDoc(itemRef, { quantity: increment(-1) });
+                        } else {
+                            await deleteDoc(itemRef);
+                        }
+                    }
+                } catch (error) {
+                    console.error("Error updating cart item: ", error);
+                }
+            });
+        });
+    }
+        
     </script>
 </body>
 </html>

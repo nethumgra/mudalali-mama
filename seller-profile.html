@@ -204,6 +204,12 @@
                         <label for="settings-location" class="form-label">Location</label>
                         <input type="text" id="settings-location" class="form-input">
                     </div>
+                    
+                    <div>
+                        <label for="settings-shipping-fee" class="form-label">Standard Delivery Charge (LKR)</label>
+                        <input type="number" id="settings-shipping-fee" class="form-input" placeholder="e.g. 350">
+                        <p class="text-xs text-gray-500 mt-1">This is the flat shipping fee you will charge *per item* in an order.</p>
+                    </div>
                     <div>
                         <label for="settings-banner-file" class="form-label">Store Banner Image</label>
                         <input type="file" id="settings-banner-file" class="form-input" accept="image/*">
@@ -318,8 +324,7 @@
                             <input type="date" id="food-expiry" class="form-input">
                         </div>
                     </div>
-                </div>
-                
+                    </div>
                 <div>
                     <label for="product-image-file" class="form-label">Product Image</label>
                     <input type="file" id="product-image-file" class="form-input" accept="image/*">
@@ -623,6 +628,9 @@
             });
         }
 
+        // =====================================
+        // ======== JS WENAS KALE 1/3 (NEW) ========
+        // =====================================
         async function loadSellerData() {
             const storeRef = doc(db, publicDataPath, 'stores', currentUser.uid);
             const storeSnap = await getDoc(storeRef);
@@ -633,12 +641,16 @@
                 document.getElementById('settings-description').value = currentStoreData.description || '';
                 document.getElementById('settings-location').value = currentStoreData.location || '';
                 
+                // Aluth line eka: Shipping fee eka load karanna
+                document.getElementById('settings-shipping-fee').value = currentStoreData.shippingFee || '';
+                
                 updateSettingsPreview(currentStoreData.storeName, currentStoreData.description, currentStoreData.location, currentStoreData.bannerUrl, currentStoreData.profileUrl);
             } else {
                 await setDoc(storeRef, {
                     storeName: currentUserData.displayName || 'My Store',
                     description: 'Welcome to my new store!',
                     location: 'Sri Lanka',
+                    shippingFee: 0, // Default shipping fee
                     bannerUrl: null,
                     profileUrl: null,
                     createdAt: serverTimestamp()
@@ -703,11 +715,8 @@
                 const product = doc.data();
                 const productId = doc.id;
                 
-                // ===== 5% FIX: Seller ta penwanna one eyage gaana (basePrice) =====
-                // Customer ge price eka (price) nemei
-                const sellerPrice = product.basePrice || product.price; // basePrice eka save karala nathnam, price eka pennanawa
-                const sellerOriginalPrice = product.baseOriginalPrice || product.originalPrice; // e wagema
-                // ==========================================================
+                const sellerPrice = product.basePrice || product.price; 
+                const sellerOriginalPrice = product.baseOriginalPrice || product.originalPrice; 
 
                 let priceHtml = `<p class="text-mudalali-green font-semibold">Rs. ${sellerPrice.toFixed(2)}</p>`;
                 if (sellerOriginalPrice && sellerOriginalPrice > sellerPrice) {
@@ -738,7 +747,7 @@
                 option.value = productId;
                 option.textContent = product.name;
                 option.dataset.name = product.name;
-                option.dataset.price = product.price; // Story ekata tag karaddi Customer Price eka yanna ona
+                option.dataset.price = product.price; 
                 option.dataset.image = product.imageUrl;
                 productSelect.appendChild(option);
             });
@@ -749,58 +758,9 @@
 
         async function loadMyOrders() { 
             const container = document.getElementById('order-list-container');
-            container.innerHTML = '';
-            
-            // This is a simplified query. For a real app, you'd query
-            // a sub-collection of orders per seller or use array-contains on item UIDs.
-            // This 'where' query on an array needs a composite index.
-            // Let's assume a 'sellerUid' field exists on the top-level order for simplicity.
-            // **This query will FAIL without an index: (sellerUid ASC, createdAt DESC)**
-            
-            // --- HARIYATAMA HADAMU ---
-            // 'orders' collection eke 'items' kiyana array eka athule 'sellerUid' eka hoyanna ona
-            // E wage query ekak (array-contains) ekka wena field ekak (createdAt) sort karanna amarui
-            // Sarala widiha thamai okkoma orders load karala, JavaScript eken filter karana eka
-            // Eth eka loku app ekakata galapenne na.
-            
-            // Api mehema karamu:
-            const ordersRef = collection(db, "orders"); // 'publicDataPath' nemei, "orders" kiyana root collection eka
-            const q = query(ordersRef, where("items", "array-contains", { sellerUid: currentUser.uid }), orderBy("createdAt", "desc"));
-            // *** MEKATA INDEX EKAK ONA WEI: (items CONTAINS, createdAt DESC) ***
-            // Eka hadanna bari unoth, me query eka fail wei.
-            
-            // --- SEMA DEKATAMA HODAMA WISADUMA ---
-            // 'orders' collection eka query karala 'sellerUid' eken filter karanna ba.
-            // E nisa 'loadMyOrders' function eka mehema wenas karamu
-            
             container.innerHTML = '<p class="p-6 text-gray-500">Loading your orders...</p>';
             try {
                 const ordersRef = collection(db, "orders");
-                
-                // Meka thamai hoda query eka:
-                // 'items' array eka athule thiyena 'sellerUid' eka match karanna 'array-contains' use karanawa
-                const q = query(ordersRef, 
-                    where("items", "array-contains-any", [
-                        { sellerUid: currentUser.uid } 
-                        // Note: Me query eka hariyatama wada karanna 'items' array eke thiyena
-                        // object eka athule 'sellerUid' eka witharak thiyenna ba.
-                        // E nisa api 'checkout.html' eke save karana 'currentCart' eka 
-                        // 'sellerUid' witharak nemei, anith details ekkama save karanna ona.
-                        // Eka e widihata wada karanawa.
-                        
-                        // *** ME QUERY EKATA INDEX EKAK ONA: (items CONTAINS, createdAt DESC) ***
-                        // Firebase auto-create karanna kiyala link eka console eke dei
-                    ]),
-                    orderBy("createdAt", "desc")
-                );
-                
-                // --- UPDATE: `array-contains-any` eka `where` filter ekak nisa,
-                // `orderBy` ekath ekka wada karanna composite index ekak ona.
-                // Eka complex wadi.
-                
-                // --- SIMPLEST SOLUTION ---
-                // Okkoma orders genath, JavaScript walin filter karamu. (Not scalable, but will work)
-                
                 const allOrdersQ = query(collection(db, "orders"), orderBy("createdAt", "desc"));
                 const querySnapshot = await getDocs(allOrdersQ);
                 
@@ -810,15 +770,12 @@
                     const myItemsInThisOrder = (order.items || []).filter(item => item.sellerUid === currentUser.uid);
                     
                     if (myItemsInThisOrder.length > 0) {
-                        // Meke Sellerge badu thiyenawa.
-                        // Seller ta adala items walin witharak total eka hadamu
                         let sellerTotal = 0;
                         myItemsInThisOrder.forEach(item => {
                             sellerTotal += (item.price * item.quantity); 
-                            // TODO: Seller ta adala shipping ganath pennanna ona
                         });
                         
-                        order.sellerTotal = sellerTotal; // Aluth field ekak add karanawa
+                        order.sellerTotal = sellerTotal; 
                         myOrders.push(order);
                     }
                 });
@@ -828,7 +785,7 @@
                     return;
                 }
                 
-                container.innerHTML = ''; // Clear loading
+                container.innerHTML = ''; 
                 myOrders.forEach(order => {
                     container.innerHTML += `
                         <div class="p-4 md:p-6">
@@ -1081,20 +1038,29 @@
                     preview.src = '';
                 }
             });
-
+            
+            // Oya illapu dynamic fields logic eka
             document.getElementById('product-category-select').addEventListener('change', showDynamicFields);
             form.addEventListener('submit', saveProduct);
         }
-
+        
+        // Oya illapu dynamic fields function eka
         function showDynamicFields() {
             const category = document.getElementById('product-category-select').value;
             document.querySelectorAll('.dynamic-field-group').forEach(group => group.classList.add('hidden'));
 
+            // Oya "Fashion" select kaloth, 'fashion-fields' div eka pennanawa
             if (category === 'Fashion') {
                 document.getElementById('fashion-fields').classList.remove('hidden');
             } else if (category === 'Food') {
                 document.getElementById('food-fields').classList.remove('hidden');
             }
+            // Oyata onenam thawa 'else if' add karanna puluwan
+            /*
+            else if (category === 'Electronics') {
+                document.getElementById('electronics-fields').classList.remove('hidden');
+            }
+            */
         }
 
         async function openProductModal(productId) {
@@ -1109,16 +1075,15 @@
             document.getElementById('product-id').value = productId;
             document.getElementById('product-name').value = product.name;
             
-            // ===== 5% FIX: Seller ge basePrice eka load karanna =====
             document.getElementById('product-original-price').value = product.baseOriginalPrice || product.originalPrice || '';
-            document.getElementById('product-sale-price').value = product.basePrice || product.price; // Seller dapu gaana pennanawa
-            // ====================================================
+            document.getElementById('product-sale-price').value = product.basePrice || product.price; 
 
             document.getElementById('product-description').value = product.description;
             document.getElementById('product-category-select').value = product.category || '';
             
-            showDynamicFields();
+            showDynamicFields(); // Dynamic fields pennanna
             
+            // Dynamic fields wala data load karanna
             if (product.category === 'Fashion' && product.attributes) {
                 document.getElementById('fashion-sizes').value = product.attributes.sizes ? product.attributes.sizes.join(', ') : '';
                 document.getElementById('fashion-colors').value = product.attributes.colors ? product.attributes.colors.join(', ') : '';
@@ -1140,6 +1105,9 @@
             document.getElementById('product-modal').classList.remove('hidden');
         }
 
+        // =====================================
+        // ======== JS WENAS KALE 2/3 (NEW) ========
+        // =====================================
         async function saveProduct(e) {
             e.preventDefault();
             const statusEl = document.getElementById('product-save-status');
@@ -1165,6 +1133,7 @@
                     if (!imageUrl) throw new Error('Image upload failed.');
                 }
                 
+                // Dynamic fields walin data ganna
                 const category = document.getElementById('product-category-select').value;
                 const attributes = {};
                 if (category === 'Fashion') {
@@ -1175,37 +1144,39 @@
                     attributes.expiryDate = document.getElementById('food-expiry').value;
                 }
                 
-                // ===== 5% FIX: Price Calculation =====
                 const sellerSalePrice = Number(document.getElementById('product-sale-price').value);
                 const sellerOriginalPrice = Number(document.getElementById('product-original-price').value) || null;
 
-                const customerSalePrice = Math.round(sellerSalePrice * 1.05); // 5% add karala, round karanawa
+                const customerSalePrice = Math.round(sellerSalePrice * 1.05); 
                 let customerOriginalPrice = null;
                 if (sellerOriginalPrice && sellerOriginalPrice > 0) {
-                    customerOriginalPrice = Math.round(sellerOriginalPrice * 1.05); // Original price ekatath 5% add karanawa
+                    customerOriginalPrice = Math.round(sellerOriginalPrice * 1.05); 
                 }
-                // ======================================
+                
+                // Aluth shipping logic eka
+                const shippingFee = Number(currentStoreData.shippingFee) || 0;
 
                 const productData = {
                     sellerUid: currentUser.uid,
                     storeName: currentStoreData.storeName || 'Mudalali Mama Store',
                     name: document.getElementById('product-name').value,
                     
-                    // --- ALUTH WENASKAM ---
-                    basePrice: sellerSalePrice, // Seller dapu gaana (e.g., 1000)
-                    price: customerSalePrice, // Customer ta penwana 5% add wechcha gaana (e.g., 1050)
+                    basePrice: sellerSalePrice, 
+                    price: customerSalePrice, 
                     
-                    baseOriginalPrice: sellerOriginalPrice, // Seller dapu original price eka (e.g., 1200)
-                    originalPrice: customerOriginalPrice, // Customer ta penwana 5% add wechcha original price eka (e.g., 1260)
-                    // --- IWATH WECHCHA EWA ---
+                    baseOriginalPrice: sellerOriginalPrice, 
+                    originalPrice: customerOriginalPrice, 
                     
                     description: document.getElementById('product-description').value,
                     category: category,
-                    categories: [category], // Shop page eke filter wenna
-                    attributes: attributes,
+                    categories: [category], 
+                    attributes: attributes, // Dynamic attributes save karanawa
                     imageUrl: imageUrl,
+                    
+                    shipping: shippingFee, // <-- ALUTH: Shipping fee eka product ekata save karanawa
+
                     updatedAt: serverTimestamp(),
-                    isApproved: true // Auto-approve seller's own products
+                    isApproved: true 
                 };
 
                 let docRef;
@@ -1214,14 +1185,13 @@
                     await updateDoc(docRef, productData);
                 } else {
                     productData.createdAt = serverTimestamp();
-                    // docRef = collection(db, publicDataPath, 'products'); // Mehema nemei
-                    docRef = doc(collection(db, publicDataPath, 'products')); // Aluth ID ekak auto ganna
-                    await setDoc(docRef, productData); // addDoc nemei setDoc
+                    docRef = doc(collection(db, publicDataPath, 'products')); 
+                    await setDoc(docRef, productData); 
                 }
 
                 statusEl.textContent = 'Product saved successfully!';
-                loadMyProducts(); // List eka refresh karanna
-                loadCategoriesIntoModal(); // Story ekata tag karana list eka refresh karanna
+                loadMyProducts(); 
+                loadCategoriesIntoModal(); 
                 
                 setTimeout(() => {
                     document.getElementById('product-modal').classList.add('hidden');
@@ -1274,10 +1244,9 @@
            storyImageFile.addEventListener('change', (e) => {
             const file = e.target.files[0];
             const statusEl = document.getElementById('story-upload-status');
-            statusEl.textContent = ''; // Error clear karanawa
+            statusEl.textContent = ''; 
 
             if (file) {
-                // --- Image eka check kirima ---
                 const img = new Image();
                 img.src = URL.createObjectURL(file);
                 
@@ -1286,9 +1255,8 @@
                     const height = img.height;
 
                     if (width === 1080 && height === 1080) {
-                        // --- Hari nam ---
                         statusEl.textContent = 'Image size eka hari (1080x1080px).';
-                        statusEl.className = 'text-sm text-green-600 mt-2'; // Lassanata pennanna
+                        statusEl.className = 'text-sm text-green-600 mt-2'; 
                         
                         storyImagePreview.src = img.src;
                         storyImagePreviewContainer.classList.remove('hidden');
@@ -1297,11 +1265,10 @@
                         URL.revokeObjectURL(img.src);
 
                     } else {
-                        // --- Waradi nam ---
                         statusEl.textContent = `Error: Image eka 1080x1080px wenna one. Oya dapu eke size eka: ${width}x${height}px`;
-                        statusEl.className = 'text-sm text-red-600 mt-2'; // Rathu paatin error eka pennanna
+                        statusEl.className = 'text-sm text-red-600 mt-2'; 
                         
-                        e.target.value = ''; // File input eka reset karanawa
+                        e.target.value = ''; 
                         storyImagePreview.src = '';
                         storyImagePreviewContainer.classList.add('hidden');
                         currentEditedStoryImageUrl = null;
@@ -1311,16 +1278,13 @@
                 };
 
                 img.onerror = () => {
-                    // --- Image eka load karanna bari unoth ---
                     statusEl.textContent = 'Error: Image file eka load karanna ba.';
                     statusEl.className = 'text-sm text-red-600 mt-2';
                     e.target.value = '';
                     URL.revokeObjectURL(img.src);
                 };
-                // --- Check kirima iwarai ---
 
             } else {
-                // File ekak select karala 'cancel' gahuwoth
                 storyImagePreview.src = '';
                 storyImagePreviewContainer.classList.add('hidden');
                 currentEditedStoryImageUrl = null;
@@ -1378,7 +1342,7 @@
                         taggedProductPrice: taggedProductId ? Number(selectedOption.dataset.price) : null,
                         taggedProductImageUrl: taggedProductId ? selectedOption.dataset.image : null,
                         updatedAt: serverTimestamp(),
-                        isApproved: true // Auto-approve seller's own stories
+                        isApproved: true 
                     };
 
                     if (editId) {
@@ -1407,9 +1371,13 @@
             });
         }
         
+        // =====================================
+        // ======== JS WENAS KALE 3/3 (NEW) ========
+        // =====================================
         function setupSettingsForm() {
             const form = document.getElementById('settings-form');
             
+            // Preview eka live update karanna
             ['settings-store-name', 'settings-description', 'settings-location'].forEach(id => {
                 const inputEl = document.getElementById(id);
                 inputEl.addEventListener('input', () => { 
@@ -1423,6 +1391,7 @@
                 });
             });
             
+            // Image preview live update karanna
             ['settings-banner-file', 'settings-profile-file'].forEach(id => {
                 document.getElementById(id).addEventListener('change', (e) => {
                     const file = e.target.files[0];
@@ -1467,7 +1436,7 @@
                 });
             });
 
-
+            // Form eka save karaddi
             form.addEventListener('submit', async (e) => {
                 e.preventDefault();
                 const statusEl = document.getElementById('settings-save-status');
@@ -1492,10 +1461,12 @@
                         profileUrl = await uploadImageToImgBB(profileFile);
                     }
                     
+                    // Aluth data object eka shipping fee ekath ekka
                     const settingsData = {
                         storeName: document.getElementById('settings-store-name').value,
                         description: document.getElementById('settings-description').value,
                         location: document.getElementById('settings-location').value,
+                        shippingFee: Number(document.getElementById('settings-shipping-fee').value) || 0, // <-- ALUTH FIELD EKA
                         bannerUrl: bannerUrl,
                         profileUrl: profileUrl,
                         updatedAt: serverTimestamp() 
@@ -1504,7 +1475,7 @@
                     const storeRef = doc(db, publicDataPath, 'stores', currentUser.uid);
                     await setDoc(storeRef, settingsData, { merge: true }); 
 
-                    currentStoreData = {...currentStoreData, ...settingsData};
+                    currentStoreData = {...currentStoreData, ...settingsData}; // Global state eka update karanawa
                     statusEl.textContent = 'Settings saved successfully!';
 
                 } catch (err) {

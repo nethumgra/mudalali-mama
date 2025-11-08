@@ -488,17 +488,7 @@
         let unsubscribeCommentsListener = null;
         const pageLoader = document.getElementById('page-loader');
 
-function captureAffiliateRef() {
-            const urlParams = new URLSearchParams(window.location.search);
-            const affiliateId = urlParams.get('ref');
-            if (affiliateId) {
-                // ID ekak URL eke thibboth, eka browser eke save karanawa
-                console.log(`Affiliate ID captured: ${affiliateId}`);
-                localStorage.setItem('affiliateRef', affiliateId);
-            }
-        }
-
-        function setupAutoScroll(containerElement) {
+    function setupAutoScroll(containerElement) {
             if (!containerElement) return;
             let scrollInterval;
             const startScroll = () => {
@@ -516,12 +506,20 @@ function captureAffiliateRef() {
                     }
                 }, 3000); 
             };
+            
+            // Mobile touch eka handle karanna
             containerElement.addEventListener('touchstart', () => clearInterval(scrollInterval), { passive: true });
             containerElement.addEventListener('touchend', startScroll);
             containerElement.addEventListener('touchcancel', startScroll);
+            
+            // --- ALUTH KOTASA MEKA ---
+            // PC eke mouse hover eka handle karanna
+            containerElement.addEventListener('mouseenter', () => clearInterval(scrollInterval));
+            containerElement.addEventListener('mouseleave', startScroll);
+            // --- ALUTH KOTASA IWARAI ---
+
             startScroll(); 
         }
-
 
 
 
@@ -535,7 +533,7 @@ function captureAffiliateRef() {
             loadSiteConfig();
             loadSiteTheme();
             buildHomepage();
-            captureAffiliateRef();
+           
             loadDesktopNavCategories();
             loadFooter();
             setupMobileDrawers(); 
@@ -1078,13 +1076,15 @@ function captureAffiliateRef() {
             }
         }
 
-        async function buildPopularCategories(mainContainer, layoutItem) {
+async function buildPopularCategories(mainContainer, layoutItem) {
             const section = document.createElement('section');
             section.id = 'popular-categories';
             section.className = 'mb-8';
             
             const grid = document.createElement('div');
-            grid.className = 'flex gap-4 overflow-x-auto text-center no-scrollbar scroll-snap-type-x-mandatory md:grid md:grid-cols-9 lg:grid-cols-9 md:gap-4 md:overflow-x-visible';
+            
+            grid.className = 'flex gap-4 overflow-x-auto text-center no-scrollbar scroll-snap-type-x-mandatory';
+            
             grid.innerHTML = '<p class="col-span-full text-gray-500 text-center">Loading categories...</p>';
             section.appendChild(grid);
             mainContainer.appendChild(section);
@@ -1099,8 +1099,11 @@ function captureAffiliateRef() {
                 querySnapshot.forEach((doc) => {
                     const category = doc.data();
                     const bgColor = category.color || '#FFFFFF'; 
+                    
+                    // ===== WENAS KALE MEKA =====
+                    // href="#" eka wenas kara shop.html ekata link wenna
                     grid.innerHTML += `
-                    <a href="#" class="group w-[22vw] flex-shrink-0 md:w-auto md:flex-shrink-0">
+                    <a href="shop.html?category=${encodeURIComponent(category.name)}" class="group w-[22vw] md:w-[14vw] lg:w-[10vw] flex-shrink-0">
                         <div class="rounded-full p-4 shadow-md group-hover:shadow-lg transform group-hover:scale-105 transition-all" 
                              style="background-color: ${bgColor};">
                             
@@ -1108,11 +1111,10 @@ function captureAffiliateRef() {
                         </div>
                         <span class="mt-2 block font-semibold text-sm text-gray-700 group-hover:text-mudalali-green">${category.name}</span>
                     </a>`;
+                    // ===== WENAS KAMA IWARAI =====
                 });
 
-                if (window.innerWidth < 768) {
-                    setupAutoScroll(grid);
-                }
+                setupAutoScroll(grid);
 
             }, (error) => {
                 console.error("Error loading categories: ", error);
@@ -1120,7 +1122,7 @@ function captureAffiliateRef() {
             });
         }
         
-        async function loadDesktopNavCategories() {
+      async function loadDesktopNavCategories() {
             const container = document.getElementById('desktop-nav-links-container');
             if (!container) return;
             
@@ -1140,13 +1142,15 @@ function captureAffiliateRef() {
                     const category = doc.data();
                     
                     if (count < 6) { 
-                        const linkHtml = `<a href="#" class="font-semibold text-gray-700 hover:text-mudalali-green-dark px-3 py-2.5 hidden md:block">${category.name}</a>`;
+                        // ===== WENAS KALE MEKA =====
+                        const linkHtml = `<a href="shop.html?category=${encodeURIComponent(category.name)}" class="font-semibold text-gray-700 hover:text-mudalali-green-dark px-3 py-2.5 hidden md:block">${category.name}</a>`;
                         container.insertAdjacentHTML('beforeend', linkHtml);
                         count++;
                     }
                     
                     if (dropdownContainer) {
-                         const dropdownLink = `<a href="#" class="font-semibold text-gray-700 hover:text-mudalali-green-dark px-4 py-3 block border-b">${category.name}</a>`;
+                         // ===== WENAS KALE MEKA =====
+                         const dropdownLink = `<a href="shop.html?category=${encodeURIComponent(category.name)}" class="font-semibold text-gray-700 hover:text-mudalali-green-dark px-4 py-3 block border-b">${category.name}</a>`;
                          dropdownContainer.innerHTML += dropdownLink;
                     }
                 });
@@ -1270,7 +1274,7 @@ section.appendChild(mobileViewAllBtn);
                             addToCart(productDataForCart, 1); 
                         });
                         
-                      productEl.querySelectorAll('.quick-view-btn').forEach(link => {
+                   productEl.querySelectorAll('.quick-view-btn').forEach(link => { // <-- HADAPU WIDIHA
                             link.addEventListener('click', (e) => {
                                 if (!currentUser) {
                                     e.preventDefault();
@@ -1300,26 +1304,35 @@ section.appendChild(mobileViewAllBtn);
             }
         }
 
-        async function buildShopByCategory(mainContainer, layoutItem) {
+    async function buildShopByCategory(mainContainer, layoutItem) {
             const section = document.createElement('section');
             section.id = 'shop-by-category';
             section.className = 'mb-8';
+            
+            // WENAS KALA: Static Grid eka Slider ekakata harawala
             section.innerHTML = `
                 <h2 class="text-2xl font-bold text-gray-800 mb-4">SHOP BY CATEGORY</h2>
-                <div class="flex flex-col md:grid md:grid-cols-3 md:grid-rows-2 gap-4 md:gap-6" style="max-height: 500px;">
-                    <a href="#" id="shop-by-cat-large" class="block rounded-lg shadow-lg overflow-hidden md:col-span-2 md:row-span-2">
+                <div id="shop-by-cat-slider" class="flex gap-4 overflow-x-auto scroll-snap-type-x-mandatory no-scrollbar md:gap-6">
+                    
+                    <a href="#" id="shop-by-cat-large" class="block rounded-lg shadow-lg overflow-hidden w-[80vw] md:w-[60vw] lg:w-[40vw] flex-shrink-0 scroll-snap-align-start">
                         <img src="https://placehold.co/800x500/e2e8f0/94a3b8?text=Loading+Large+Banner..." alt="Large Banner" class="w-full h-full object-cover hover:opacity-90">
                     </a>
-                    <a href="#" id="shop-by-cat-small1" class="block rounded-lg shadow-lg overflow-hidden">
+                    <a href="#" id="shop-by-cat-small1" class="block rounded-lg shadow-lg overflow-hidden w-[60vw] md:w-[40vw] lg:w-[25vw] flex-shrink-0 scroll-snap-align-start">
                         <img src="https://placehold.co/400x242/e2e8f0/94a3b8?text=Loading+Small+Banner..." alt="Small Banner 1" class="w-full h-full object-cover hover:opacity-90">
                     </a>
-                    <a href="#" id="shop-by-cat-small2" class="block rounded-lg shadow-lg overflow-hidden">
+                    <a href="#" id="shop-by-cat-small2" class="block rounded-lg shadow-lg overflow-hidden w-[60vw] md:w-[40vw] lg:w-[25vw] flex-shrink-0 scroll-snap-align-start">
                         <img src="https://placehold.co/400x242/e2e8f0/94a3b8?text=Loading+Small+Banner..." alt="Small Banner 2" class="w-full h-full object-cover hover:opacity-90">
                     </a>
+
                 </div>
             `;
             mainContainer.appendChild(section);
 
+            // WENAS KALA: Slider ekata auto-scroll add kala
+            const sliderContainer = section.querySelector('#shop-by-cat-slider');
+            setupAutoScroll(sliderContainer); // Aluth line eka
+
+            // Pahala code eka wenas karanna one ne. Eken banner 3 load wei.
             const largeBannerLink = section.querySelector('#shop-by-cat-large');
             const smallBanner1Link = section.querySelector('#shop-by-cat-small1');
             const smallBanner2Link = section.querySelector('#shop-by-cat-small2');
@@ -1916,7 +1929,7 @@ section.appendChild(mobileViewAllBtn);
             });
         }
 
-        function loadCategoriesIntoDrawer(container) {
+  function loadCategoriesIntoDrawer(container) {
             const collRef = collection(db, publicDataPath, 'categories');
             onSnapshot(collRef, (querySnapshot) => {
                 container.innerHTML = ''; 
@@ -1926,7 +1939,8 @@ section.appendChild(mobileViewAllBtn);
                 }
                 querySnapshot.forEach((doc) => {
                     const category = doc.data();
-                    container.innerHTML += `<a href="#" class="block p-4 border-b text-gray-700">${category.name}</a>`;
+                    // ===== WENAS KALE MEKA =====
+                    container.innerHTML += `<a href="shop.html?category=${encodeURIComponent(category.name)}" class="block p-4 border-b text-gray-700">${category.name}</a>`;
                 });
             }, (error) => {
                 container.innerHTML = '<p class="p-4 text-red-500">Error loading categories.</p>';

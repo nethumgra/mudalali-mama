@@ -41,12 +41,25 @@
         .form-label { @apply block text-sm font-medium text-gray-700; }
         .btn-primary { @apply w-full bg-mudalali-green text-white p-3 rounded-md hover:bg-mudalali-green-dark font-bold text-lg transition-colors; }
         .btn-secondary { @apply w-full bg-gray-100 text-gray-700 p-3 rounded-md hover:bg-gray-200 font-bold; }
-        .modal-overlay { @apply fixed inset-0 bg-black bg-opacity-50 z-40 transition-opacity; }
-        .modal-content { @apply relative bg-white rounded-lg shadow-xl p-6 w-full max-w-lg m-4 transform transition-all z-50; }
+        .btn-small { @apply bg-mudalali-green text-white px-3 py-1 rounded font-semibold text-sm transition-colors; }
+        .btn-small-red { @apply bg-red-600 text-white px-3 py-1 rounded font-semibold text-sm transition-colors; }
+        .btn-small-gray { @apply bg-gray-200 text-gray-700 px-3 py-1 rounded font-semibold text-sm transition-colors; }
+        
+        .modal { @apply fixed inset-0 z-50 flex items-center justify-center p-4 bg-black bg-opacity-50 transition-opacity opacity-0 pointer-events-none; }
+        .modal.open { @apply opacity-100 pointer-events-auto; }
+        .modal-content { @apply bg-white rounded-lg shadow-xl w-full max-w-lg transform scale-95 transition-transform; }
+        .modal.open .modal-content { @apply scale-100; }
+
         .mobile-nav-link { @apply flex-1 flex flex-col items-center justify-center text-gray-600 hover:text-mudalali-green text-xs; }
         .mobile-nav-link.active { @apply text-mudalali-green; }
         .stat-card { @apply bg-white p-6 rounded-lg shadow-md; }
+        .layout-item { @apply bg-white p-4 rounded-lg shadow border flex items-center justify-between; }
+        .layout-item-handle { @apply cursor-move text-gray-400 mr-2; }
+        
+        /* === Aluth Image Preview Style === */
+        .image-preview { @apply w-full max-w-xs h-auto object-contain rounded-md mt-2 border p-2 bg-gray-50; }
     </style>
+    <script src="https://cdn.jsdelivr.net/npm/sortablejs@latest/Sortable.min.js"></script>
 </head>
 <body class="pb-20 md:pb-0"> 
     
@@ -78,7 +91,7 @@
             <div class="p-4 border-b">
                 <a href="index.html" class="flex items-center gap-2">
                     <img id="logo-img" src="https://i.ibb.co/1tCywvyP/logo.png" class="h-10" alt="Logo">
-                    <span class="text-xl font-bold text-mudalali-green-dark"></span>
+                    <span class="text-xl font-bold text-mudalali-green-dark">Admin Panel</span>
                 </a>
             </div>
             <nav class="flex-grow p-4 space-y-2 overflow-y-auto no-scrollbar">
@@ -86,7 +99,7 @@
                     <i class="fa fa-tachometer-alt"></i>
                     <span class="ml-3">Dashboard</span>
                 </a>
-                <a href="#sellers" id="nav-sellers" class="sidebar-link">
+                <a href="#sellers" id="nav-sellers" class="sidebar-link hidden">
                     <i class="fa fa-users"></i>
                     <span class="ml-3">Seller Management</span>
                 </a>
@@ -98,21 +111,35 @@
                     <i class="fa fa-receipt"></i>
                     <span class="ml-3">Order Management</span>
                 </a>
-                <a href="#stories" id="nav-stories" class="sidebar-link">
+                
+                <p class="text-xs font-semibold text-gray-400 uppercase pt-4 px-3">Content & Layout</p>
+                <a href="#layout" id="nav-layout" class="sidebar-link">
+                    <i class="fa fa-layer-group"></i>
+                    <span class="ml-3">Homepage Layout</span>
+                </a>
+                <a href="#stories" id="nav-stories" class="sidebar-link hidden">
                     <i class="fa fa-book-open"></i>
                     <span class="ml-3">Content (Stories)</span>
-                </a>
-                <a href="#financials" id="nav-financials" class="sidebar-link">
-                    <i class="fa fa-dollar-sign"></i>
-                    <span class="ml-3">Financials & Payouts</span>
-                </a>
-                <a href="#marketing" id="nav-marketing" class="sidebar-link">
-                    <i class="fa fa-bullhorn"></i>
-                    <span class="ml-3">Marketing & Promo</span>
                 </a>
                 <a href="#categories" id="nav-categories" class="sidebar-link">
                     <i class="fa fa-list"></i>
                     <span class="ml-3">Categories</span>
+                </a>
+                
+                <p class="text-xs font-semibold text-gray-400 uppercase pt-4 px-3">Marketing</p>
+                <a href="#marketing" id="nav-marketing" class="sidebar-link">
+                    <i class="fa fa-bullhorn"></i>
+                    <span class="ml-3">Banners & Promo</span>
+                </a>
+                <a href="#carousels" id="nav-carousels" class="sidebar-link">
+                    <i class="fa fa-images"></i>
+                    <span class="ml-3">Product Carousels</span>
+                </a>
+                
+                <p class="text-xs font-semibold text-gray-400 uppercase pt-4 px-3">Admin</p>
+                <a href="#financials" id="nav-financials" class="sidebar-link hidden">
+                    <i class="fa fa-dollar-sign"></i>
+                    <span class="ml-3">Financials & Payouts</span>
                 </a>
                 <a href="#settings" id="nav-settings" class="sidebar-link">
                     <i class="fa fa-cog"></i>
@@ -162,13 +189,13 @@
                 <div class="grid grid-cols-1 lg:grid-cols-3 gap-6">
                     <div class="lg:col-span-1 bg-white p-6 rounded-lg shadow-md">
                         <h3 class="font-bold text-xl mb-4">Action Items</h3>
-                        <div id="widget-pending-sellers" class="border-b pb-3 mb-3">
+                        <div id="widget-pending-sellers" class="border-b pb-3 mb-3 hidden">
                             <p class="text-gray-600">Loading pending sellers...</p>
                         </div>
                         <div id="widget-pending-products" class="border-b pb-3 mb-3">
                             <p class="text-gray-600">Loading pending products...</p>
                         </div>
-                        <div id="widget-pending-stories">
+                        <div id="widget-pending-stories" class="hidden">
                             <p class="text-gray-600">Loading pending stories...</p>
                         </div>
                     </div>
@@ -183,21 +210,19 @@
 
             <div id="view-sellers" class="dashboard-view hidden">
                 <h1 class="text-3xl font-bold text-gray-800 mb-6">Seller Management</h1>
-                <h2 class="text-2xl font-bold text-gray-800 mt-4 mb-4">Pending Approval</h2>
-                <div id="seller-list-container" class="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-4 md:gap-6">
-                    <p class="text-gray-500 col-span-full">Loading sellers awaiting approval...</p>
-                </div>
-                <h2 class="text-2xl font-bold text-gray-800 mt-12 mb-6">All Approved Sellers</h2>
-                <div id="approved-seller-list-container" class="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-4 md:gap-6">
-                    <p class="text-gray-500 col-span-full">Loading approved sellers...</p>
-                </div>
+                <p class="text-gray-500 col-span-full">This section is hidden.</p>
             </div>
             
             <div id="view-products" class="dashboard-view hidden">
                 <h1 class="text-3xl font-bold text-gray-800 mb-6">Product Management</h1>
-                <h2 class="text-2xl font-bold text-gray-800 mt-4 mb-4">Pending Product Approval</h2>
-                <div id="pending-product-list" class="bg-white rounded-lg shadow-md overflow-hidden">
-                    <p class="text-gray-500 p-6">Loading pending products...</p>
+                
+                <div class="mb-4">
+                    <input type="text" id="product-search-input" placeholder="Search products by name or ID..." class="form-input !w-full !max-w-md !inline-block">
+                </div>
+                
+                <h2 class="text-2xl font-bold text-gray-800 mt-4 mb-4">Product List</h2>
+                <div id="product-list-container" class="bg-white rounded-lg shadow-md overflow-hidden">
+                    <p class="text-gray-500 p-6">Loading products...</p>
                 </div>
             </div>
 
@@ -211,33 +236,87 @@
 
             <div id="view-stories" class="dashboard-view hidden">
                 <h1 class="text-3xl font-bold text-gray-800 mb-6">Content & Story Management</h1>
-                <h2 class="text-2xl font-bold text-gray-800 mt-4 mb-4">Pending Story Approval</h2>
-                <div id="pending-story-list" class="bg-white rounded-lg shadow-md overflow-hidden">
-                    <p class="text-gray-500 p-6">Loading pending stories...</p>
-                </div>
+                 <p class="text-gray-500 col-span-full">This section is hidden.</p>
             </div>
 
             <div id="view-financials" class="dashboard-view hidden">
                 <h1 class="text-3xl font-bold text-gray-800 mb-6">Financials & Payouts</h1>
-                <h2 class="text-2xl font-bold text-gray-800 mt-4 mb-4">Commission Reports</h2>
-                <p class="text-gray-500">Commission charts and reports go here...</p>
-                <h2 class="text-2xl font-bold text-gray-800 mt-12 mb-6">Payouts Due</h2>
-                <div id="payouts-due-list" class="bg-white rounded-lg shadow-md overflow-hidden">
-                    <p class="text-gray-500 p-6">Loading payouts due...</p>
-                </div>
+                 <p class="text-gray-500 col-span-full">This section is hidden.</p>
             </div>
 
             <div id="view-marketing" class="dashboard-view hidden">
-                <h1 class="text-3xl font-bold text-gray-800 mb-6">Marketing & Promotions</h1>
+                <h1 class="text-3xl font-bold text-gray-800 mb-6">Banners & Promotions</h1>
                 
-                <h2 class="text-2xl font-bold text-gray-800 mt-4 mb-4">Homepage Banners</h2>
-                <div id="homepage-banners-container" class="space-y-6">
-                    <p class="text-gray-500">Loading homepage settings...</p>
+                <div class="grid grid-cols-1 lg:grid-cols-2 gap-8">
+                    <div>
+                        <h2 class="text-2xl font-bold text-gray-800 mt-4 mb-4">Homepage Banners</h2>
+                        <div id="homepage-banners-container" class="space-y-6">
+                            <p class="text-gray-500">Loading homepage settings...</p>
+                        </div>
+                    </div>
+                    <div class="space-y-8">
+                        <div>
+                            <h2 class="text-2xl font-bold text-gray-800 mt-4 mb-4">Shop By Category Banners</h2>
+                            <div id="shop-by-category-banners-container" class="space-y-6">
+                                <p class="text-gray-500">Loading shop banner settings...</p>
+                            </div>
+                        </div>
+                        <div>
+                            <h2 class="text-2xl font-bold text-gray-800 mt-4 mb-4">Product Promo Areas</h2>
+                            <div id="promo-areas-container" class="space-y-6">
+                                <p class="text-gray-500">Loading promo area settings...</p>
+                            </div>
+                        </div>
+                    </div>
                 </div>
                 
                 <h2 class="text-2xl font-bold text-gray-800 mt-12 mb-6">Coupon Management</h2>
                 <div id="coupons-container" class="space-y-6">
                     <p class="text-gray-500">Coupon management forms go here...</p>
+                </div>
+            </div>
+            
+            <div id="view-layout" class="dashboard-view hidden">
+                <div class="flex justify-between items-center mb-6">
+                    <h1 class="text-3xl font-bold text-gray-800">Homepage Layout</h1>
+                    <button id="save-layout-btn" class="btn-primary !w-auto !text-base !py-2 !px-6">Save Layout</button>
+                </div>
+                
+                <div class="bg-yellow-100 border-l-4 border-yellow-500 text-yellow-700 p-4 rounded-md mb-6">
+                    <p><i class="fa fa-arrows-alt-v mr-2"></i> Drag items to re-order the homepage sections. Use the checkbox to show or hide a section.</p>
+                </div>
+                
+                <div id="layout-manager-container" class="max-w-2xl mx-auto space-y-3">
+                    <p class="text-gray-500 text-center py-10">Loading layout...</p>
+                </div>
+                <p id="layout-save-status" class="text-center text-green-600 font-semibold mt-4"></p>
+            </div>
+
+            <div id="view-carousels" class="dashboard-view hidden">
+                <h1 class="text-3xl font-bold text-gray-800 mb-6">Manage Product Carousels</h1>
+                <div class="grid grid-cols-1 lg:grid-cols-2 gap-6">
+                    <div class="lg:col-span-1">
+                        <form id="carousel-form" class="bg-white p-6 rounded-lg shadow-md space-y-4">
+                            <h2 id="carousel-form-title" class="text-xl font-bold text-gray-800">Add New Carousel</h2>
+                            <div>
+                                <label for="carousel-title" class="form-label">Carousel Title (e.g., "New Arrivals")</label>
+                                <input type="text" id="carousel-title" class="form-input" required>
+                            </div>
+                            <div>
+                                <label for="carousel-id" class="form-label">Unique ID (e.g., "new_arrivals")</label>
+                                <input type="text" id="carousel-id" class="form-input" required placeholder="new_arrivals_no_spaces">
+                                <p class="text-xs text-gray-500 mt-1">Use this ID in the "Product Promo Area" settings. Use underscores, no spaces.</p>
+                            </div>
+                            <button id="submit-carousel-btn" type="submit" class="btn-primary !text-base !py-2">Save Carousel</button>
+                            <p id="carousel-upload-status" class="text-sm text-gray-600 mt-2"></p>
+                        </form>
+                    </div>
+                    <div class="lg:col-span-1">
+                        <h2 class="text-xl font-bold text-gray-800 mb-4">Existing Carousels</h2>
+                        <div id="carousel-list-container" class="space-y-4">
+                            <p class="text-gray-500">Loading your carousels...</p>
+                        </div>
+                    </div>
                 </div>
             </div>
 
@@ -253,12 +332,13 @@
                                 <input type="text" id="category-name" class="form-input" required>
                             </div>
                             <div>
-                                <label for="category-image-url" class="form-label">Image URL</label>
-                                <input type="text" id="category-image-url" class="form-input" placeholder="https://...">
+                                <label for="category-image-file" class="form-label">Category Image</label>
+                                <input type="file" id="category-image-file" class="form-input" accept="image/*" required>
+                                <img id="category-image-preview" class="hidden w-20 h-20 object-contain rounded-md mt-2 border p-1">
                             </div>
                             <div>
-                                <label for="category-color" class="form-label">Background Color (e.g., #FFFFFF)</label>
-                                <input type="text" id="category-color" class="form-input" placeholder="#f5f5f4">
+                                <label for="category-color" class="form-label">Background Color</label>
+                                <input type="color" id="category-color" class="form-input h-12 p-1" value="#f5f5f4">
                             </div>
                             <button id="submit-category-btn" type="submit" class="btn-primary !text-base !py-2">Save Category</button>
                             <p id="category-upload-status" class="text-sm text-gray-600 mt-2"></p>
@@ -275,13 +355,66 @@
 
             <div id="view-settings" class="dashboard-view hidden">
                 <h1 class="text-3xl font-bold text-gray-800 mb-6">Platform Settings</h1>
-                <div id="platform-settings-container" class="bg-white p-6 rounded-lg shadow-md space-y-4">
-                    <h3 class="text-xl font-bold text-gray-700">General Settings</h3>
-                    <p class="text-gray-500">Forms to edit site logo, name, commission rate, etc. go here...</p>
-                    <h3 class="text-xl font-bold text-gray-700 mt-6">Payment Gateway</h3>
-                    <p class="text-gray-500">Forms for API keys go here (WARNING: Use secure methods).</p>
-                    <h3 class="text-xl font-bold text-gray-700 mt-6">Shipping Configuration</h3>
-                    <p class="text-gray-500">Forms for shipping rates go here...</p>
+                <div class="grid grid-cols-1 lg:grid-cols-2 gap-6">
+                    <div id="platform-settings-container" class="bg-white p-6 rounded-lg shadow-md space-y-4">
+                        <h3 class="text-xl font-bold text-gray-700">General Settings</h3>
+                        <p class="text-gray-500">Manage site-wide details.</p>
+                        <form id="general-settings-form" class="space-y-4 pt-4 border-t">
+                            <div>
+                                <label class="form-label">Site Name (Logo Text)</label>
+                                <input type="text" id="setting-logo-text" class="form-input" placeholder="මුදලාලි මාමා">
+                            </div>
+                            <div>
+                                <label class="form-label">Logo Image</label>
+                                <input type="file" id="setting-logo-file" class="form-input" data-preview="preview-logo-url" accept="image/*">
+                                <input type="hidden" id="setting-logo-url">
+                                <img id="preview-logo-url" src="" class="image-preview hidden">
+                            </div>
+                             <div>
+                                <label class="form-label">Header Hotline Number</label>
+                                <input type="text" id="setting-hotline" class="form-input" placeholder="011 123 4567">
+                            </div>
+                             <div>
+                                <label class="form-label">Global Commission Rate (%)</label>
+                                <input type="number" id="setting-commission" class="form-input" placeholder="5">
+                                <p class="text-xs text-gray-500 mt-1">This is the platform fee (e.g., 5 for 5%).</p>
+                            </div>
+                            <button type="submit" class="btn-primary !text-base !py-2 !w-auto !px-6">Save General Settings</button>
+                            <p id="settings-status" class="text-sm"></p>
+                        </form>
+                    </div>
+
+                    <div class="bg-white p-6 rounded-lg shadow-md space-y-4">
+                        <h3 class="text-xl font-bold text-gray-700">Footer Links</h3>
+                        <form id="footer-link-form" class="space-y-4 pt-4 border-t">
+                            <input type="hidden" id="footer-link-edit-id">
+                            <h4 id="footer-form-title" class="text-lg font-semibold">Add New Footer Link</h4>
+                            <div>
+                                <label for="footer-link-text" class="form-label">Link Text</label>
+                                <input type="text" id="footer-link-text" class="form-input" placeholder="About Us" required>
+                            </div>
+                            <div>
+                                <label for="footer-link-url" class="form-label">Link URL</label>
+                                <input type="text" id="footer-link-url" class="form-input" placeholder="/about.html" required>
+                            </div>
+                            <div>
+                                <label for="footer-link-column" class="form-label">Footer Column</label>
+                                <select id="footer-link-column" class="form-input">
+                                    <option value="col_tsmgroup">Column 1 (මුදලාලි මාමා)</option>
+                                    <option value="col_info">Column 2 (INFO)</option>
+                                    <option value="col_quicklinks">Column 3 (QUICK LINKS)</option>
+                                </select>
+                            </div>
+                            <button id="submit-footer-link-btn" type="submit" class="btn-primary !text-base !py-2">Save Link</button>
+                            <button id="cancel-footer-edit-btn" type="button" class="btn-secondary !text-base !py-2 !w-auto !px-4 hidden">Cancel Edit</button>
+                        </form>
+                        <div class="pt-4 border-t">
+                             <h4 class="text-lg font-semibold mb-2">Existing Links</h4>
+                            <div id="footer-links-list-container" class="space-y-2">
+                                <p class="text-gray-500">Loading footer links...</p>
+                            </div>
+                        </div>
+                    </div>
                 </div>
             </div>
             
@@ -292,7 +425,7 @@
                 <i class="fa fa-tachometer-alt text-xl"></i>
                 <span class="mt-1">Dashboard</span>
             </button>
-            <button id="nav-btn-sellers" class="mobile-nav-link" data-hash="#sellers">
+            <button id="nav-btn-sellers" class="mobile-nav-link hidden" data-hash="#sellers">
                 <i class="fa fa-users text-xl"></i>
                 <span class="mt-1">Sellers</span>
             </button>
@@ -324,7 +457,7 @@
                         <i class="fa fa-tachometer-alt"></i>
                         <span class="ml-3">Dashboard</span>
                     </a>
-                    <a href="#sellers" id="mobile-nav-sellers" class="sidebar-link">
+                    <a href="#sellers" id="mobile-nav-sellers" class="sidebar-link hidden">
                         <i class="fa fa-users"></i>
                         <span class="ml-3">Seller Management</span>
                     </a>
@@ -336,21 +469,35 @@
                         <i class="fa fa-receipt"></i>
                         <span class="ml-3">Order Management</span>
                     </a>
-                    <a href="#stories" id="mobile-nav-stories" class="sidebar-link">
+                    
+                    <p class="text-xs font-semibold text-gray-400 uppercase pt-4 px-3">Content & Layout</p>
+                    <a href="#layout" id="mobile-nav-layout" class="sidebar-link">
+                        <i class="fa fa-layer-group"></i>
+                        <span class="ml-3">Homepage Layout</span>
+                    </a>
+                    <a href="#stories" id="mobile-nav-stories" class="sidebar-link hidden">
                         <i class="fa fa-book-open"></i>
                         <span class="ml-3">Content (Stories)</span>
-                    </a>
-                    <a href="#financials" id="mobile-nav-financials" class="sidebar-link">
-                        <i class="fa fa-dollar-sign"></i>
-                        <span class="ml-3">Financials & Payouts</span>
-                    </a>
-                    <a href="#marketing" id="mobile-nav-marketing" class="sidebar-link">
-                        <i class="fa fa-bullhorn"></i>
-                        <span class="ml-3">Marketing & Promo</span>
                     </a>
                     <a href="#categories" id="mobile-nav-categories" class="sidebar-link">
                         <i class="fa fa-list"></i>
                         <span class="ml-3">Categories</span>
+                    </a>
+                    
+                    <p class="text-xs font-semibold text-gray-400 uppercase pt-4 px-3">Marketing</p>
+                    <a href="#marketing" id="mobile-nav-marketing" class="sidebar-link">
+                        <i class="fa fa-bullhorn"></i>
+                        <span class="ml-3">Banners & Promo</span>
+                    </a>
+                    <a href="#carousels" id="mobile-nav-carousels" class="sidebar-link">
+                        <i class="fa fa-images"></i>
+                        <span class="ml-3">Product Carousels</span>
+                    </a>
+                    
+                    <p class="text-xs font-semibold text-gray-400 uppercase pt-4 px-3">Admin</p>
+                    <a href="#financials" id="mobile-nav-financials" class="sidebar-link hidden">
+                        <i class="fa fa-dollar-sign"></i>
+                        <span class="ml-3">Financials & Payouts</span>
                     </a>
                     <a href="#settings" id="mobile-nav-settings" class="sidebar-link">
                         <i class="fa fa-cog"></i>
@@ -366,13 +513,52 @@
             </aside>
         </div>
 
-    </div> <script type="module">
+    </div> 
+    
+    <div id="product-edit-modal" class="modal">
+        <div class="modal-content">
+            <div class="flex justify-between items-center p-4 border-b">
+                <h2 class="text-xl font-bold text-gray-800">Edit Product</h2>
+                <button id="product-edit-modal-close" class="text-gray-500 hover:text-gray-800 text-3xl">&times;</button>
+            </div>
+            <div class="p-6 max-h-[70vh] overflow-y-auto">
+                <form id="product-edit-form" class="space-y-4">
+                    <input type="hidden" id="product-edit-id">
+                    
+                    <div>
+                        <label class="form-label">Product Name</label>
+                        <input type="text" id="product-edit-name" class="form-input bg-gray-100" readonly>
+                    </div>
+                    
+                    <div>
+                        <label class="form-label">Approval Status</label>
+                        <select id="product-edit-approval" class="form-input">
+                            <option value="true">Approved (Visible on site)</option>
+                            <option value="false">Pending (Hidden from site)</option>
+                        </select>
+                    </div>
+
+                    <div>
+                        <label class="form-label">Assign to Carousels</label>
+                        <div id="product-edit-carousels-container" class="mt-2 space-y-2 max-h-40 overflow-y-auto border p-3 rounded-md">
+                            <p class="text-gray-500">Loading carousels...</p>
+                        </div>
+                    </div>
+                    
+                    <button type="submit" id="product-edit-save-btn" class="btn-primary !text-base !py-2">Save Changes</button>
+                    <p id="product-edit-status" class="text-sm text-center"></p>
+                </form>
+            </div>
+        </div>
+    </div>
+    
+    <script type="module">
         import { initializeApp } from "https://www.gstatic.com/firebasejs/11.6.1/firebase-app.js";
         import { 
             getAuth, 
             onAuthStateChanged, 
             signOut,
-            signInWithEmailAndPassword // <-- Aluthen import karanne
+            signInWithEmailAndPassword
         } from "https://www.gstatic.com/firebasejs/11.6.1/firebase-auth.js";
         import { 
             getFirestore, 
@@ -391,7 +577,8 @@
             serverTimestamp,
             increment,
             limit,
-            writeBatch
+            writeBatch,
+            startAfter 
         } from "https://www.gstatic.com/firebasejs/11.6.1/firebase-firestore.js";
 
         // --- Firebase Config ---
@@ -412,6 +599,8 @@
         const appId = typeof __app_id !== 'undefined' ? __app_id : 'default-app-id';
         const publicDataPath = `/artifacts/${appId}/public/data`;
         const usersPath = `/users`; 
+        
+        const imgbbApiKey = 'f068295c19803c448665a0ea48bcc2fc'; 
 
         // --- Global State & Element References ---
         let currentUser = null;
@@ -422,44 +611,43 @@
         const adminLoginForm = document.getElementById('admin-login-form');
         const adminLoginError = document.getElementById('admin-login-error');
         const loginLogo = document.getElementById('login-logo');
+        
+        let sortableLayoutList = null;
+        let homepageLayoutData = []; 
+        
+        let allCarouselsCache = []; 
+        let lastVisibleProduct = null;
+        let isProductLoading = false;
+        const PRODUCT_PAGE_LIMIT = 20;
 
-        // --- (HEAVILY MODIFIED) Auth State Change ---
+        // --- Auth State Change (Login Logic) ---
         onAuthStateChanged(auth, async (user) => {
             if (user) {
-                // User log wela, admin da balamu
                 currentUser = user;
                 const userDocRef = doc(db, usersPath, user.uid);
                 const userDocSnap = await getDoc(userDocRef);
 
                 if (userDocSnap.exists() && userDocSnap.data().isAdmin) {
-                    // --- SUCCESS: User is an Admin ---
                     currentUserData = userDocSnap.data();
-                    
                     adminLoginContainer.classList.add('hidden');
                     adminPanelContainer.classList.remove('hidden');
-                    
-                    initializeAdminDashboard(); // Admin data load karamu
+                    initializeAdminDashboard(); 
                 } else {
-                    // --- FAILURE: User is NOT an Admin (Customer/Seller) ---
                     console.warn("Auth Failed: User is not an admin.");
-                    
                     adminLoginContainer.classList.remove('hidden');
                     adminPanelContainer.classList.add('hidden');
-                    
                     if(adminLoginError) adminLoginError.textContent = "You do not have permission to access this panel.";
-                    await signOut(auth); // Aulak nethiwa logout karamu
+                    await signOut(auth); 
                 }
             } else {
-                // --- User is logged out ---
                 currentUser = null;
                 currentUserData = null;
-                
                 adminLoginContainer.classList.remove('hidden');
                 adminPanelContainer.classList.add('hidden');
             }
         });
 
-        // --- (NEW) Admin Login Form Submit Handler ---
+        // --- Admin Login Form Submit Handler ---
         if (adminLoginForm) {
             adminLoginForm.addEventListener('submit', async (e) => {
                 e.preventDefault();
@@ -469,7 +657,6 @@
                 
                 try {
                     await signInWithEmailAndPassword(auth, email, password);
-                    // Success! onAuthStateChanged eken anith tika karagani.
                     if(adminLoginError) adminLoginError.textContent = '';
                 } catch (error) {
                     console.error("Admin Login Error:", error);
@@ -482,7 +669,7 @@
             });
         }
         
-        // --- (MODIFIED) Logout Buttons ---
+        // --- Logout Buttons ---
         function setupLogoutButtons() {
             const logoutBtns = [
                 document.getElementById('drawer-logout-btn'),
@@ -491,11 +678,10 @@
             logoutBtns.forEach(btn => {
                 btn?.addEventListener('click', async () => {
                     await signOut(auth);
-                    // onAuthStateChanged eken login screen eka pennai
                 });
             });
         }
-
+        
         // --- Dashboard Initialization ---
         function initializeAdminDashboard() {
             console.log("Admin Dashboard Initialized for:", currentUser.uid);
@@ -503,22 +689,42 @@
             setupDashboardNavigation();
             setupLogoutButtons();
             
+            // =====================================
+            // ======== JS WENAS KALE (Initialize) ========
+            // =====================================
+            
+            // Aluth: Image upload listener eka add kala
+            setupImageUploadListeners(); 
+            
             // Load data for all views
             loadDashboardStats();
-            loadWidgetPendingSellers();
             loadWidgetPendingProducts();
-            loadWidgetPendingStories();
             loadWidgetRecentOrders();
 
-            loadSellersForApproval(); 
-            loadAllApprovedSellers();
-            loadProductManagement();
+            // === AYIN KARAPU FUNCTIONS ===
+            // loadWidgetPendingSellers();
+            // loadWidgetPendingStories();
+            // loadSellersForApproval(); 
+            // loadAllApprovedSellers();
+            // loadStoryManagement();
+            // loadFinancials();
+            // ============================
+            
+            // === ALUTH FUNCTIONS ===
+            loadAllCarouselsCache(); 
+            setupProductEditModal(); 
+            loadProductManagement(true); 
+            setupProductSearch(); 
+            // =======================
+
             loadOrderManagement();
-            loadStoryManagement();
-            loadFinancials();
-            loadMarketing();
+            
+            loadLayoutManagement(); 
+            loadMarketing(); 
+            loadCarouselManagement(); 
             loadCategoryManagement(); 
-            loadPlatformSettings();
+            loadPlatformSettings(); 
+            loadFooterLinkManagement(); 
 
             document.getElementById('page-loader').style.width = '100%';
             setTimeout(() => document.getElementById('page-loader').style.display = 'none', 500);
@@ -534,7 +740,7 @@
             const dashboardDrawer = document.getElementById('dashboard-drawer');
 
             function switchView(hash) {
-                if (!hash || hash === '#') hash = '#dashboard'; // Default view
+                if (!hash || hash === '#') hash = '#dashboard'; 
                 window.location.hash = hash;
 
                 views.forEach(view => view.classList.add('hidden'));
@@ -543,7 +749,7 @@
                     activeView.classList.remove('hidden');
                 } else {
                     console.warn(`View not found: ${hash}`);
-                    document.getElementById('view-dashboard').classList.remove('hidden'); // Fallback
+                    document.getElementById('view-dashboard').classList.remove('hidden'); 
                 }
 
                 let activeLinkTitle = 'Dashboard';
@@ -579,6 +785,41 @@
             
             switchView(window.location.hash || '#dashboard');
         }
+        
+        // =====================================
+        // ======== ALUTH JS FUNCTION (Image Upload) ========
+        // =====================================
+
+        function setupImageUploadListeners() {
+            const mainContainer = document.getElementById('admin-panel-container');
+            
+            mainContainer.addEventListener('change', (e) => {
+                // Check if it's a file input with a data-preview attribute
+                if (e.target.tagName === 'INPUT' && e.target.type === 'file' && e.target.dataset.preview) {
+                    const file = e.target.files[0];
+                    const previewEl = document.getElementById(e.target.dataset.preview);
+                    
+                    // Find the hidden input
+                    const hiddenUrlInput = e.target.closest('div').querySelector('input[type="hidden"]');
+                    
+                    if (file && previewEl) {
+                        previewEl.src = URL.createObjectURL(file);
+                        previewEl.classList.remove('hidden');
+                        if (hiddenUrlInput) {
+                            hiddenUrlInput.value = ''; // Clear old URL
+                        }
+                        e.target.dataset.isDirty = 'true'; // Mark as new file
+                    } else if (previewEl) {
+                        // No file selected
+                        if (!hiddenUrlInput || !hiddenUrlInput.value) {
+                            previewEl.classList.add('hidden');
+                            previewEl.src = '';
+                        }
+                        e.target.dataset.isDirty = 'false';
+                    }
+                }
+            });
+        }
 
         // --- MODULE 1: DASHBOARD FUNCTIONS ---
         async function loadDashboardStats() {
@@ -597,15 +838,17 @@
                 customersEl.textContent = usersSnap.size.toLocaleString();
 
                 const last30Days = new Date(Date.now() - 30 * 24 * 60 * 60 * 1000);
-                const ordersRef = collection(db, publicDataPath, 'orders');
+                const ordersRef = collection(db, "orders"); 
                 
                 const ordersSnap = await getDocs(query(ordersRef, where("createdAt", ">=", last30Days)));
                 
                 let totalSales = 0;
                 let totalCommission = 0;
                 ordersSnap.forEach(doc => {
-                    totalSales += doc.data().totalAmount || 0;
-                    totalCommission += doc.data().platformFee || 0;
+                    const order = doc.data();
+                    totalSales += order.totalAmount || 0;
+                    const platformFee = (order.subtotal || 0) * 0.05; 
+                    totalCommission += platformFee;
                 });
                 
                 salesEl.textContent = `Rs. ${totalSales.toLocaleString('en-US', { minimumFractionDigits: 2 })}`;
@@ -623,19 +866,6 @@
             }
         }
         
-        async function loadWidgetPendingSellers() {
-            const container = document.getElementById('widget-pending-sellers');
-            try {
-                const q = query(collection(db, usersPath), where("isSeller", "==", true), where("isApproved", "==", false));
-                const snap = await getDocs(q);
-                if (snap.size > 0) {
-                    container.innerHTML = `<a href="#sellers" class="font-bold text-lg text-yellow-600 hover:underline">${snap.size} Seller(s)</a> waiting for approval.`;
-                } else {
-                    container.innerHTML = `<p class="text-gray-500">No pending sellers.</p>`;
-                }
-            } catch (e) { container.innerHTML = `<p class="text-red-500">Error loading sellers.</p>`; }
-        }
-        
         async function loadWidgetPendingProducts() {
             const container = document.getElementById('widget-pending-products');
              try {
@@ -649,23 +879,10 @@
             } catch (e) { container.innerHTML = `<p class="text-red-500">Error loading products.</p>`; }
         }
         
-        async function loadWidgetPendingStories() {
-            const container = document.getElementById('widget-pending-stories');
-             try {
-                const q = query(collection(db, publicDataPath, 'stories'), where("isApproved", "==", false));
-                const snap = await getDocs(q);
-                if (snap.size > 0) {
-                    container.innerHTML = `<a href="#stories" class="font-bold text-lg text-yellow-600 hover:underline">${snap.size} Storie(s)</a> waiting for approval.`;
-                } else {
-                    container.innerHTML = `<p class="text-gray-500">No pending stories.</p>`;
-                }
-            } catch (e) { container.innerHTML = `<p class="text-red-500">Error loading stories.</p>`; }
-        }
-        
         async function loadWidgetRecentOrders() {
             const container = document.getElementById('widget-recent-orders');
             try {
-                const q = query(collection(db, publicDataPath, 'orders'), orderBy("createdAt", "desc"), limit(5));
+                const q = query(collection(db, "orders"), orderBy("createdAt", "desc"), limit(5));
                 const snap = await getDocs(q);
                 if (snap.empty) {
                     container.innerHTML = '<p class="text-gray-500">No recent orders.</p>';
@@ -683,204 +900,241 @@
                 }).join('');
             } catch (e) {
                 console.error("Error loading widget orders:", e);
-                container.innerHTML = '<p class="text-red-500">Error loading recent orders.</video>';
+                container.innerHTML = '<p class="text-red-500">Error loading recent orders.</p>';
             }
         }
 
-        // --- MODULE 2: SELLER FUNCTIONS ---
-        async function loadSellersForApproval() {
-            const container = document.getElementById('seller-list-container');
-            container.innerHTML = '<p class="text-gray-500 col-span-full">Loading sellers awaiting approval...</p>';
-            const usersRef = collection(db, usersPath);
-            const q = query(usersRef, where("isSeller", "==", true), where("isApproved", "==", false));
-
-            try {
-                const querySnapshot = await getDocs(q);
-                if (querySnapshot.empty) {
-                    container.innerHTML = '<p class="text-gray-500 col-span-full">No new seller registrations.</p>';
-                    return;
-                }
-                container.innerHTML = '';
-                querySnapshot.forEach(doc => {
-                    const seller = doc.data();
-                    const sellerId = doc.id;
-                    let storeName = seller.storeName || seller.name || 'N/A';
-                    
-                    container.innerHTML += `
-                        <div class="col-span-1 bg-white p-4 rounded shadow border-l-4 border-yellow-500">
-                            <h3 class="font-bold text-lg">${storeName}</h3>
-                            <p class="text-sm text-gray-600">Owner: ${seller.name || 'N/A'}</p>
-                            <p class="text-sm text-gray-600">Email: ${seller.email}</p>
-                            <p class="text-sm text-blue-600">
-                                <a href="${seller.nicUrl || '#'}" target="_blank" class="hover:underline">View NIC</a> |
-                                <a href="${seller.brUrl || '#'}" target="_blank" class="hover:underline">View BR</a>
-                            </p>
-                            <div class="flex gap-2 mt-4">
-                                <button class="approve-seller-btn flex-1 bg-mudalali-green text-white px-3 py-2 rounded font-semibold text-sm" data-id="${sellerId}">Approve</button>
-                                <button class="reject-seller-btn flex-1 bg-red-600 text-white px-3 py-2 rounded font-semibold text-sm" data-id="${sellerId}">Reject</button>
-                            </div>
-                        </div>
-                    `;
-                });
-                container.querySelectorAll('.approve-seller-btn').forEach(btn => btn.addEventListener('click', (e) => approveSeller(e.target.dataset.id)));
-                container.querySelectorAll('.reject-seller-btn').forEach(btn => btn.addEventListener('click', (e) => rejectSeller(e.target.dataset.id)));
-            } catch (err) {
-                console.error("Error loading pending sellers: ", err);
-                container.innerHTML = '<p class="text-red-500 col-span-full">Error loading sellers.</p>';
-            }
-        }
-
-        async function loadAllApprovedSellers() {
-            const container = document.getElementById('approved-seller-list-container');
-            container.innerHTML = '<p class="text-gray-500 col-span-full">Loading approved sellers...</p>';
-            const usersRef = collection(db, usersPath);
-            const q = query(usersRef, where("isSeller", "==", true), where("isApproved", "==", true), orderBy("name"));
-
-            try {
-                const querySnapshot = await getDocs(q);
-                if (querySnapshot.empty) {
-                    container.innerHTML = '<p class="text-gray-500 col-span-full">No approved sellers found.</p>';
-                    return;
-                }
-                container.innerHTML = '';
-                querySnapshot.forEach(doc => {
-                    const seller = doc.data();
-                    const sellerId = doc.id;
-                    let storeName = seller.storeName || seller.name || 'N/A';
-                    container.innerHTML += `
-                        <div class="col-span-1 bg-white p-4 rounded shadow border-l-4 border-green-500">
-                            <h3 class="font-bold text-lg">${storeName}</h3>
-                            <p class="text-sm text-gray-600">Owner: ${seller.name || 'N/A'}</p>
-                            <p class="text-sm text-gray-600">Email: ${seller.email}</p>
-                             <div class="flex gap-2 mt-4">
-                                <a href="store.html?id=${sellerId}" target="_blank" class="flex-1 text-center bg-gray-100 text-gray-700 px-3 py-2 rounded font-semibold text-sm hover:bg-gray-200">View Store</a>
-                                <button class="reject-seller-btn flex-1 bg-red-100 text-red-600 px-3 py-2 rounded font-semibold text-sm" data-id="${sellerId}">Revoke</button>
-                            </div>
-                        </div>
-                    `;
-                });
-                container.querySelectorAll('.reject-seller-btn').forEach(btn => btn.addEventListener('click', (e) => rejectSeller(e.target.dataset.id, true)));
-            } catch (err) {
-                console.error("Error loading approved sellers: ", err);
-                container.innerHTML = '<p class="text-red-500 col-span-full">Error loading sellers.</p>';
-            }
-        }
-
-        async function approveSeller(sellerId) {
-            if (!confirm('Are you sure you want to approve this seller?')) return;
-            const userDocRef = doc(db, usersPath, sellerId);
-            const storeDocRef = doc(db, publicDataPath, 'stores', sellerId);
-            
-            try {
-                const batch = writeBatch(db);
-                batch.update(userDocRef, { isApproved: true });
-                batch.update(storeDocRef, { isApproved: true });
-                await batch.commit();
-                
-                alert('Seller Approved!');
-                loadSellersForApproval(); 
-                loadAllApprovedSellers(); 
-                loadWidgetPendingSellers();
-            } catch (err) {
-                console.error("Error approving seller: ", err);
-                alert('Approval failed.');
-            }
-        }
-
-        async function rejectSeller(sellerId, isRevoke = false) {
-            const action = isRevoke ? 'revoke approval for' : 'reject';
-            if (!confirm(`Are you sure you want to ${action} this seller?`)) return;
-            const userDocRef = doc(db, usersPath, sellerId);
-            const storeDocRef = doc(db, publicDataPath, 'stores', sellerId);
-            try {
-                const batch = writeBatch(db);
-                batch.update(userDocRef, { isApproved: false });
-                batch.update(storeDocRef, { isApproved: false });
-                await batch.commit();
-                
-                alert(`Seller ${isRevoke ? 'access revoked' : 'rejected'}.`);
-                loadSellersForApproval(); 
-                loadAllApprovedSellers(); 
-                loadWidgetPendingSellers();
-            } catch (err) {
-                console.error(`Error ${action}ing seller: `, err);
-                alert('Action failed.');
-            }
-        }
-
+        // --- MODULE 2 (Sellers): HIDDEN ---
+        async function loadSellersForApproval() {}
+        async function loadAllApprovedSellers() {}
+        async function approveSeller(sellerId) {}
+        async function rejectSeller(sellerId, isRevoke = false) {}
+        
         // --- MODULE 3: PRODUCT MANAGEMENT FUNCTIONS ---
-        async function loadProductManagement() {
-            const container = document.getElementById('pending-product-list');
-            container.innerHTML = '<p class="text-gray-500 p-6">Loading pending products...</p>';
+        
+        function setupProductSearch() {
+            const searchInput = document.getElementById('product-search-input');
+            let debounceTimer;
+            searchInput.addEventListener('input', (e) => {
+                clearTimeout(debounceTimer);
+                debounceTimer = setTimeout(() => {
+                    loadProductManagement(true); 
+                }, 500); 
+            });
+        }
+
+        async function loadProductManagement(reset = false) {
+            const container = document.getElementById('product-list-container');
+            const searchInput = document.getElementById('product-search-input').value.toLowerCase();
             
+            if (isProductLoading) return;
+            isProductLoading = true;
+            
+            if (reset) {
+                lastVisibleProduct = null;
+                container.innerHTML = ''; 
+            }
+            
+            if (!document.getElementById('product-loader')) {
+                 container.insertAdjacentHTML('beforeend', `<p id="product-loader" class="text-gray-500 p-6 text-center">Loading products...</p>`);
+            }
+
             try {
-                const q = query(collection(db, publicDataPath, 'products'), where("isApproved", "==", false));
+                const productsRef = collection(db, publicDataPath, 'products');
+                let qConstraints = [orderBy("createdAt", "desc")];
+                
+                if (searchInput) {
+                    qConstraints = [
+                        where('name_lowercase', '>=', searchInput),
+                        where('name_lowercase', '<=', searchInput + '\uf8ff'),
+                        orderBy('name_lowercase')
+                    ];
+                    qConstraints.push(limit(100));
+                    if(reset) container.innerHTML = '';
+                } else {
+                    if (lastVisibleProduct) {
+                        qConstraints.push(startAfter(lastVisibleProduct));
+                    }
+                    qConstraints.push(limit(PRODUCT_PAGE_LIMIT));
+                }
+
+                const q = query(productsRef, ...qConstraints);
                 const snap = await getDocs(q);
                 
-                if (snap.empty) {
-                    container.innerHTML = '<p class="text-gray-500 p-6">No products waiting for approval.</p>';
+                document.getElementById('product-loader')?.remove();
+
+                if (snap.empty && reset) {
+                    container.innerHTML = '<p class="text-gray-500 p-6">No products found.</p>';
+                    isProductLoading = false;
                     return;
                 }
                 
-                container.innerHTML = '';
+                if (snap.empty && !reset) {
+                    isProductLoading = false;
+                    return;
+                }
+                
+                if (!searchInput) {
+                    lastVisibleProduct = snap.docs[snap.docs.length - 1];
+                }
+
                 snap.forEach(doc => {
                     const product = doc.data();
                     const productId = doc.id;
-                    container.innerHTML += `
+                    const statusClass = product.isApproved ? "bg-green-100 text-green-700" : "bg-yellow-100 text-yellow-700";
+                    const statusText = product.isApproved ? "Approved" : "Pending";
+                    
+                    const productHtml = `
                         <div class="flex items-center justify-between p-4 border-b">
                             <div class="flex items-center gap-4">
                                 <img src="${product.imageUrl || 'https://placehold.co/80'}" class="w-16 h-16 object-cover rounded-md border">
                                 <div>
                                     <h4 class="font-bold text-lg">${product.name}</h4>
                                     <p class="text-sm text-gray-600">By: ${product.storeName || 'N/A'}</p>
-                                    <a href="product.html?id=${productId}" target="_blank" class="text-sm text-blue-600 hover:underline">Preview</a>
+                                    <span class="px-2 py-0.5 text-xs font-semibold rounded-full ${statusClass}">${statusText}</span>
                                 </div>
                             </div>
                             <div class="flex gap-2">
-                                <button class="approve-product-btn bg-mudalali-green text-white px-3 py-2 rounded font-semibold text-sm" data-id="${productId}">Approve</button>
-                                <button class="reject-product-btn bg-red-600 text-white px-3 py-2 rounded font-semibold text-sm" data-id="${productId}">Reject</button>
+                                <button class="edit-product-btn btn-small" data-id="${productId}">Edit</button>
+                                <a href="product.html?id=${productId}" target="_blank" class="btn-small-gray">Preview</a>
                             </div>
                         </div>
                     `;
+                    container.insertAdjacentHTML('beforeend', productHtml);
                 });
                 
-                container.querySelectorAll('.approve-product-btn').forEach(btn => btn.addEventListener('click', (e) => approveProduct(e.target.dataset.id)));
-                container.querySelectorAll('.reject-product-btn').forEach(btn => btn.addEventListener('click', (e) => rejectProduct(e.target.dataset.id)));
+                container.querySelectorAll('.edit-product-btn:not([data-listener-attached])').forEach(btn => {
+                    btn.addEventListener('click', (e) => openProductEditModal(e.target.dataset.id));
+                    btn.dataset.listenerAttached = true; 
+                });
                 
             } catch (e) {
-                console.error("Error loading pending products:", e);
+                console.error("Error loading products:", e);
+                document.getElementById('product-loader')?.remove();
                 container.innerHTML = '<p class="text-red-500 p-6">Error loading products.</p>';
+            }
+            
+            isProductLoading = false;
+        }
+
+        async function loadAllCarouselsCache() {
+            try {
+                allCarouselsCache = [];
+                const snap = await getDocs(query(collection(db, publicDataPath, 'productCarousels'), orderBy('title')));
+                snap.forEach(doc => {
+                    allCarouselsCache.push({ id: doc.id, ...doc.data() });
+                });
+                console.log("Carousels cached:", allCarouselsCache);
+            } catch (e) {
+                console.error("Failed to cache carousels: ", e);
             }
         }
         
-        async function approveProduct(productId) {
-            if (!confirm('Approve this product? It will be visible on the site.')) return;
-            try {
-                const docRef = doc(db, publicDataPath, 'products', productId);
-                await updateDoc(docRef, { isApproved: true });
-                loadProductManagement(); 
-                loadWidgetPendingProducts();
-            } catch (e) { console.error(e); alert("Error approving product."); }
+        function setupProductEditModal() {
+            const modal = document.getElementById('product-edit-modal');
+            const closeBtn = document.getElementById('product-edit-modal-close');
+            const form = document.getElementById('product-edit-form');
+
+            closeBtn.addEventListener('click', () => modal.classList.remove('open'));
+            form.addEventListener('submit', saveProductChanges);
         }
-        
-        async function rejectProduct(productId) {
-            if (!confirm('Reject this product? It will be hidden.')) return;
+
+        async function openProductEditModal(productId) {
+            const modal = document.getElementById('product-edit-modal');
+            const form = document.getElementById('product-edit-form');
+            const carouselsContainer = document.getElementById('product-edit-carousels-container');
+            const statusEl = document.getElementById('product-edit-status');
+            
+            form.reset();
+            statusEl.textContent = '';
+            document.getElementById('product-edit-id').value = productId;
+            carouselsContainer.innerHTML = '<p class="text-gray-500">Loading carousels...</p>';
+            
             try {
-                // We'll just set it to false. Deleting is also an option.
-                const docRef = doc(db, publicDataPath, 'products', productId);
-                await updateDoc(docRef, { isApproved: false, rejectionReason: "Rejected by admin" });
-                alert("Product Rejected.");
-                loadProductManagement(); 
-                loadWidgetPendingProducts();
-            } catch (e) { console.error(e); alert("Error rejecting product."); }
+                const productRef = doc(db, publicDataPath, 'products', productId);
+                const productSnap = await getDoc(productRef);
+                if (!productSnap.exists()) {
+                    throw new Error("Product not found");
+                }
+                
+                const product = productSnap.data();
+                document.getElementById('product-edit-name').value = product.name;
+                document.getElementById('product-edit-approval').value = product.isApproved ? 'true' : 'false';
+                
+                const productCarousels = product.carousels || []; 
+                
+                if (allCarouselsCache.length === 0) {
+                    carouselsContainer.innerHTML = '<p class="text-red-500">Error: Carousel list not loaded.</p>';
+                } else {
+                    carouselsContainer.innerHTML = allCarouselsCache.map(carousel => {
+                        const isChecked = productCarousels.includes(carousel.id);
+                        return `
+                            <label class="flex items-center gap-2 p-2 hover:bg-gray-50 rounded">
+                                <input type="checkbox" value="${carousel.id}" class="h-4 w-4 text-mudalali-green rounded" ${isChecked ? 'checked' : ''}>
+                                <span class="text-sm font-medium">${carousel.title}</span>
+                            </label>
+                        `;
+                    }).join('');
+                }
+                
+                modal.classList.add('open');
+                
+            } catch (e) {
+                console.error("Error opening product modal: ", e);
+                alert("Error: " + e.message);
+            }
         }
+
+        async function saveProductChanges(e) {
+            e.preventDefault();
+            const productId = document.getElementById('product-edit-id').value;
+            if (!productId) return;
+
+            const saveBtn = document.getElementById('product-edit-save-btn');
+            const statusEl = document.getElementById('product-edit-status');
+            saveBtn.disabled = true;
+            statusEl.textContent = 'Saving...';
+
+            const selectedCarousels = [];
+            document.querySelectorAll('#product-edit-carousels-container input[type="checkbox"]:checked').forEach(input => {
+                selectedCarousels.push(input.value);
+            });
+            
+            const isApproved = document.getElementById('product-edit-approval').value === 'true';
+            
+            try {
+                const productRef = doc(db, publicDataPath, 'products', productId);
+                await updateDoc(productRef, {
+                    isApproved: isApproved,
+                    carousels: selectedCarousels 
+                });
+                
+                statusEl.textContent = 'Product Updated!';
+                statusEl.className = 'text-sm text-center text-green-600';
+                
+                loadProductManagement(true);
+                loadWidgetPendingProducts(); 
+
+                setTimeout(() => {
+                    document.getElementById('product-edit-modal').classList.remove('open');
+                    saveBtn.disabled = false;
+                }, 1500);
+
+            } catch (e) {
+                console.error("Error saving product: ", e);
+                statusEl.textContent = 'Error saving: ' + e.message;
+                statusEl.className = 'text-sm text-center text-red-500';
+                saveBtn.disabled = false;
+            }
+        }
+
 
         // --- MODULE 4: ORDER MANAGEMENT FUNCTIONS ---
         async function loadOrderManagement() {
             const container = document.getElementById('all-orders-list');
             container.innerHTML = '<p class="text-gray-500 p-6">Loading all orders...</p>';
             try {
-                const q = query(collection(db, publicDataPath, 'orders'), orderBy("createdAt", "desc"), limit(50));
+                const q = query(collection(db, "orders"), orderBy("createdAt", "desc"), limit(50));
                 const snap = await getDocs(q);
                 
                 if (snap.empty) {
@@ -889,23 +1143,23 @@
                 }
                 
                 container.innerHTML = snap.docs.map(doc => {
-                     const order = doc.data();
-                     const date = order.createdAt ? order.createdAt.toDate().toLocaleDateString() : 'N/A';
-                     return `
-                        <div class="p-4 border-b">
-                            <div class="flex justify-between items-center">
-                                <div>
-                                    <p class="text-sm font-semibold text-gray-500">Order ID: ${doc.id}</p>
-                                    <h3 class="text-lg font-bold text-gray-800">${order.customerInfo?.name || 'N/A'}</h3>
+                       const order = doc.data();
+                       const date = order.createdAt ? order.createdAt.toDate().toLocaleDateString() : 'N/A';
+                       return `
+                            <div class="p-4 border-b">
+                                <div class="flex justify-between items-center">
+                                    <div>
+                                        <p class="text-sm font-semibold text-gray-500">Order ID: ${doc.id}</p>
+                                        <h3 class="text-lg font-bold text-gray-800">${order.customerInfo?.name || 'N/A'}</h3>
+                                    </div>
+                                    <div class="text-right">
+                                        <p class="text-xl font-bold text-mudalali-green">Rs. ${order.totalAmount.toFixed(2)}</p>
+                                        <span class="px-3 py-1 text-xs font-semibold rounded-full bg-green-100 text-green-700">${order.status || 'Pending'}</span>
+                                    </div>
                                 </div>
-                                <div class="text-right">
-                                    <p class="text-xl font-bold text-mudalali-green">Rs. ${order.totalAmount.toFixed(2)}</p>
-                                    <span class="px-3 py-1 text-xs font-semibold rounded-full bg-green-100 text-green-700">${order.status || 'Pending'}</span>
-                                </div>
+                                <p class="text-sm text-gray-500">Date: ${date}</p>
                             </div>
-                            <p class="text-sm text-gray-500">Date: ${date}</p>
-                        </div>
-                     `;
+                       `;
                 }).join('');
                 
             } catch (e) {
@@ -914,162 +1168,28 @@
             }
         }
 
-        // --- MODULE 5: STORY MANAGEMENT FUNCTIONS ---
-        async function loadStoryManagement() {
-            const container = document.getElementById('pending-story-list');
-            container.innerHTML = '<p class="text-gray-500 p-6">Loading pending stories...</p>';
-            
-            try {
-                const q = query(collection(db, publicDataPath, 'stories'), where("isApproved", "==", false));
-                const snap = await getDocs(q);
-                
-                if (snap.empty) {
-                    container.innerHTML = '<p class="text-gray-500 p-6">No stories waiting for approval.</p>';
-                    return;
-                }
-                
-                container.innerHTML = '';
-                snap.forEach(doc => {
-                    const story = doc.data();
-                    const storyId = doc.id;
-                    container.innerHTML += `
-                        <div class="flex items-center justify-between p-4 border-b">
-                            <div class="flex items-center gap-4">
-                                <img src="${story.imageUrl || 'https://placehold.co/80'}" class="w-16 h-16 object-cover rounded-md border">
-                                <div>
-                                    <h4 class="font-bold text-lg">${story.storeName || 'N/A'}</h4>
-                                    <p class="text-sm text-gray-600 line-clamp-1">${story.content || 'No content'}</p>
-                                    <a href="story-detail.html?id=${storyId}" target="_blank" class="text-sm text-blue-600 hover:underline">Preview</a>
-                                </div>
-                            </div>
-                            <div class="flex gap-2">
-                                <button class="approve-story-btn bg-mudalali-green text-white px-3 py-2 rounded font-semibold text-sm" data-id="${storyId}">Approve</button>
-                                <button class="reject-story-btn bg-red-600 text-white px-3 py-2 rounded font-semibold text-sm" data-id="${storyId}">Reject</button>
-                            </div>
-                        </div>
-                    `;
-                });
-                
-                container.querySelectorAll('.approve-story-btn').forEach(btn => btn.addEventListener('click', (e) => approveStory(e.target.dataset.id)));
-                container.querySelectorAll('.reject-story-btn').forEach(btn => btn.addEventListener('click', (e) => rejectStory(e.target.dataset.id)));
-                
-            } catch (e) {
-                console.error("Error loading pending stories:", e);
-                container.innerHTML = '<p class="text-red-500 p-6">Error loading stories.</p>';
-            }
-        }
+        // --- MODULE 5 (Stories): HIDDEN ---
+        async function loadStoryManagement() {}
+        async function approveStory(storyId) {}
+        async function rejectStory(storyId) {}
+
+        // --- MODULE 6 (Financials): HIDDEN ---
+        async function loadFinancials() {}
         
-        async function approveStory(storyId) {
-            if (!confirm('Approve this story?')) return;
-            try {
-                await updateDoc(doc(db, publicDataPath, 'stories', storyId), { isApproved: true });
-                loadStoryManagement(); loadWidgetPendingStories();
-            } catch (e) { console.error(e); alert("Error approving story."); }
-        }
-        
-        async function rejectStory(storyId) {
-            if (!confirm('Reject and delete this story?')) return;
-            try {
-                await deleteDoc(doc(db, publicDataPath, 'stories', storyId));
-                loadStoryManagement(); loadWidgetPendingStories();
-            } catch (e) { console.error(e); alert("Error rejecting story."); }
-        }
+        // =====================================
+        // ======== JS WENAS KALE (Marketing Module) ========
+        // =====================================
 
-        // --- MODULE 6: FINANCIAL FUNCTIONS ---
-        async function loadFinancials() {
-            const container = document.getElementById('payouts-due-list');
-            container.innerHTML = '<p class="text-gray-500 p-6">Loading payouts due...</p>';
-            
-            try {
-                const q = query(collection(db, publicDataPath, 'orders'), 
-                    where("status", "==", "Delivered"), 
-                    where("payoutComplete", "==", false)
-                );
-                const snap = await getDocs(q);
-
-                if (snap.empty) {
-                    container.innerHTML = '<p class="text-gray-500 p-6">No payouts due.</p>';
-                    return;
-                }
-
-                const payouts = {};
-                snap.forEach(doc => {
-                    const order = doc.data();
-                    order.items.forEach(item => {
-                        const sellerId = item.sellerUid;
-                        if (!sellerId) return;
-                        if (!payouts[sellerId]) {
-                            payouts[sellerId] = { 
-                                storeName: item.storeName || 'Unknown Seller', 
-                                totalSales: 0, 
-                                totalCommission: 0, 
-                                totalShipping: 0,
-                                orderDocs: [] 
-                            };
-                        }
-                        
-                        const itemTotal = item.price * item.quantity;
-                        const itemCommission = itemTotal * ( (order.platformFee / order.subtotal) || 0.04); // Calculate item-wise commission
-                        const itemShipping = item.shippingCost || 0;
-
-                        payouts[sellerId].totalSales += itemTotal;
-                        payouts[sellerId].totalCommission += itemCommission;
-                        payouts[sellerId].totalShipping += itemShipping;
-                        payouts[sellerId].orderDocs.push(doc.id);
-                    });
-                });
-                
-                container.innerHTML = '';
-                for (const sellerId in payouts) {
-                    const data = payouts[sellerId];
-                    const amountDue = (data.totalSales - data.totalCommission) + data.totalShipping;
-                    container.innerHTML += `
-                        <div class="p-4 border-b">
-                            <h4 class="font-bold text-lg">${data.storeName} (ID: ${sellerId})</h4>
-                            <p>Total Sales: Rs. ${data.totalSales.toFixed(2)}</p>
-                            <p>Shipping Collected: Rs. ${data.totalShipping.toFixed(2)}</p>
-                            <p>Commission (-): Rs. ${data.totalCommission.toFixed(2)}</p>
-                            <p class="font-bold text-xl text-mudalali-green">Amount Due: Rs. ${amountDue.toFixed(2)}</p>
-                            <p class="text-xs text-gray-500">${data.orderDocs.length} order(s)</p>
-                            <button class="mark-paid-btn mt-2 bg-blue-600 text-white px-3 py-1 rounded text-sm" data-seller-id="${sellerId}">Mark as Paid</button>
-                        </div>
-                    `;
-                }
-                
-                container.querySelectorAll('.mark-paid-btn').forEach(btn => {
-                    btn.addEventListener('click', async (e) => {
-                        const sellerId = e.target.dataset.sellerId;
-                        const orderIds = payouts[sellerId].orderDocs;
-                        if (!confirm(`Mark ${orderIds.length} order(s) as paid for ${sellerId}?`)) return;
-                        
-                        try {
-                            const batch = writeBatch(db);
-                            orderIds.forEach(orderId => {
-                                const orderRef = doc(db, publicDataPath, 'orders', orderId);
-                                batch.update(orderRef, { payoutComplete: true });
-                            });
-                            await batch.commit();
-                            alert("Payout marked as complete!");
-                            loadFinancials();
-                        } catch (err) { console.error(err); alert("Error marking as paid."); }
-                    });
-                });
-
-            } catch (e) {
-                console.error("Error loading financials:", e);
-                container.innerHTML = '<p class="text-red-500 p-6">Error loading financials.</p>';
-            }
-        }
-        
         // --- MODULE 7: MARKETING ---
         function loadMarketing() {
-            loadMarketingBanners();
-            // loadCoupons() (meka passe hadamu)
+            loadMarketingBanners(); 
+            loadShopByCategoryBanners(); 
+            loadPromoAreaManagement(); 
         }
 
         async function loadMarketingBanners() {
-            const viewContainer = document.getElementById('homepage-banners-container');
-            viewContainer.innerHTML = '';
+            const container = document.getElementById('homepage-banners-container');
+            container.innerHTML = '';
             
             const settingsToLoad = [
                 { id: 'heroBanner1', title: 'Hero Banner 1' },
@@ -1084,50 +1204,278 @@
                 const docRef = doc(db, publicDataPath, 'siteContent', setting.id);
                 const docSnap = await getDoc(docRef);
                 const data = docSnap.exists() ? docSnap.data() : {};
+                
+                const pcImgUrl = data.imageUrl_pc || data.imageUrl || '';
+                const mobImgUrl = data.imageUrl_mob || '';
 
-                viewContainer.innerHTML += `
+                let mobileFieldHtml = '';
+                if (setting.id.includes('heroBanner')) {
+                    mobileFieldHtml = `
+                        <div>
+                            <label class="form-label">Mobile Image (Optional)</label>
+                            <input type="file" class="form-input banner-image-file-mob" data-preview="preview-${setting.id}-mob" accept="image/*">
+                            <input type="hidden" class="banner-image-url-mob" value="${mobImgUrl}">
+                            <img id="preview-${setting.id}-mob" src="${mobImgUrl}" class="image-preview ${mobImgUrl ? '' : 'hidden'}">
+                        </div>
+                    `;
+                }
+
+                container.innerHTML += `
                     <form class="bg-white p-6 rounded-lg shadow-md space-y-4 homepage-form" data-doc-id="${setting.id}">
                         <h3 class="text-xl font-bold text-gray-700">${setting.title}</h3>
                         <div>
-                            <label class="form-label">Image URL</label>
-                            <input type="text" class="form-input banner-image-url" value="${data.imageUrl || ''}" placeholder="https://...">
+                            <label class="form-label">Desktop/Main Image</label>
+                            <input type="file" class="form-input banner-image-file-pc" data-preview="preview-${setting.id}-pc" accept="image/*">
+                            <input type="hidden" class="banner-image-url-pc" value="${pcImgUrl}">
+                            <img id="preview-${setting.id}-pc" src="${pcImgUrl}" class="image-preview ${pcImgUrl ? '' : 'hidden'}">
+                        </div>
+                        ${mobileFieldHtml}
+                        <div>
+                            <label class="form-label">Link URL (When clicked)</label>
+                            <input type="text" class="form-input banner-link-url" value="${data.linkUrl || ''}" placeholder="/shop.html?category=...">
+                        </div>
+                        <button type="submit" class="btn-primary !text-base !py-2 !w-auto !px-6">Save ${setting.title}</button>
+                        <p class="text-sm text-red-500 status-msg"></p>
+                    </form>
+                `;
+            }
+
+            container.querySelectorAll('.homepage-form').forEach(form => {
+                form.addEventListener('submit', (e) => saveSiteContent(e, 'siteContent'));
+            });
+        }
+        
+        async function loadShopByCategoryBanners() {
+            const container = document.getElementById('shop-by-category-banners-container');
+            container.innerHTML = '';
+            
+            const settingsToLoad = [
+                { id: 'shopByCatLarge', title: 'Large Banner (2x2)' },
+                { id: 'shopByCatSmall1', title: 'Small Banner 1 (Top)' },
+                { id: 'shopByCatSmall2', title: 'Small Banner 2 (Bottom)' }
+            ];
+
+            for (const setting of settingsToLoad) {
+                const docRef = doc(db, publicDataPath, 'shopByCategoryBanners', setting.id);
+                const docSnap = await getDoc(docRef);
+                const data = docSnap.exists() ? docSnap.data() : {};
+                const imgUrl = data.imageUrl || '';
+
+                container.innerHTML += `
+                    <form class="bg-white p-6 rounded-lg shadow-md space-y-4 shop-by-cat-form" data-doc-id="${setting.id}">
+                        <h3 class="text-xl font-bold text-gray-700">${setting.title}</h3>
+                        <div>
+                            <label class="form-label">Image</label>
+                            <input type="file" class="form-input banner-image-file" data-preview="preview-${setting.id}" accept="image/*">
+                            <input type="hidden" class="banner-image-url" value="${imgUrl}">
+                            <img id="preview-${setting.id}" src="${imgUrl}" class="image-preview ${imgUrl ? '' : 'hidden'}">
                         </div>
                         <div>
                             <label class="form-label">Link URL (When clicked)</label>
                             <input type="text" class="form-input banner-link-url" value="${data.linkUrl || ''}" placeholder="/shop.html?category=...">
                         </div>
                         <button type="submit" class="btn-primary !text-base !py-2 !w-auto !px-6">Save ${setting.title}</button>
+                        <p class="text-sm text-red-500 status-msg"></p>
                     </form>
                 `;
             }
-
-            viewContainer.querySelectorAll('.homepage-form').forEach(form => {
-                form.addEventListener('submit', saveHomepageContent);
+            
+            container.querySelectorAll('.shop-by-cat-form').forEach(form => {
+                form.addEventListener('submit', (e) => saveSiteContent(e, 'shopByCategoryBanners'));
             });
         }
         
-        async function saveHomepageContent(e) {
+        async function loadPromoAreaManagement() {
+            const container = document.getElementById('promo-areas-container');
+            container.innerHTML = '';
+            
+            const settingsToLoad = [
+                { id: 'promo_1', title: 'Product Promo Area 1' },
+                { id: 'promo_2', title: 'Product Promo Area 2' }
+            ];
+            
+            let carouselOptions = '<option value="">None</option>';
+            if (allCarouselsCache.length > 0) {
+                 carouselOptions += allCarouselsCache.map(carousel => 
+                    `<option value="${carousel.id}">${carousel.title} (ID: ${carousel.id})</option>`
+                 ).join('');
+            }
+
+            for (const setting of settingsToLoad) {
+                const docRef = doc(db, publicDataPath, 'productPromoAreas', setting.id);
+                const docSnap = await getDoc(docRef);
+                const data = docSnap.exists() ? docSnap.data() : {};
+                const imgUrl = data.bannerImageUrl || '';
+
+                container.innerHTML += `
+                    <form class="bg-white p-6 rounded-lg shadow-md space-y-4 promo-area-form" data-doc-id="${setting.id}">
+                        <h3 class="text-xl font-bold text-gray-700">${setting.title}</h3>
+                        <div>
+                            <label class="form-label">Area Title</label>
+                            <input type="text" class="form-input promo-title" value="${data.title || ''}" placeholder="e.g. Weekly Deals">
+                        </div>
+                        <div>
+                            <label class="form-label">Banner Image</label>
+                            <input type="file" class="form-input banner-image-file" data-preview="preview-${setting.id}" accept="image/*">
+                            <input type="hidden" class="banner-image-url" value="${imgUrl}">
+                            <img id="preview-${setting.id}" src="${imgUrl}" class="image-preview ${imgUrl ? '' : 'hidden'}">
+                        </div>
+                        <div>
+                            <label class="form-label">Banner Link URL</label>
+                            <input type="text" class="form-input banner-link-url" value="${data.bannerLink || ''}" placeholder="/shop.html">
+                        </div>
+                        <div>
+                            <label class="form-label">Product Carousel to Show</label>
+                            <select class="form-input promo-carousel-id">
+                                ${carouselOptions}
+                            </select>
+                        </div>
+                        <button type="submit" class="btn-primary !text-base !py-2 !w-auto !px-6">Save ${setting.title}</button>
+                        <p class="text-sm text-red-500 status-msg"></p>
+                    </form>
+                `;
+                if (data.productCarouselId) {
+                    const select = container.querySelector(`form[data-doc-id="${setting.id}"] .promo-carousel-id`);
+                    if(select) select.value = data.productCarouselId;
+                }
+            }
+            
+            container.querySelectorAll('.promo-area-form').forEach(form => {
+                form.addEventListener('submit', savePromoArea);
+            });
+        }
+        
+        async function saveSiteContent(e, collectionName) {
             e.preventDefault();
             const form = e.currentTarget;
             const docId = form.dataset.docId;
             const saveBtn = form.querySelector('button[type="submit"]');
+            const statusEl = form.querySelector('.status-msg');
             const originalBtnText = saveBtn.textContent;
             
-            const dataToSave = {
-                imageUrl: form.querySelector('.banner-image-url').value,
-                linkUrl: form.querySelector('.banner-link-url').value
-            };
-
             saveBtn.disabled = true;
             saveBtn.textContent = 'Saving...';
-            
+            statusEl.textContent = '';
+
             try {
-                const docRef = doc(db, publicDataPath, 'siteContent', docId);
+                // Check for PC/Main file upload
+                const fileInputPC = form.querySelector('.banner-image-file-pc, .banner-image-file');
+                const hiddenInputPC = form.querySelector('.banner-image-url-pc, .banner-image-url');
+                
+                if (fileInputPC && fileInputPC.dataset.isDirty === 'true' && fileInputPC.files[0]) {
+                    saveBtn.textContent = 'Uploading Image...';
+                    const newPcUrl = await uploadImageToImgBB(fileInputPC.files[0]);
+                    if (newPcUrl) {
+                        hiddenInputPC.value = newPcUrl;
+                    } else {
+                        throw new Error('Main Image upload failed.');
+                    }
+                    fileInputPC.dataset.isDirty = 'false';
+                }
+                
+                // Check for Mobile file upload
+                const fileInputMob = form.querySelector('.banner-image-file-mob');
+                const hiddenInputMob = form.querySelector('.banner-image-url-mob');
+                
+                if (fileInputMob && fileInputMob.dataset.isDirty === 'true' && fileInputMob.files[0]) {
+                    saveBtn.textContent = 'Uploading Mobile Image...';
+                    const newMobUrl = await uploadImageToImgBB(fileInputMob.files[0]);
+                    if (newMobUrl) {
+                        hiddenInputMob.value = newMobUrl;
+                    } else {
+                        throw new Error('Mobile Image upload failed.');
+                    }
+                    fileInputMob.dataset.isDirty = 'false';
+                }
+
+                saveBtn.textContent = 'Saving Data...';
+
+                const pcUrl = hiddenInputPC.value;
+                const linkUrl = form.querySelector('.banner-link-url').value;
+
+                const dataToSave = {
+                    imageUrl: pcUrl, 
+                    linkUrl: linkUrl,
+                    updatedAt: serverTimestamp()
+                };
+                
+                if (collectionName === 'siteContent') {
+                    dataToSave.imageUrl_pc = pcUrl;
+                    if (hiddenInputMob) { 
+                        dataToSave.imageUrl_mob = hiddenInputMob.value || pcUrl; 
+                        dataToSave.imageUrl_tab = pcUrl; 
+                    }
+                }
+                
+                if (collectionName === 'shopByCategoryBanners') {
+                    try {
+                        const docSnap = await getDoc(doc(db, publicDataPath, collectionName, docId));
+                        if(docSnap.exists()) dataToSave.size = docSnap.data().size || 'small';
+                        else dataToSave.size = docId.includes('Large') ? 'large' : 'small'; // Fallback
+                    } catch(e) {}
+                }
+
+                const docRef = doc(db, publicDataPath, collectionName, docId);
                 await setDoc(docRef, dataToSave, { merge: true });
                 saveBtn.textContent = 'Saved!';
+                
             } catch (err) {
                 console.error(err);
                 saveBtn.textContent = 'Error!';
+                statusEl.textContent = err.message;
+            }
+            setTimeout(() => {
+                saveBtn.disabled = false;
+                saveBtn.textContent = originalBtnText;
+            }, 2000);
+        }
+        
+        async function savePromoArea(e) {
+            e.preventDefault();
+            const form = e.currentTarget;
+            const docId = form.dataset.docId;
+            const saveBtn = form.querySelector('button[type="submit"]');
+            const statusEl = form.querySelector('.status-msg');
+            const originalBtnText = saveBtn.textContent;
+            
+            saveBtn.disabled = true;
+            saveBtn.textContent = 'Saving...';
+            statusEl.textContent = '';
+            
+            try {
+                // Check for Banner file upload
+                const fileInput = form.querySelector('.banner-image-file');
+                const hiddenInput = form.querySelector('.banner-image-url');
+                
+                if (fileInput && fileInput.dataset.isDirty === 'true' && fileInput.files[0]) {
+                    saveBtn.textContent = 'Uploading Banner...';
+                    const newBannerUrl = await uploadImageToImgBB(fileInput.files[0]);
+                    if (newBannerUrl) {
+                        hiddenInput.value = newBannerUrl;
+                    } else {
+                        throw new Error('Banner Image upload failed.');
+                    }
+                    fileInput.dataset.isDirty = 'false';
+                }
+
+                saveBtn.textContent = 'Saving Data...';
+            
+                const dataToSave = {
+                    title: form.querySelector('.promo-title').value,
+                    bannerImageUrl: hiddenInput.value,
+                    bannerLink: form.querySelector('.banner-link-url').value,
+                    productCarouselId: form.querySelector('.promo-carousel-id').value,
+                    updatedAt: serverTimestamp()
+                };
+
+                const docRef = doc(db, publicDataPath, 'productPromoAreas', docId);
+                await setDoc(docRef, dataToSave, { merge: true });
+                saveBtn.textContent = 'Saved!';
+
+            } catch (err) {
+                console.error(err);
+                saveBtn.textContent = 'Error!';
+                statusEl.textContent = err.message;
             }
             setTimeout(() => {
                 saveBtn.disabled = false;
@@ -1141,6 +1489,19 @@
             form.addEventListener('submit', saveCategory);
             const listContainer = document.getElementById('category-list-container');
             listContainer.innerHTML = '<p class="text-gray-500">Loading categories...</p>';
+            
+            const imageInput = document.getElementById('category-image-file');
+            const imagePreview = document.getElementById('category-image-preview');
+            imageInput.addEventListener('change', (e) => {
+                const file = e.target.files[0];
+                if (file) {
+                    imagePreview.src = URL.createObjectURL(file);
+                    imagePreview.classList.remove('hidden');
+                } else {
+                    imagePreview.classList.add('hidden');
+                    imagePreview.src = '';
+                }
+            });
             
             const categoriesRef = collection(db, publicDataPath, 'categories');
             onSnapshot(query(categoriesRef, orderBy("name")), (snapshot) => {
@@ -1157,7 +1518,7 @@
                             <strong class="text-gray-700">${doc.data().name}</strong>
                         </div>
                         <div>
-                            <button class="delete-category-btn text-red-500 hover:text-red-700 font-semibold" data-id="${doc.id}">Delete</button>
+                            <button class="delete-category-btn btn-small-red !py-1 !px-2" data-id="${doc.id}">Delete</button>
                         </div>
                     </div>
                 `).join('');
@@ -1168,19 +1529,44 @@
         async function saveCategory(e) {
             e.preventDefault();
             const name = document.getElementById('category-name').value;
-            const imageUrl = document.getElementById('category-image-url').value;
+            const imageFile = document.getElementById('category-image-file').files[0];
             const color = document.getElementById('category-color').value;
             const statusEl = document.getElementById('category-upload-status');
-            if (!name) { statusEl.textContent = 'Category name is required.'; return; }
-            statusEl.textContent = 'Saving...';
+            const form = document.getElementById('category-form');
+            const imagePreview = document.getElementById('category-image-preview');
+
+            if (!name || !imageFile) { 
+                statusEl.textContent = 'Category name and image are required.'; 
+                return; 
+            }
+            statusEl.textContent = 'Uploading image...';
+            
             try {
-                const docId = name.toLowerCase().replace(/\s+/g, '-').replace(/&/g, 'and'); 
-                const docRef = doc(db, publicDataPath, 'categories', docId);
-                await setDoc(docRef, { name: name, imageUrl: imageUrl, color: color });
+                const imageUrl = await uploadImageToImgBB(imageFile);
+                if (!imageUrl) {
+                    throw new Error("Image upload failed. Please try again.");
+                }
+                
+                statusEl.textContent = 'Image uploaded. Saving category...';
+                
+                const docRef = doc(collection(db, publicDataPath, 'categories'));
+                await setDoc(docRef, { 
+                    id: docRef.id, 
+                    name: name, 
+                    imageUrl: imageUrl, 
+                    color: color 
+                });
+                
                 statusEl.textContent = 'Category Saved!';
-                document.getElementById('category-form').reset();
+                form.reset(); 
+                document.getElementById('category-color').value = '#f5f5f4';
+                
+                imagePreview.classList.add('hidden');
+                imagePreview.src = '';
+                
             } catch (err) {
-                console.error(err); statusEl.textContent = 'Error saving category.';
+                console.error(err); 
+                statusEl.textContent = `Error: ${err.message || 'Could not save category.'}`;
             }
             setTimeout(() => statusEl.textContent = '', 3000);
         }
@@ -1192,7 +1578,206 @@
             } catch (err) { console.error(err); alert('Error deleting category.'); }
         }
         
-        // --- MODULE 9: PLATFORM SETTINGS ---
+        // --- MODULE 9: Product Carousels ---
+        
+        function loadCarouselManagement() {
+            const form = document.getElementById('carousel-form');
+            form.addEventListener('submit', saveCarousel);
+            const listContainer = document.getElementById('carousel-list-container');
+            listContainer.innerHTML = '<p class="text-gray-500">Loading carousels...</p>';
+            
+            const carouselsRef = collection(db, publicDataPath, 'productCarousels');
+            onSnapshot(query(carouselsRef, orderBy("title")), (snapshot) => {
+                if (snapshot.empty) {
+                    listContainer.innerHTML = '<p class="text-gray-500">No carousels found.</p>';
+                    return;
+                }
+                listContainer.innerHTML = snapshot.docs.map(doc => `
+                    <div class="bg-white p-3 rounded shadow flex justify-between items-center">
+                        <div>
+                            <strong class="text-gray-700">${doc.data().title}</strong>
+                            <p class="text-sm text-gray-500">ID: ${doc.id}</p>
+                        </div>
+                        <div>
+                            <button class="delete-carousel-btn btn-small-red !py-1 !px-2" data-id="${doc.id}">Delete</button>
+                        </div>
+                    </div>
+                `).join('');
+                listContainer.querySelectorAll('.delete-carousel-btn').forEach(btn => btn.addEventListener('click', (e) => deleteCarousel(e.target.dataset.id)));
+            });
+        }
+
+        async function saveCarousel(e) {
+            e.preventDefault();
+            const title = document.getElementById('carousel-title').value;
+            const id = document.getElementById('carousel-id').value.trim().replace(/\s+/g, '_'); 
+            const statusEl = document.getElementById('carousel-upload-status');
+            
+            if (!title || !id) { 
+                statusEl.textContent = 'Title and ID are required.'; 
+                return; 
+            }
+            statusEl.textContent = 'Saving...';
+            
+            try {
+                const docRef = doc(db, publicDataPath, 'productCarousels', id);
+                const docSnap = await getDoc(docRef);
+                if (docSnap.exists()) {
+                     throw new Error("This ID already exists. Please use a unique ID.");
+                }
+                
+                await setDoc(docRef, { 
+                    title: title, 
+                    id: id 
+                });
+                
+                statusEl.textContent = 'Carousel Saved!';
+                document.getElementById('carousel-form').reset();
+                await loadAllCarouselsCache(); 
+                loadPromoAreaManagement(); 
+            } catch (err) {
+                console.error(err); 
+                statusEl.textContent = `Error: ${err.message || 'Could not save carousel.'}`;
+            }
+            setTimeout(() => statusEl.textContent = '', 3000);
+        }
+        
+        async function deleteCarousel(docId) {
+            if (!confirm('Are you sure you want to delete this carousel? This will not delete products, but it might break promo areas using this ID.')) return;
+            try {
+                await deleteDoc(doc(db, publicDataPath, 'productCarousels', docId));
+                await loadAllCarouselsCache(); 
+                loadPromoAreaManagement(); 
+            } catch (err) { console.error(err); alert('Error deleting carousel.'); }
+        }
+        
+        // --- MODULE 10: Homepage Layout ---
+        
+        async function loadLayoutManagement() {
+            const container = document.getElementById('layout-manager-container');
+            container.innerHTML = '<p class="text-gray-500 text-center py-10">Loading layout...</p>';
+            
+            const layoutRef = doc(db, publicDataPath, 'siteContent', 'homepageLayout');
+            
+            const defaultLayout = [
+                { id: 'hero', type: 'hero', title: 'Hero Slider', visible: true },
+                { id: 'popularCategories', type: 'popularCategories', title: 'Popular Categories', visible: true },
+                { id: 'smallBanners', type: 'smallBanners', title: 'Small Banners (x3)', visible: true },
+                { id: 'newArrivals', type: 'newArrivals', title: 'New Arrivals Carousel', visible: true },
+                { id: 'promo_1', type: 'productPromoArea', title: 'Product Promo Area 1', visible: true },
+                { id: 'stories', type: 'sellerStories', title: 'Seller Stories', visible: true }, 
+                { id: 'shopByCategory', type: 'shopByCategory', title: 'Shop By Category Banners', visible: true },
+                { id: 'promo_2', type: 'productPromoArea', title: 'Product Promo Area 2', visible: true },
+            ];
+
+            try {
+                const layoutSnap = await getDoc(layoutRef);
+
+                if (layoutSnap.exists() && layoutSnap.data().layout) {
+                    homepageLayoutData = layoutSnap.data().layout;
+                    homepageLayoutData.forEach(item => {
+                        const defaultItem = defaultLayout.find(d => d.id === item.id);
+                        item.title = defaultItem ? defaultItem.title : item.type;
+                    });
+                } else {
+                    console.warn("Homepage layout not found, using default.");
+                    homepageLayoutData = defaultLayout;
+                }
+
+                container.innerHTML = ''; 
+                
+                homepageLayoutData.forEach((item, index) => {
+                    // Ayin karapu features layout eke pennanne nehe
+                    if (item.type === 'sellerStories') return; 
+
+                    container.innerHTML += `
+                        <div class="layout-item" data-id="${item.id}" data-type="${item.type}">
+                            <div class="flex items-center">
+                                <i class="fa fa-bars layout-item-handle mr-4 text-gray-400"></i>
+                                <strong class="text-gray-700">${item.title}</strong>
+                            </div>
+                            <div class="flex items-center">
+                                <label class="text-sm text-gray-500 mr-2">Show</label>
+                                <input type="checkbox" class="layout-visible-toggle h-5 w-5 text-mudalali-green rounded" ${item.visible ? 'checked' : ''}>
+                            </div>
+                        </div>
+                    `;
+                });
+                
+                if(sortableLayoutList) sortableLayoutList.destroy();
+                sortableLayoutList = new Sortable(container, {
+                    animation: 150,
+                    handle: '.layout-item-handle'
+                });
+
+                document.getElementById('save-layout-btn').addEventListener('click', saveLayoutChanges);
+
+            } catch (error) {
+                console.error("Error building homepage layout:", error);
+                container.innerHTML = '<p class="text-center text-red-500">Error loading layout.</p>';
+            }
+        }
+        
+        async function saveLayoutChanges() {
+            const container = document.getElementById('layout-manager-container');
+            const saveBtn = document.getElementById('save-layout-btn');
+            const statusEl = document.getElementById('layout-save-status');
+            
+            const newLayoutArray = [];
+            const items = container.querySelectorAll('.layout-item');
+            
+            items.forEach((itemEl, index) => {
+                const id = itemEl.dataset.id;
+                const type = itemEl.dataset.type;
+                const visible = itemEl.querySelector('.layout-visible-toggle').checked;
+                
+                const originalItem = homepageLayoutData.find(d => d.id === id) || { type: type };
+                
+                newLayoutArray.push({
+                    id: id,
+                    type: originalItem.type, 
+                    visible: visible
+                });
+            });
+            
+            // Ayin karapu items (stories wage) layout array ekata apahu add karanawa (hidden widiyata)
+            homepageLayoutData.forEach(originalItem => {
+                if (originalItem.type === 'sellerStories') {
+                    newLayoutArray.push({ ...originalItem, visible: false });
+                }
+            });
+
+            saveBtn.disabled = true;
+            saveBtn.textContent = 'Saving...';
+            statusEl.textContent = 'Saving layout...';
+            
+            try {
+                const layoutRef = doc(db, publicDataPath, 'siteContent', 'homepageLayout');
+                await setDoc(layoutRef, { layout: newLayoutArray });
+                
+                homepageLayoutData = newLayoutArray.map(item => ({
+                    ...item,
+                    title: homepageLayoutData.find(d => d.id === item.id)?.title || item.type
+                }));
+
+                statusEl.textContent = 'Layout Saved Successfully!';
+                saveBtn.textContent = 'Save Layout';
+                saveBtn.disabled = false;
+                
+            } catch(e) {
+                console.error("Error saving layout: ", e);
+                statusEl.textContent = 'Error saving layout.';
+                saveBtn.textContent = 'Save Layout';
+                saveBtn.disabled = false;
+            }
+            setTimeout(() => statusEl.textContent = '', 3000);
+        }
+
+        // =====================================
+        // ======== JS WENAS KALE (Settings) ========
+        // =====================================
+        
+        // --- MODULE 11: PLATFORM SETTINGS ---
         async function loadPlatformSettings() {
             const container = document.getElementById('platform-settings-container');
             container.innerHTML = `
@@ -1203,12 +1788,19 @@
                         <input type="text" id="setting-logo-text" class="form-input" placeholder="මුදලාලි මාමා">
                     </div>
                     <div>
-                        <label class="form-label">Logo Image URL</label>
-                        <input type="text" id="setting-logo-url" class="form-input" placeholder="https://...">
+                        <label class="form-label">Logo Image</label>
+                        <input type="file" id="setting-logo-file" class="form-input" data-preview="preview-logo-url" accept="image/*">
+                        <input type="hidden" id="setting-logo-url">
+                        <img id="preview-logo-url" src="" class="image-preview hidden">
+                    </div>
+                     <div>
+                        <label class="form-label">Header Hotline Number</label>
+                        <input type="text" id="setting-hotline" class="form-input" placeholder="011 123 4567">
                     </div>
                      <div>
                         <label class="form-label">Global Commission Rate (%)</label>
-                        <input type="number" id="setting-commission" class="form-input" placeholder="10">
+                        <input type="number" id="setting-commission" class="form-input" placeholder="5">
+                        <p class="text-xs text-gray-500 mt-1">This is the platform fee (e.g., 5 for 5%).</p>
                     </div>
                     <button type="submit" class="btn-primary !text-base !py-2 !w-auto !px-6">Save General Settings</button>
                     <p id="settings-status" class="text-sm"></p>
@@ -1221,8 +1813,17 @@
                 if (docSnap.exists()) {
                     const config = docSnap.data();
                     document.getElementById('setting-logo-text').value = config.logoText || '';
-                    document.getElementById('setting-logo-url').value = config.logoImageUrl || '';
-                    document.getElementById('setting-commission').value = config.globalCommissionRate || '';
+                    document.getElementById('setting-hotline').value = config.headerHotline || ''; 
+                    document.getElementById('setting-commission').value = config.globalCommissionRate || '5';
+                    
+                    // Aluth: Logo load karanawa
+                    const logoUrl = config.logoImageUrl || '';
+                    document.getElementById('setting-logo-url').value = logoUrl;
+                    const logoPreview = document.getElementById('preview-logo-url');
+                    if (logoUrl) {
+                        logoPreview.src = logoUrl;
+                        logoPreview.classList.remove('hidden');
+                    }
                 }
             } catch (e) { console.error("Error loading config:", e); }
             
@@ -1231,24 +1832,156 @@
                 const statusEl = document.getElementById('settings-status');
                 statusEl.textContent = 'Saving...';
                 
-                const dataToSave = {
-                    logoText: document.getElementById('setting-logo-text').value,
-                    logoImageUrl: document.getElementById('setting-logo-url').value,
-                    globalCommissionRate: Number(document.getElementById('setting-commission').value)
-                };
-                
                 try {
+                    // Check for new logo upload
+                    const fileInput = document.getElementById('setting-logo-file');
+                    const hiddenInput = document.getElementById('setting-logo-url');
+                    
+                    if (fileInput.dataset.isDirty === 'true' && fileInput.files[0]) {
+                        statusEl.textContent = 'Uploading Logo...';
+                        const newLogoUrl = await uploadImageToImgBB(fileInput.files[0]);
+                        if (newLogoUrl) {
+                            hiddenInput.value = newLogoUrl;
+                        } else {
+                            throw new Error('Logo upload failed.');
+                        }
+                        fileInput.dataset.isDirty = 'false';
+                    }
+
+                    statusEl.textContent = 'Saving Settings...';
+
+                    const dataToSave = {
+                        logoText: document.getElementById('setting-logo-text').value,
+                        logoImageUrl: hiddenInput.value, // Hidden input eken gannawa
+                        headerHotline: document.getElementById('setting-hotline').value, 
+                        globalCommissionRate: Number(document.getElementById('setting-commission').value)
+                    };
+                    
                     const configRef = doc(db, publicDataPath, 'siteContent', 'config');
                     await setDoc(configRef, dataToSave, { merge: true });
                     statusEl.textContent = 'Settings Saved!';
                     statusEl.className = 'text-sm text-green-600';
+                    loadSiteConfig(); 
                 } catch (e) {
                     console.error("Error saving config:", e);
                     statusEl.textContent = 'Error saving settings.';
                     statusEl.className = 'text-sm text-red-500';
                 }
-                 setTimeout(() => statusEl.textContent = '', 3000);
+                 setTimeout(() => {
+                    statusEl.textContent = '';
+                    statusEl.className = 'text-sm';
+                 }, 3000);
             });
+        }
+        
+        // --- MODULE 12: Footer ---
+        function loadFooterLinkManagement() {
+            const form = document.getElementById('footer-link-form');
+            const cancelBtn = document.getElementById('cancel-footer-edit-btn');
+            form.addEventListener('submit', saveFooterLink);
+            cancelBtn.addEventListener('click', resetFooterForm);
+            
+            const listContainer = document.getElementById('footer-links-list-container');
+            listContainer.innerHTML = '<p class="text-gray-500">Loading links...</p>';
+            
+            const linksRef = collection(db, publicDataPath, 'footerLinks');
+            onSnapshot(query(linksRef, orderBy("column"), orderBy("text")), (snapshot) => {
+                if (snapshot.empty) {
+                    listContainer.innerHTML = '<p class="text-gray-500">No footer links found.</p>';
+                    return;
+                }
+                
+                const columns = {
+                    col_tsmgroup: [],
+                    col_info: [],
+                    col_quicklinks: []
+                };
+                
+                snapshot.docs.forEach(doc => {
+                    if (columns[doc.data().column]) {
+                        columns[doc.data().column].push({ id: doc.id, ...doc.data() });
+                    }
+                });
+                
+                listContainer.innerHTML = `
+                    <div class="mb-2">
+                        <strong class="text-gray-700">Column 1 (මුදලාලි මාමා)</strong>
+                        <div class="pl-4 space-y-1 mt-1">${renderFooterLinkList(columns.col_tsmgroup)}</div>
+                    </div>
+                    <div class="mb-2">
+                        <strong class="text-gray-700">Column 2 (INFO)</strong>
+                        <div class="pl-4 space-y-1 mt-1">${renderFooterLinkList(columns.col_info)}</div>
+                    </div>
+                    <div>
+                        <strong class="text-gray-700">Column 3 (QUICK LINKS)</strong>
+                        <div class="pl-4 space-y-1 mt-1">${renderFooterLinkList(columns.col_quicklinks)}</div>
+                    </div>
+                `;
+                
+                listContainer.querySelectorAll('.edit-footer-link-btn').forEach(btn => btn.addEventListener('click', (e) => editFooterLink(e.target.dataset.id, e.target.dataset.text, e.target.dataset.url, e.target.dataset.col)));
+                listContainer.querySelectorAll('.delete-footer-link-btn').forEach(btn => btn.addEventListener('click', (e) => deleteFooterLink(e.target.dataset.id)));
+            });
+        }
+        
+        function renderFooterLinkList(links) {
+            if (!links.length) return '<p class="text-xs text-gray-400">No links in this column.</p>';
+            return links.map(link => `
+                <div class="flex justify-between items-center text-sm">
+                    <span>${link.text} <span class="text-gray-400">(${link.url})</span></span>
+                    <div>
+                        <button class="edit-footer-link-btn text-blue-600 hover:underline font-medium" data-id="${link.id}" data-text="${link.text}" data-url="${link.url}" data-col="${link.column}">Edit</button>
+                        <button class="delete-footer-link-btn text-red-500 hover:underline font-medium ml-2" data-id="${link.id}">Delete</button>
+                    </div>
+                </div>
+            `).join('');
+        }
+
+        async function saveFooterLink(e) {
+            e.preventDefault();
+            const editId = document.getElementById('footer-link-edit-id').value;
+            const data = {
+                text: document.getElementById('footer-link-text').value,
+                url: document.getElementById('footer-link-url').value,
+                column: document.getElementById('footer-link-column').value
+            };
+            
+            try {
+                if (editId) {
+                    const docRef = doc(db, publicDataPath, 'footerLinks', editId);
+                    await setDoc(docRef, data);
+                } else {
+                    await addDoc(collection(db, publicDataPath, 'footerLinks'), data);
+                }
+                resetFooterForm();
+            } catch (err) {
+                console.error("Error saving footer link: ", err);
+                alert("Error saving link.");
+            }
+        }
+        
+        function editFooterLink(id, text, url, col) {
+            document.getElementById('footer-link-edit-id').value = id;
+            document.getElementById('footer-form-title').textContent = 'Edit Footer Link';
+            document.getElementById('footer-link-text').value = text;
+            document.getElementById('footer-link-url').value = url;
+            document.getElementById('footer-link-column').value = col;
+            document.getElementById('submit-footer-link-btn').textContent = "Update Link";
+            document.getElementById('cancel-footer-edit-btn').classList.remove('hidden');
+        }
+        
+        function resetFooterForm() {
+            document.getElementById('footer-link-form').reset();
+            document.getElementById('footer-link-edit-id').value = '';
+            document.getElementById('footer-form-title').textContent = 'Add New Footer Link';
+            document.getElementById('submit-footer-link-btn').textContent = "Save Link";
+            document.getElementById('cancel-footer-edit-btn').classList.add('hidden');
+        }
+
+        async function deleteFooterLink(docId) {
+            if (!confirm('Are you sure you want to delete this footer link?')) return;
+            try {
+                await deleteDoc(doc(db, publicDataPath, 'footerLinks', docId));
+            } catch (err) { console.error(err); alert('Error deleting link.'); }
         }
 
         // --- General Functions ---
@@ -1262,14 +1995,41 @@
                 const logoImg = document.getElementById('logo-img');
                 const mobileLogoImg = document.getElementById('mobile-logo-img');
                 const loginLogoImg = document.getElementById('login-logo');
+                const logoTextEl = document.querySelector('#logo-img + span');
 
                 if (config.logoImageUrl) {
                     if(logoImg) logoImg.src = config.logoImageUrl;
                     if(mobileLogoImg) mobileLogoImg.src = config.logoImageUrl;
                     if(loginLogoImg) loginLogoImg.src = config.logoImageUrl;
+                    if(logoTextEl) logoTextEl.textContent = 'Admin Panel'; 
+                } else if (config.logoText) {
+                    if(logoImg) logoImg.remove();
+                    if(mobileLogoImg) mobileLogoImg.remove();
+                    if(loginLogoImg) loginLogoImg.remove();
+                    if(logoTextEl) logoTextEl.textContent = config.logoText;
                 }
             } catch (e) {
                 console.error("Error loading site config: ", e);
+            }
+        }
+        
+        async function uploadImageToImgBB(imageFile) {
+            const formData = new FormData();
+            formData.append('image', imageFile);
+            try {
+                const response = await fetch(`https://api.imgbb.com/1/upload?key=${imgbbApiKey}`, {
+                    method: 'POST',
+                    body: formData
+                });
+                const data = await response.json();
+                if (data.success) {
+                    return data.data.url; 
+                } else {
+                    throw new Error(data.error.message);
+                }
+            } catch (error) {
+                console.error('ImgBB Upload Error:', error);
+                return null; 
             }
         }
 
