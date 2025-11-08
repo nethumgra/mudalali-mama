@@ -1304,72 +1304,60 @@ section.appendChild(mobileViewAllBtn);
             }
         }
 
-    async function buildShopByCategory(mainContainer, layoutItem) {
+ async function buildShopByCategory(mainContainer, layoutItem) {
             const section = document.createElement('section');
             section.id = 'shop-by-category';
             section.className = 'mb-8';
             
-            // WENAS KALA: Static Grid eka Slider ekakata harawala
-            section.innerHTML = `
-                <h2 class="text-2xl font-bold text-gray-800 mb-4">SHOP BY CATEGORY</h2>
-                <div id="shop-by-cat-slider" class="flex gap-4 overflow-x-auto scroll-snap-type-x-mandatory no-scrollbar md:gap-6">
-                    
-                    <a href="#" id="shop-by-cat-large" class="block rounded-lg shadow-lg overflow-hidden w-[80vw] md:w-[60vw] lg:w-[40vw] flex-shrink-0 scroll-snap-align-start">
-                        <img src="https://placehold.co/800x500/e2e8f0/94a3b8?text=Loading+Large+Banner..." alt="Large Banner" class="w-full h-full object-cover hover:opacity-90">
-                    </a>
-                    <a href="#" id="shop-by-cat-small1" class="block rounded-lg shadow-lg overflow-hidden w-[60vw] md:w-[40vw] lg:w-[25vw] flex-shrink-0 scroll-snap-align-start">
-                        <img src="https://placehold.co/400x242/e2e8f0/94a3b8?text=Loading+Small+Banner..." alt="Small Banner 1" class="w-full h-full object-cover hover:opacity-90">
-                    </a>
-                    <a href="#" id="shop-by-cat-small2" class="block rounded-lg shadow-lg overflow-hidden w-[60vw] md:w-[40vw] lg:w-[25vw] flex-shrink-0 scroll-snap-align-start">
-                        <img src="https://placehold.co/400x242/e2e8f0/94a3b8?text=Loading+Small+Banner..." alt="Small Banner 2" class="w-full h-full object-cover hover:opacity-90">
-                    </a>
+            // H2 Title eka hadanawa
+            const titleEl = document.createElement('h2');
+            titleEl.className = 'text-2xl font-bold text-gray-800 mb-4';
+            titleEl.textContent = 'SHOP BY CATEGORY';
+            section.appendChild(titleEl);
 
-                </div>
-            `;
+            // Banners walata container eka hadanawa
+            const gridEl = document.createElement('div');
+            gridEl.className = 'flex gap-4 overflow-x-auto md:grid md:grid-cols-3 md:gap-6 scroll-snap-type-x-mandatory no-scrollbar';
+            gridEl.innerHTML = '<p class="text-gray-500 text-center w-full">Loading banners...</p>'; // Loader
+            section.appendChild(gridEl);
+            
             mainContainer.appendChild(section);
 
-            // WENAS KALA: Slider ekata auto-scroll add kala
-            const sliderContainer = section.querySelector('#shop-by-cat-slider');
-            setupAutoScroll(sliderContainer); // Aluth line eka
-
-            // Pahala code eka wenas karanna one ne. Eken banner 3 load wei.
-            const largeBannerLink = section.querySelector('#shop-by-cat-large');
-            const smallBanner1Link = section.querySelector('#shop-by-cat-small1');
-            const smallBanner2Link = section.querySelector('#shop-by-cat-small2');
-            const largeImg = largeBannerLink.querySelector('img');
-            const small1Img = smallBanner1Link.querySelector('img');
-            const small2Img = smallBanner2Link.querySelector('img');
-
+            // --- Aluth JavaScript Logic eka ---
             const collRef = collection(db, publicDataPath, 'shopByCategoryBanners');
             
-            onSnapshot(collRef, (querySnapshot) => {
-                let largeSet = false;
-                let smallCount = 0;
+            // 'shopByCategoryBanners' collection eken banners 3k gannawa
+            const q = query(collRef, limit(3)); 
 
+            onSnapshot(q, (querySnapshot) => {
+                gridEl.innerHTML = ''; // Loader eka ain karanawa
+
+                if (querySnapshot.empty) {
+                    gridEl.innerHTML = '<p class="text-gray-500 text-center w-full">No banners found.</p>';
+                    return;
+                }
+                
                 querySnapshot.forEach((doc) => {
                     const banner = doc.data();
-                    if (banner.size === 'large' && !largeSet) {
-                        largeBannerLink.href = banner.linkUrl || '#';
-                        largeImg.src = banner.imageUrl;
-                        largeImg.alt = "Large Banner";
-                        largeSet = true;
-                    } else if (banner.size === 'small' && smallCount === 0) {
-                        smallBanner1Link.href = banner.linkUrl || '#';
-                        small1Img.src = banner.imageUrl;
-                        small1Img.alt = "Small Banner 1";
-                        smallCount++;
-                    } else if (banner.size === 'small' && smallCount === 1) {
-                        smallBanner2Link.href = banner.linkUrl || '#';
-                        small2Img.src = banner.imageUrl;
-                        small2Img.alt = "Small Banner 2";
-                        smallCount++;
-                    }
+                    const link = banner.linkUrl || '#';
+                    const img = banner.imageUrl || 'https://placehold.co/400x200/e2e8f0/94a3b8?text=Banner';
+
+                    gridEl.innerHTML += `
+                    <a href="${link}" class="block rounded-lg shadow-lg overflow-hidden hover:opacity-90 w-[80vw] flex-shrink-0 md:w-auto scroll-snap-align-start">
+                        <img src="${img}" alt="Shop by category banner" class="w-full h-full object-cover">
+                    </a>`;
                 });
+
+                // ===== WENAS KALE MEKA =====
+                // if check eka ain kara. Dan hemotama auto-scroll wenawa.
+                setupAutoScroll(gridEl);
+                // ===== WENAS KAMA IWARAI =====
+
             }, (error) => {
                 console.error("Error loading shop by category banners: ", error);
+                gridEl.innerHTML = '<p class="text-red-500 text-center w-full">Error loading banners.</p>';
             });
         }
-
         async function buildProductPromoArea(mainContainer, layoutItem) {
             const section = document.createElement('section');
             section.id = `promo-area-${layoutItem.id}`;
