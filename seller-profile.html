@@ -59,7 +59,7 @@
         .btn-secondary { @apply w-full bg-gray-100 text-gray-700 p-3 rounded-md hover:bg-gray-200 font-bold; }
         .modal-overlay { @apply fixed inset-0 bg-black bg-opacity-50 z-40 transition-opacity; }
         .modal-content { @apply relative bg-white rounded-lg shadow-xl p-6 w-full max-w-lg m-4 transform transition-all z-50; }
-        .dynamic-field-group { @apply hidden space-y-4 p-4 border-t; }
+        /* .dynamic-field-group { @apply hidden space-y-4 p-4 border-t; } */ /* Me class eka dan wedak ne */
         .mobile-nav-link { @apply flex-1 flex flex-col items-center justify-center text-gray-600 hover:text-mudalali-green text-xs; }
         .mobile-nav-link.active { @apply text-mudalali-green; }
     </style>
@@ -280,12 +280,12 @@
                 </div>
                 <div class="grid grid-cols-2 gap-4">
                     <div>
-                        <label for="product-original-price" class="form-label">Your "Original Price" (Optional)</label>
+                        <label for="product-original-price" class="form-label">Default "Original Price"</label>
                         <input type="number" id="product-original-price" class="form-input" placeholder="e.g. 1200">
                         <p class="text-xs text-gray-500 mt-1">Customer will see this with 5% added.</p>
                     </div>
                     <div>
-                        <label for="product-sale-price" class="form-label">Your Price (LKR)</label>
+                        <label for="product-sale-price" class="form-label">Default Price (LKR)</label>
                         <input type="number" id="product-sale-price" class="form-input" placeholder="e.g. 1000" required>
                         <p class="text-xs text-gray-500 mt-1">5% (Platform Fee) will be added to this.</p>
                     </div>
@@ -301,34 +301,22 @@
                     </select>
                 </div>
                 
-                <div id="dynamic-product-fields" class="space-y-4">
-                    <div id="fashion-fields" class="dynamic-field-group">
-                        <h4 class="font-semibold text-gray-600">Fashion Details</h4>
-                        <div>
-                            <label for="fashion-sizes" class="form-label">Sizes</label>
-                            <input type="text" id="fashion-sizes" class="form-input" placeholder="e.g. S, M, L, XL">
+                <div class="p-4 border-t space-y-3 bg-gray-50 rounded-md">
+                    <label class="form-label">Product Variations (Optional)</label>
+                    <p class="text-xs text-gray-500 -mt-2">Use this if your product has different sizes, colors, or types with **different prices**. If you add variations, the default price above will be used as the base.</p>
+                    
+                    <div id="product-variations-container" class="space-y-3">
                         </div>
-                        <div>
-                            <label for="fashion-colors" class="form-label">Colors</label>
-                            <input type="text" id="fashion-colors" class="form-input" placeholder="e.g. Red, Blue, Black">
-                        </div>
-                    </div>
-                    <div id="food-fields" class="dynamic-field-group">
-                        <h4 class="font-semibold text-gray-600">Food Details</h4>
-                        <div>
-                            <label for="food-weight" class="form-label">Weight (g/kg)</label>
-                            <input type="text" id="food-weight" class="form-input" placeholder="e.g. 500g">
-                        </div>
-                        <div>
-                            <label for="food-expiry" class="form-label">Expiry Date</label>
-                            <input type="date" id="food-expiry" class="form-input">
-                        </div>
-                    </div>
-                    </div>
+                    
+                    <button type="button" id="add-variation-btn" class="w-full bg-mudalali-green-light text-mudalali-green-dark p-2 rounded-md hover:bg-mudalali-green hover:text-white font-semibold text-sm">
+                        <i class="fa fa-plus mr-1"></i> Add Variation
+                    </button>
+                </div>
                 <div>
-                    <label for="product-image-file" class="form-label">Product Image</label>
-                    <input type="file" id="product-image-file" class="form-input" accept="image/*">
-                    <img id="product-image-preview" src="" class="hidden w-24 h-24 object-cover rounded-md mt-2">
+                    <label for="product-image-files" class="form-label">Product Images (Add Multiple)</label>
+                    <input type="file" id="product-image-files" class="form-input" accept="image/*" multiple>
+                    <div id="product-image-preview-container" class="mt-2 flex flex-wrap gap-2">
+                        </div>
                 </div>
                 <div class="flex gap-4 pt-4">
                     <button type="button" id="close-product-modal-btn" class="btn-secondary !text-base !py-2.5">Cancel</button>
@@ -338,7 +326,6 @@
             </form>
         </div>
     </div>
-    
     <div id="add-new-modal" class="hidden fixed inset-0 z-50 flex items-end justify-center p-4">
         <div class="modal-overlay absolute inset-0"></div>
         <div class="modal-content relative w-full" style="max-width: 400px;">
@@ -628,9 +615,6 @@
             });
         }
 
-        // =====================================
-        // ======== JS WENAS KALE 1/3 (NEW) ========
-        // =====================================
         async function loadSellerData() {
             const storeRef = doc(db, publicDataPath, 'stores', currentUser.uid);
             const storeSnap = await getDoc(storeRef);
@@ -640,8 +624,6 @@
                 document.getElementById('settings-store-name').value = currentStoreData.storeName || '';
                 document.getElementById('settings-description').value = currentStoreData.description || '';
                 document.getElementById('settings-location').value = currentStoreData.location || '';
-                
-                // Aluth line eka: Shipping fee eka load karanna
                 document.getElementById('settings-shipping-fee').value = currentStoreData.shippingFee || '';
                 
                 updateSettingsPreview(currentStoreData.storeName, currentStoreData.description, currentStoreData.location, currentStoreData.bannerUrl, currentStoreData.profileUrl);
@@ -650,7 +632,7 @@
                     storeName: currentUserData.displayName || 'My Store',
                     description: 'Welcome to my new store!',
                     location: 'Sri Lanka',
-                    shippingFee: 0, // Default shipping fee
+                    shippingFee: 0, 
                     bannerUrl: null,
                     profileUrl: null,
                     createdAt: serverTimestamp()
@@ -1000,6 +982,36 @@
             }
         }
 
+        // =====================================
+        // === PRODUCT MODAL JS - WENAS WELA ===
+        // =====================================
+        
+        // --- Aluth Function eka: Variation Row ekak hadanna ---
+        function addVariationRow(variation = {}) {
+            const container = document.getElementById('product-variations-container');
+            const newRow = document.createElement('div');
+            newRow.className = 'variation-row flex gap-2 items-center p-2 border rounded-md bg-white';
+            
+            // variation object eken data gannawa (edit karaddi)
+            const name = variation.name || '';
+            const price = variation.price || ''; // Me 'price' eka seller ge 'basePrice' eka
+
+            newRow.innerHTML = `
+                <div class="flex-grow">
+                    <label class="text-xs font-medium text-gray-600">Name (e.g., Small, Red)</label>
+                    <input type="text" class="variation-name form-input !p-2 !mt-0" placeholder="Variation Name" value="${name}" required>
+                </div>
+                <div class="w-28 flex-shrink-0">
+                    <label class="text-xs font-medium text-gray-600">Your Price</label>
+                    <input type="number" class="variation-price form-input !p-2 !mt-0" placeholder="e.g. 1000" value="${price}" required>
+                </div>
+                <button type="button" class="remove-variation-btn text-red-500 hover:text-red-700 h-10 w-10 mt-4 flex-shrink-0">
+                    <i class="fa fa-trash"></i>
+                </button>
+            `;
+            container.appendChild(newRow);
+        }
+
         function setupProductModal() {
             const modal = document.getElementById('product-modal');
             const openBtn = document.getElementById('open-product-modal-btn');
@@ -1007,17 +1019,18 @@
             const overlay = modal.querySelector('.modal-overlay');
             const form = document.getElementById('product-form');
             const modalTitle = document.getElementById('product-modal-title');
-            const preview = document.getElementById('product-image-preview');
-            const fileInput = document.getElementById('product-image-file');
+            
+            const fileInput = document.getElementById('product-image-files'); 
+            const previewContainer = document.getElementById('product-image-preview-container'); 
+            const variationsContainer = document.getElementById('product-variations-container'); // Aluth
 
             const openModal = () => modal.classList.remove('hidden');
             const closeModal = () => {
                 modal.classList.add('hidden');
                 form.reset();
-                preview.classList.add('hidden');
-                preview.src = '';
+                previewContainer.innerHTML = ''; 
+                variationsContainer.innerHTML = ''; // Aluth: variations clear karanna
                 document.getElementById('product-id').value = '';
-                showDynamicFields();
                 document.getElementById('product-save-status').textContent = '';
             };
 
@@ -1029,39 +1042,38 @@
             overlay.addEventListener('click', closeModal);
             
             fileInput.addEventListener('change', () => {
-                const file = fileInput.files[0];
-                if (file) {
-                    preview.src = URL.createObjectURL(file);
-                    preview.classList.remove('hidden');
-                } else {
-                    preview.classList.add('hidden');
-                    preview.src = '';
+                previewContainer.innerHTML = ''; 
+                const files = fileInput.files;
+                
+                if (files.length > 0) {
+                    Array.from(files).forEach(file => {
+                        const img = document.createElement('img');
+                        img.src = URL.createObjectURL(file);
+                        img.className = 'w-24 h-24 object-cover rounded-md border';
+                        previewContainer.appendChild(img);
+                    });
                 }
             });
             
-            // Oya illapu dynamic fields logic eka
-            document.getElementById('product-category-select').addEventListener('change', showDynamicFields);
+            // --- Aluth: Variation buttons walata listeners ---
+            document.getElementById('add-variation-btn').addEventListener('click', () => {
+                addVariationRow(); // His row ekak add karanawa
+            });
+            
+            // Event Delegation: "Remove" button click karama row eka ain karanna
+            variationsContainer.addEventListener('click', (e) => {
+                const removeBtn = e.target.closest('.remove-variation-btn');
+                if (removeBtn) {
+                    removeBtn.closest('.variation-row').remove();
+                }
+            });
+            // --- Iwarai ---
+            
             form.addEventListener('submit', saveProduct);
         }
         
-        // Oya illapu dynamic fields function eka
-        function showDynamicFields() {
-            const category = document.getElementById('product-category-select').value;
-            document.querySelectorAll('.dynamic-field-group').forEach(group => group.classList.add('hidden'));
-
-            // Oya "Fashion" select kaloth, 'fashion-fields' div eka pennanawa
-            if (category === 'Fashion') {
-                document.getElementById('fashion-fields').classList.remove('hidden');
-            } else if (category === 'Food') {
-                document.getElementById('food-fields').classList.remove('hidden');
-            }
-            // Oyata onenam thawa 'else if' add karanna puluwan
-            /*
-            else if (category === 'Electronics') {
-                document.getElementById('electronics-fields').classList.remove('hidden');
-            }
-            */
-        }
+        // --- Me function eka dan wedak ne ---
+        // function showDynamicFields() { ... }
 
         async function openProductModal(productId) {
             const modalTitle = document.getElementById('product-modal-title');
@@ -1081,33 +1093,41 @@
             document.getElementById('product-description').value = product.description;
             document.getElementById('product-category-select').value = product.category || '';
             
-            showDynamicFields(); // Dynamic fields pennanna
+            // --- Parana dynamic fields (Fashion/Food) load karana ewa ain kara ---
             
-            // Dynamic fields wala data load karanna
-            if (product.category === 'Fashion' && product.attributes) {
-                document.getElementById('fashion-sizes').value = product.attributes.sizes ? product.attributes.sizes.join(', ') : '';
-                document.getElementById('fashion-colors').value = product.attributes.colors ? product.attributes.colors.join(', ') : '';
+            // --- Aluth: Variations load kirima ---
+            const variationsContainer = document.getElementById('product-variations-container');
+            variationsContainer.innerHTML = ''; // Clear karanna
+            if (product.variations && Array.isArray(product.variations)) {
+                product.variations.forEach(variation => {
+                    // 'variation' object eka (e.g., {name: "Small", basePrice: 1000})
+                    // 'addVariationRow' ekata pass karanawa
+                    addVariationRow({
+                        name: variation.name,
+                        price: variation.basePrice // Seller ge price eka (basePrice) thama pennanna ona
+                    });
+                });
             }
-            if (product.category === 'Food' && product.attributes) {
-                document.getElementById('food-weight').value = product.attributes.weight || '';
-                document.getElementById('food-expiry').value = product.attributes.expiryDate || '';
-            }
+            // --- Iwarai ---
 
-            const preview = document.getElementById('product-image-preview');
-            if (product.imageUrl) {
-                preview.src = product.imageUrl;
-                preview.classList.remove('hidden');
-            } else {
-                preview.classList.add('hidden');
-                preview.src = '';
+            document.getElementById('product-image-files').value = ''; 
+            const previewContainer = document.getElementById('product-image-preview-container');
+            previewContainer.innerHTML = ''; 
+
+            const imageUrls = product.imageUrls || (product.imageUrl ? [product.imageUrl] : []);
+
+            if (imageUrls.length > 0) {
+                imageUrls.forEach(url => {
+                    const img = document.createElement('img');
+                    img.src = url;
+                    img.className = 'w-24 h-24 object-cover rounded-md border';
+                    previewContainer.appendChild(img);
+                });
             }
             
             document.getElementById('product-modal').classList.remove('hidden');
         }
 
-        // =====================================
-        // ======== JS WENAS KALE 2/3 (NEW) ========
-        // =====================================
         async function saveProduct(e) {
             e.preventDefault();
             const statusEl = document.getElementById('product-save-status');
@@ -1116,33 +1136,74 @@
             statusEl.textContent = 'Saving...';
             
             const productId = document.getElementById('product-id').value;
-            const imageFile = document.getElementById('product-image-file').files[0];
-            let imageUrl = '';
-
-            if (productId) {
-                const existingProductDoc = await getDoc(doc(db, publicDataPath, 'products', productId));
-                if (existingProductDoc.exists() && existingProductDoc.data().imageUrl) {
-                    imageUrl = existingProductDoc.data().imageUrl;
-                }
-            }
+            const imageFiles = document.getElementById('product-image-files').files; 
+            let finalImageUrls = []; 
 
             try {
-                if (imageFile) {
-                    statusEl.textContent = 'Uploading image...';
-                    imageUrl = await uploadImageToImgBB(imageFile);
-                    if (!imageUrl) throw new Error('Image upload failed.');
+                if (imageFiles.length > 0) {
+                    statusEl.textContent = `Uploading ${imageFiles.length} image(s)...`;
+                    const uploadPromises = Array.from(imageFiles).map(file => uploadImageToImgBB(file));
+                    finalImageUrls = await Promise.all(uploadPromises);
+                    
+                    if (finalImageUrls.some(url => !url)) {
+                        throw new Error('Some image uploads failed.');
+                    }
+                } else if (productId) {
+                    const existingProductDoc = await getDoc(doc(db, publicDataPath, 'products', productId));
+                    if (existingProductDoc.exists()) {
+                        const data = existingProductDoc.data();
+                        finalImageUrls = data.imageUrls || (data.imageUrl ? [data.imageUrl] : []);
+                    }
                 }
                 
-                // Dynamic fields walin data ganna
-                const category = document.getElementById('product-category-select').value;
-                const attributes = {};
-                if (category === 'Fashion') {
-                    attributes.sizes = document.getElementById('fashion-sizes').value.split(',').map(s => s.trim()).filter(Boolean);
-                    attributes.colors = document.getElementById('fashion-colors').value.split(',').map(c => c.trim()).filter(Boolean);
-                } else if (category === 'Food') {
-                    attributes.weight = document.getElementById('food-weight').value;
-                    attributes.expiryDate = document.getElementById('food-expiry').value;
+                // --- Aluth: Variations data ganna ---
+                const variationsContainer = document.getElementById('product-variations-container');
+                const variationRows = variationsContainer.querySelectorAll('.variation-row');
+                const variations = []; // Me array ekata thama variations save karanne
+                
+                let hasVariationError = false;
+                for (const row of variationRows) {
+                    const nameInput = row.querySelector('.variation-name');
+                    const priceInput = row.querySelector('.variation-price');
+                    
+                    const name = nameInput.value.trim();
+                    const sellerPrice = Number(priceInput.value);
+
+                    // Validation
+                    let rowError = false;
+                    if (!name) {
+                        nameInput.classList.add('border-red-500');
+                        rowError = true;
+                    } else {
+                        nameInput.classList.remove('border-red-500');
+                    }
+
+                    if (!(sellerPrice > 0)) {
+                        priceInput.classList.add('border-red-500');
+                        rowError = true;
+                    } else {
+                        priceInput.classList.remove('border-red-500');
+                    }
+
+                    if (rowError) {
+                        hasVariationError = true;
+                    }
+
+                    if (name && sellerPrice > 0) {
+                        // Customer ge price eka calculate karanawa
+                        const customerPrice = Math.round(sellerPrice * 1.05);
+                        variations.push({
+                            name: name,
+                            basePrice: sellerPrice, // Seller's price
+                            price: customerPrice    // Customer's price
+                        });
+                    }
                 }
+                
+                if (hasVariationError) {
+                    throw new Error('Please fill all variation names and prices correctly.');
+                }
+                // --- Iwarai ---
                 
                 const sellerSalePrice = Number(document.getElementById('product-sale-price').value);
                 const sellerOriginalPrice = Number(document.getElementById('product-original-price').value) || null;
@@ -1153,27 +1214,30 @@
                     customerOriginalPrice = Math.round(sellerOriginalPrice * 1.05); 
                 }
                 
-                // Aluth shipping logic eka
                 const shippingFee = Number(currentStoreData.shippingFee) || 0;
+                const category = document.getElementById('product-category-select').value;
 
                 const productData = {
                     sellerUid: currentUser.uid,
                     storeName: currentStoreData.storeName || 'Mudalali Mama Store',
                     name: document.getElementById('product-name').value,
                     
-                    basePrice: sellerSalePrice, 
-                    price: customerSalePrice, 
+                    basePrice: sellerSalePrice, // Default Seller Price
+                    price: customerSalePrice, // Default Customer Price
                     
-                    baseOriginalPrice: sellerOriginalPrice, 
-                    originalPrice: customerOriginalPrice, 
+                    baseOriginalPrice: sellerOriginalPrice, // Default Seller Original Price
+                    originalPrice: customerOriginalPrice, // Default Customer Original Price
                     
                     description: document.getElementById('product-description').value,
                     category: category,
                     categories: [category], 
-                    attributes: attributes, // Dynamic attributes save karanawa
-                    imageUrl: imageUrl,
                     
-                    shipping: shippingFee, // <-- ALUTH: Shipping fee eka product ekata save karanawa
+                    variations: variations, // Aluth variations array eka save karanawa
+                    
+                    imageUrl: finalImageUrls[0] || null, 
+                    imageUrls: finalImageUrls, 
+                    
+                    shipping: shippingFee, 
 
                     updatedAt: serverTimestamp(),
                     isApproved: true 
@@ -1197,7 +1261,8 @@
                     document.getElementById('product-modal').classList.add('hidden');
                     statusEl.textContent = '';
                     document.getElementById('product-form').reset();
-                    document.getElementById('product-image-preview').classList.add('hidden');
+                    document.getElementById('product-image-preview-container').innerHTML = '';
+                    document.getElementById('product-variations-container').innerHTML = ''; // Aluth
                 }, 1500);
 
             } catch (err) {
@@ -1371,13 +1436,9 @@
             });
         }
         
-        // =====================================
-        // ======== JS WENAS KALE 3/3 (NEW) ========
-        // =====================================
         function setupSettingsForm() {
             const form = document.getElementById('settings-form');
             
-            // Preview eka live update karanna
             ['settings-store-name', 'settings-description', 'settings-location'].forEach(id => {
                 const inputEl = document.getElementById(id);
                 inputEl.addEventListener('input', () => { 
@@ -1391,7 +1452,6 @@
                 });
             });
             
-            // Image preview live update karanna
             ['settings-banner-file', 'settings-profile-file'].forEach(id => {
                 document.getElementById(id).addEventListener('change', (e) => {
                     const file = e.target.files[0];
@@ -1436,7 +1496,6 @@
                 });
             });
 
-            // Form eka save karaddi
             form.addEventListener('submit', async (e) => {
                 e.preventDefault();
                 const statusEl = document.getElementById('settings-save-status');
@@ -1461,12 +1520,11 @@
                         profileUrl = await uploadImageToImgBB(profileFile);
                     }
                     
-                    // Aluth data object eka shipping fee ekath ekka
                     const settingsData = {
                         storeName: document.getElementById('settings-store-name').value,
                         description: document.getElementById('settings-description').value,
                         location: document.getElementById('settings-location').value,
-                        shippingFee: Number(document.getElementById('settings-shipping-fee').value) || 0, // <-- ALUTH FIELD EKA
+                        shippingFee: Number(document.getElementById('settings-shipping-fee').value) || 0, 
                         bannerUrl: bannerUrl,
                         profileUrl: profileUrl,
                         updatedAt: serverTimestamp() 
@@ -1475,7 +1533,7 @@
                     const storeRef = doc(db, publicDataPath, 'stores', currentUser.uid);
                     await setDoc(storeRef, settingsData, { merge: true }); 
 
-                    currentStoreData = {...currentStoreData, ...settingsData}; // Global state eka update karanawa
+                    currentStoreData = {...currentStoreData, ...settingsData}; 
                     statusEl.textContent = 'Settings saved successfully!';
 
                 } catch (err) {

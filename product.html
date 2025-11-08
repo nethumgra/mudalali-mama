@@ -177,7 +177,7 @@
                         <i class="fa fa-chevron-down text-xs ml-2"></i>
                     </a>
                     
-                    <div class="dropdown-menu absolute left-0 top-full w-56 bg-white shadow-lg rounded-b-md z-40">
+                   <div class="dropdown-menu absolute left-0 top-full w-56 bg-white shadow-lg rounded-b-md z-40 hidden group-hover:block">
                     </div>
                 </div>
             </div>
@@ -709,7 +709,7 @@
             document.getElementById('product-content').classList.add('hidden');
         }
 
-        async function loadProductDetails(productId) {
+      async function loadProductDetails(productId) {
             const productRef = doc(db, publicDataPath, 'products', productId);
             try {
                 const docSnap = await getDoc(productRef);
@@ -726,21 +726,26 @@
                 document.getElementById('product-description').textContent = currentProductData.description || 'No description provided.';
                 document.getElementById('product-price').innerHTML = formatPrice(currentProductData);
                 
-                // (ඉල්ලීම 3) Image Gallery Setup
+                // =========== ME THANA THAMA WENASA ===========
+                // (ඉල්ලීම 3) Image Gallery Setup [WENAS KALA / FIXED]
                 const mainImage = document.getElementById('main-product-image');
                 const thumbContainer = document.getElementById('product-thumbnails');
-                let imageUrls = [];
-                if (currentProductData.imageUrl) {
-                    imageUrls.push(currentProductData.imageUrl);
+                let imageUrls = []; // Final image list eka
+                
+                // Api aluthen save karapu 'imageUrls' array eka thiyenawada balanawa
+                if (currentProductData.imageUrls && Array.isArray(currentProductData.imageUrls) && currentProductData.imageUrls.length > 0) {
+                    // Thiyenawanam, eka use karanawa
+                    imageUrls = currentProductData.imageUrls;
+                } else if (currentProductData.imageUrl) {
+                    // 'imageUrls' array eka naththam, parana 'imageUrl' eka witharak thiyenawanam, eka use karanawa
+                    imageUrls = [currentProductData.imageUrl];
                 }
-                if (currentProductData.gallery && Array.isArray(currentProductData.gallery)) {
-                    imageUrls = [...imageUrls, ...currentProductData.gallery];
-                }
-                imageUrls = [...new Set(imageUrls)]; // Duplicates අයින් කරනවා
+                // [WENAS KAMA IWARAI]
 
                 mainImage.src = imageUrls.length > 0 ? imageUrls[0] : 'https://placehold.co/600x600';
                 thumbContainer.innerHTML = ''; 
                 
+                // Dan 'imageUrls.length > 1' (1ta wada thiyenawanam) thumbnails pennanawa
                 if (imageUrls.length > 1) { 
                     imageUrls.forEach((url, index) => {
                         thumbContainer.innerHTML += `
@@ -761,6 +766,8 @@
                         e.target.classList.replace('border-transparent', 'border-mudalali-green');
                     }
                 });
+                // =========== WENAS KAMA MEHIN IWARAI ===========
+
 
                 document.getElementById('add-to-cart-btn').addEventListener('click', () => {
                     addToCart(currentProductData, 1);
@@ -801,7 +808,6 @@
                 showProductError("Error loading product details.");
             }
         }
-
         // (ඉල්ලීම 2) Seller info load කරන function එකට Delivery details add කළා
         async function loadSellerInfo(sellerUid) {
             const storeRef = doc(db, publicDataPath, 'stores', sellerUid);

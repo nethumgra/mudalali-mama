@@ -363,7 +363,7 @@
                 <a href="#" class="block p-4 border-b text-gray-700">CONTACT US</a>
                 <div class="p-4 bg-gray-100 font-bold text-gray-600">MY ACCOUNT</div>
                 <a href="wishlist.html" class="block p-4 border-b text-gray-700"><i class="fa fa-heart w-6 mr-1"></i> WISHLIST</a>
-                <a href="#" class="block p-4 border-b text-gray-700"><i class="fa fa-exchange-alt w-6 mr-1"></i> COMPARE</a>
+            
                 <a href="account.html" id="drawer-my-account-btn" class="block w-full text-left p-4 border-b text-gray-700"><i class="fa fa-user w-6 mr-1"></i> MY ACCOUNT</a>
             </div>
             <div id="menu-tab-categories-content" class="hidden flex-col flex-grow overflow-y-auto">
@@ -837,14 +837,14 @@
                 document.getElementById('account-drawer-user-email').textContent = user.email;
                 attachCartDrawerListener(user.uid);
 
-                desktopAccountBtn.href = "#";
-                desktopAccountBtn.addEventListener('click', (e) => {
-                    e.preventDefault();
-                    document.getElementById('account-drawer-modal')?.classList.remove('hidden');
-                });
-                drawerMyAccountBtn.href = "#";
+          desktopAccountBtn.href = "account.html";
+                    desktopAccountBtn.addEventListener('click', (e) => { // <-- MEKA
+                        e.preventDefault();
+                        document.getElementById('account-drawer-modal')?.classList.remove('hidden');
+                    });
+                    drawerMyAccountBtn.href = "#";
 
-                if (currentUserData && currentUserData.isSeller) {
+                    if (currentUserData && currentUserData.isSeller) {
                     mobileAccountBtn.href = 'seller-profile.html';
                 } else {
                     mobileAccountBtn.href = 'customer-account.html';
@@ -863,6 +863,7 @@
                 attachCartDrawerListener(null); 
                 
                 desktopAccountBtn.href = "account.html";
+              
                 mobileAccountBtn.href = "account.html";
                 drawerMyAccountBtn.href = "account.html";
                 desktopAccountBtn.replaceWith(desktopAccountBtn.cloneNode(true)); 
