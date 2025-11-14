@@ -676,79 +676,103 @@
                 profilePlaceholder.classList.remove('hidden');
             }
         }
-
+        
+        
+        // ===============================================
+        // === ME THIYENNE HADAPU FUNCTION EKA (1/2) ===
+        // ===============================================
         async function loadMyProducts() {
             const container = document.getElementById('product-list-container');
             const productSelect = document.getElementById('story-product-tag-select');
             
-            container.innerHTML = '';
+            container.innerHTML = '<p class="text-gray-500">Loading your products...</p>'; // Loader
             productSelect.innerHTML = '<option value="">No Product</option>';
 
             const productsRef = collection(db, publicDataPath, 'products');
             const q = query(productsRef, where("sellerUid", "==", currentUser.uid), orderBy("createdAt", "desc"));
 
-            const querySnapshot = await getDocs(q);
-            if (querySnapshot.empty) {
-                container.innerHTML = '<p class="text-gray-500">You haven\'t added any products yet.</p>';
-                return;
-            }
-
-            querySnapshot.forEach(doc => {
-                const product = doc.data();
-                const productId = doc.id;
-                
-                const sellerPrice = product.basePrice || product.price; 
-                const sellerOriginalPrice = product.baseOriginalPrice || product.originalPrice; 
-
-                let priceHtml = `<p class="text-mudalali-green font-semibold">Rs. ${sellerPrice.toFixed(2)}</p>`;
-                if (sellerOriginalPrice && sellerOriginalPrice > sellerPrice) {
-                    priceHtml = `
-                        <p class="text-mudalali-red font-bold text-lg">Rs. ${sellerPrice.toFixed(2)}</p>
-                        <p class="text-gray-400 line-through text-sm">Rs. ${sellerOriginalPrice.toFixed(2)}</p>
-                    `;
+            try {
+                const querySnapshot = await getDocs(q);
+                if (querySnapshot.empty) {
+                    container.innerHTML = '<p class="text-gray-500">You haven\'t added any products yet.</p>';
+                    return;
                 }
 
-              container.innerHTML += `
-    <div class="bg-white rounded-lg shadow-md overflow-hidden">
-        <div class="h-48 w-full bg-gray-100"> 
-            <img src="${product.imageUrl || 'https://placehold.co/400x300'}" alt="${product.name}" class="h-full w-full object-contain">
-        </div>
-        <div class="p-4">
-                            <h3 class="text-lg font-bold text-gray-800">${product.name}</h3>
-                            <div class="flex items-baseline gap-2">${priceHtml}</div>
-                            <p class="text-sm text-gray-600 mt-2 truncate">${product.description}</p>
-                            <div class="flex gap-2 mt-4">
-                                <button class="edit-product-btn w-full text-sm bg-gray-100 p-2 rounded-md font-semibold hover:bg-gray-200" data-id="${productId}">Edit</button>
-                                <button class="delete-product-btn w-full text-sm bg-red-100 text-red-600 p-2 rounded-md font-semibold hover:bg-red-200" data-id="${productId}">Delete</button>
+                // 1. HTML ටික array එකකට එකතු කරගන්න
+                const productHtmlArray = querySnapshot.docs.map(doc => {
+                    const product = doc.data();
+                    const productId = doc.id;
+                    
+                    const sellerPrice = product.basePrice || product.price; 
+                    const sellerOriginalPrice = product.baseOriginalPrice || product.originalPrice; 
+
+                    let priceHtml = `<p class="text-mudalali-green font-semibold">Rs. ${sellerPrice.toFixed(2)}</p>`;
+                    if (sellerOriginalPrice && sellerOriginalPrice > sellerPrice) {
+                        priceHtml = `
+                            <p class="text-mudalali-red font-bold text-lg">Rs. ${sellerPrice.toFixed(2)}</p>
+                            <p class="text-gray-400 line-through text-sm">Rs. ${sellerOriginalPrice.toFixed(2)}</p>
+                        `;
+                    }
+
+                    // 2. Product එකට අදාල option එකත් මෙතනදිම හදාගන්න
+                    // (appendChild kiyanne 'innerHTML' newei, eka nisa meka loop eke athule thibbath aulak ne)
+                    const option = document.createElement('option');
+                    option.value = productId;
+                    option.textContent = product.name;
+                    option.dataset.name = product.name;
+                    option.dataset.price = product.price; 
+                    option.dataset.image = product.imageUrl;
+                    productSelect.appendChild(option);
+
+                    // 3. Card HTML එක return කරන්න
+                    return `
+                        <div class="bg-white rounded-lg shadow-md overflow-hidden">
+                            <div class="h-48 w-full bg-gray-100"> 
+                                <img src="${product.imageUrl || 'https://placehold.co/400x300'}" alt="${product.name}" class="h-full w-full object-contain">
+                            </div>
+                            <div class="p-4">
+                                <h3 class="text-lg font-bold text-gray-800">${product.name}</h3>
+                                <div class="flex items-baseline gap-2">${priceHtml}</div>
+                                <p class="text-sm text-gray-600 mt-2 truncate">${product.description}</p>
+                                <div class="flex gap-2 mt-4">
+                                    <button class="edit-product-btn w-full text-sm bg-gray-100 p-2 rounded-md font-semibold hover:bg-gray-200" data-id="${productId}">Edit</button>
+                                    <button class="delete-product-btn w-full text-sm bg-red-100 text-red-600 p-2 rounded-md font-semibold hover:bg-red-200" data-id="${productId}">Delete</button>
+                                </div>
                             </div>
                         </div>
-                    </div>
-                `;
-                
-                const option = document.createElement('option');
-                option.value = productId;
-                option.textContent = product.name;
-                option.dataset.name = product.name;
-                option.dataset.price = product.price; 
-                option.dataset.image = product.imageUrl;
-                productSelect.appendChild(option);
-            });
-            
-            container.querySelectorAll('.edit-product-btn').forEach(btn => btn.addEventListener('click', (e) => openProductModal(e.target.dataset.id)));
-            container.querySelectorAll('.delete-product-btn').forEach(btn => btn.addEventListener('click', (e) => deleteProduct(e.target.dataset.id)));
-        }
+                    `;
+                }); // .map eka iwarai
 
+                // 4. Array එක join කරලා, එක පාරක් විතරක් HTML එකට දාන්න
+                container.innerHTML = productHtmlArray.join('');
+                
+                // 5. Buttons වලට listeners ටික ආයෙත් add කරන්න
+                container.querySelectorAll('.edit-product-btn').forEach(btn => btn.addEventListener('click', (e) => openProductModal(e.target.dataset.id)));
+                container.querySelectorAll('.delete-product-btn').forEach(btn => btn.addEventListener('click', (e) => deleteProduct(e.target.dataset.id)));
+
+            } catch (e) {
+                console.error("Error loading products: ", e);
+                container.innerHTML = '<p class="text-red-500">Error loading products.</p>';
+            }
+        }
+        
+        // ===============================================
+        // === ME THIYENNE HADAPU FUNCTION EKA (2/2) ===
+        // ===============================================
         async function loadMyOrders() { 
             const container = document.getElementById('order-list-container');
             container.innerHTML = '<p class="p-6 text-gray-500">Loading your orders...</p>';
             try {
                 const ordersRef = collection(db, "orders");
+                // Oyaage me query eka 'orders' collection eke 'createdAt' walata index ekak illanawa
                 const allOrdersQ = query(collection(db, "orders"), orderBy("createdAt", "desc"));
                 const querySnapshot = await getDocs(allOrdersQ);
                 
                 let myOrders = [];
                 querySnapshot.forEach(doc => {
                     const order = doc.data();
+                    // Order ID eka doc.id eken ganna
+                    order.id = doc.id; 
                     const myItemsInThisOrder = (order.items || []).filter(item => item.sellerUid === currentUser.uid);
                     
                     if (myItemsInThisOrder.length > 0) {
@@ -767,9 +791,9 @@
                     return;
                 }
                 
-                container.innerHTML = ''; 
-                myOrders.forEach(order => {
-                    container.innerHTML += `
+                // .map().join('') ක්‍රමය පාවිච්චි කරනවා
+                const ordersHtmlArray = myOrders.map(order => {
+                    return `
                         <div class="p-4 md:p-6">
                             <div class="flex flex-col md:flex-row justify-between md:items-center">
                                 <div>
@@ -785,6 +809,9 @@
                         </div>
                     `;
                 });
+                
+                // එක පාරට HTML එකට දානවා
+                container.innerHTML = ordersHtmlArray.join('');
 
             } catch (err) {
                 console.error("Error loading orders:", err);
