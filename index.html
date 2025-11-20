@@ -6,113 +6,57 @@
     <title>මුදලාලි මාමා - Made in Sri Lanka</title>
     
     <script src="https://cdn.tailwindcss.com"></script>
-    
     <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.2/css/all.min.css">
-
-    <link rel="preconnect" href="https://fonts.googleapis.com">
-    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
     <link href="https://fonts.googleapis.com/css2?family=Poppins:wght@300;400;500;600;700&display=swap" rel="stylesheet">
 
     <script>
         tailwind.config = {
             theme: {
                 extend: {
-                    fontFamily: {
-                        sans: ['Poppins', 'sans-serif'],
-                    },
+                    fontFamily: { sans: ['Poppins', 'sans-serif'] },
                     colors: {
-                        'mudalali-green': {
-                            light: '#76b852',       
-                            DEFAULT: '#3a6a4a',      
-                            dark: '#2c5234',        
-                        },
+                        'mudalali-green': { light: '#76b852', DEFAULT: '#3a6a4a', dark: '#2c5234' },
                         'mudalali-gold': '#bda26b',
                         'mudalali-red': '#d93a3e',
                         'mudalali-bg': '#f5f5f4',
-                        'mm-gray': { 
-                            light: '#f8f8f8',
-                            DEFAULT: '#e5e5e5',
-                        }
+                        'mm-gray': { light: '#f8f8f8', DEFAULT: '#e5e5e5' }
                     }
                 }
             }
         }
     </script>
     <style type="text/tailwindcss">
-        body {
-            @apply font-sans text-gray-800;
-        }
-        .sale-tag {
-            @apply absolute top-0 right-0 bg-red-600 text-white text-xs font-bold px-3 py-1;
-            clip-path: polygon(0% 0%, 100% 0%, 100% 100%, 0% 100%, 25% 50%);
-        }
-        .dropdown-menu {
-            @apply hidden;
-        }
-        .group:hover .dropdown-menu {
-            @apply block;
-        }
-        .drawer-overlay {
-            @apply fixed inset-0 bg-black bg-opacity-50 z-50 transition-opacity opacity-0 pointer-events-none;
-        }
-        .drawer-content {
-            @apply fixed top-0 right-0 h-full bg-white shadow-xl z-50 transform translate-x-full transition-transform duration-300 ease-in-out;
-            width: 90%;
-            max-width: 400px;
-        }
-        .drawer-content.left {
-            @apply left-0 right-auto transform -translate-x-full;
-        }
-        .drawer.open .drawer-overlay {
-            @apply opacity-100 pointer-events-auto;
-        }
-        .drawer.open .drawer-content {
-            @apply transform translate-x-0;
-        }
-        .mobile-nav-link.active {
-            @apply text-mudalali-green;
-        }
-        .no-scrollbar::-webkit-scrollbar {
-            display: none;
-        }
-        .no-scrollbar {
-            scrollbar-width: none;
-        }
-        .tab-button.active { 
-            border-color: #3a6a4a; 
-            color: #3a6a4a; 
-        }
-        .menu-tab-btn.active {
-            @apply border-mudalali-green text-mudalali-green;
-        }
+        body { @apply font-sans text-gray-800; }
+        .sale-tag { @apply absolute top-0 right-0 bg-red-600 text-white text-xs font-bold px-3 py-1; clip-path: polygon(0% 0%, 100% 0%, 100% 100%, 0% 100%, 25% 50%); }
+        .dropdown-menu { @apply hidden; }
+        .group:hover .dropdown-menu { @apply block; }
+        .drawer-overlay { @apply fixed inset-0 bg-black bg-opacity-50 z-50 transition-opacity opacity-0 pointer-events-none; }
+        .drawer-content { @apply fixed top-0 right-0 h-full bg-white shadow-xl z-50 transform translate-x-full transition-transform duration-300 ease-in-out; width: 90%; max-width: 400px; }
+        .drawer-content.left { @apply left-0 right-auto transform -translate-x-full; }
+        .drawer.open .drawer-overlay { @apply opacity-100 pointer-events-auto; }
+        .drawer.open .drawer-content { @apply transform translate-x-0; }
+        .mobile-nav-link.active { @apply text-mudalali-green; }
+        .no-scrollbar::-webkit-scrollbar { display: none; }
+        .no-scrollbar { scrollbar-width: none; }
+        .tab-button.active { border-color: #3a6a4a; color: #3a6a4a; }
+        .menu-tab-btn.active { @apply border-mudalali-green text-mudalali-green; }
         @keyframes pop { 0% { transform: scale(1); } 50% { transform: scale(1.3); } 100% { transform: scale(1); } }
         .pop { animation: pop 0.2s ease-out; }
-        .hero-slide {
-            @apply absolute inset-0 w-full h-full opacity-0 transition-opacity duration-1000 ease-in-out;
-        }
-        .hero-slide.active {
-            @apply opacity-100 z-10;
-        }
-        .slider-dot {
-            @apply h-3 w-3 bg-white bg-opacity-50 rounded-full cursor-pointer transition-all;
-        }
-        .slider-dot.active {
-            @apply bg-opacity-100 w-6;
-        }
-        .line-clamp-2 {
-            display: -webkit-box;
-            -webkit-line-clamp: 2;
-            -webkit-box-orient: vertical;  
-            overflow: hidden;
-        }
-        .line-clamp-3 {
-            display: -webkit-box;
-            -webkit-line-clamp: 3;
-            -webkit-box-orient: vertical;  
-            overflow: hidden;
-        }
-         .like-button.liked {
-            @apply text-mudalali-green font-bold;
+        .hero-slide { @apply absolute inset-0 w-full h-full opacity-0 transition-opacity duration-1000 ease-in-out; }
+        .hero-slide.active { @apply opacity-100 z-10; }
+        .slider-dot { @apply h-3 w-3 bg-white bg-opacity-50 rounded-full cursor-pointer transition-all; }
+        .slider-dot.active { @apply bg-opacity-100 w-6; }
+        .line-clamp-2 { display: -webkit-box; -webkit-line-clamp: 2; -webkit-box-orient: vertical; overflow: hidden; }
+        .line-clamp-3 { display: -webkit-box; -webkit-line-clamp: 3; -webkit-box-orient: vertical; overflow: hidden; }
+        .like-button.liked { @apply text-mudalali-green font-bold; }
+        .seller-badge { @apply absolute top-2 right-2 bg-white/90 backdrop-blur-sm text-mudalali-gold text-xs font-bold px-2 py-1 rounded-full shadow-sm flex items-center gap-1; }
+        
+        /* Chat Button Animation */
+        .chat-btn-pulse { animation: pulse-green 2s infinite; }
+        @keyframes pulse-green {
+            0% { box-shadow: 0 0 0 0 rgba(58, 106, 74, 0.7); }
+            70% { box-shadow: 0 0 0 10px rgba(58, 106, 74, 0); }
+            100% { box-shadow: 0 0 0 0 rgba(58, 106, 74, 0); }
         }
     </style>
 </head>
@@ -120,75 +64,83 @@
     
     <div id="page-loader" class="fixed top-0 left-0 w-0 h-1 bg-mudalali-green z-[9999] transition-all duration-300 ease-linear"></div>
     
-    <header class="bg-white shadow-md sticky top-0 z-40 hidden md:block">
-        <div class="container mx-auto px-4 py-3 flex justify-between items-center">
-            <a href="/" id="logo-link" class="text-3xl font-bold text-mudalali-green-dark">
-                <img id="logo-img" src="https://i.ibb.co/1tCywvyP/logo.png" class="h-10" alt="Mudalali Mama Logo">
-            </a>
+    <div class="hidden md:block sticky top-0 z-50 w-full bg-white shadow-md">
+        <header class="bg-white border-b border-gray-100">
+            <div class="container mx-auto px-4 py-3 flex justify-between items-center">
+                <a href="/" id="logo-link" class="block">
+                    <img src="https://i.ibb.co/1tCywvyP/logo.png" class="h-12 object-contain" alt="Mudalali Mama Logo">
+                </a>
 
-            <div class="flex-grow max-w-xl mx-4">
-                <form class="flex">
-                    <input type="text" placeholder="Search for anything..." class="w-full px-4 py-2 border border-mm-gray-DEFAULT rounded-l-md focus:outline-none focus:ring-2 focus:ring-mudalali-green">
-                    <button type="submit" class="bg-mudalali-green text-white px-4 py-2 rounded-r-md hover:bg-mudalali-green-dark">
-                        <i class="fa fa-search"></i>
-                    </button>
-                </form>
-            </div>
-
-            <div class="flex items-center space-x-6">
-                <div class="text-right">
-                    <div class="text-sm font-semibold">Support Hotline</div>
-                    <div id="header-hotline" class="text-lg font-bold text-mudalali-green-dark">...</div>
+                <div class="flex-grow max-w-xl mx-4">
+                    <form class="flex">
+                        <input type="text" placeholder="Search for anything..." class="w-full px-4 py-2 border border-mm-gray-DEFAULT rounded-l-md focus:outline-none focus:ring-2 focus:ring-mudalali-green">
+                        <button type="submit" class="bg-mudalali-green text-white px-4 py-2 rounded-r-md hover:bg-mudalali-green-dark">
+                            <i class="fa fa-search"></i>
+                        </button>
+                    </form>
                 </div>
-                <a href="account.html" id="desktop-account-btn" class="flex flex-col items-center text-gray-600 hover:text-mudalali-green">
-                    <i class="fa fa-user text-xl"></i>
-                    <span class="text-xs">Account</span>
-                </a>
-                <a href="wishlist.html" class="relative flex flex-col items-center text-gray-600 hover:text-mudalali-green">
-                    <i class="fa fa-heart text-xl"></i>
-                    <span id="wishlist-count-badge" class="absolute -top-2 -right-2 bg-mudalali-red text-white text-xs rounded-full px-1.5 py-0.5">0</span>
-                    <span class="text-xs">Wishlist</span>
-                </a>
-                <button id="desktop-cart-btn" class="flex flex-col items-center text-gray-600 hover:text-mudalali-green relative">
-                    <i class="fa fa-shopping-cart text-xl"></i>
-                    <span id="cart-count-badge" class="absolute -top-2 -right-2 bg-mudalali-red text-white text-xs rounded-full px-1.5 py-0.5">0</span>
-                    <span class="text-xs">Cart</span>
-                </button>
-            </div>
-        </div>
-    </header>
 
-    <nav class="bg-mudalali-bg shadow-sm hidden md:block" style="border-bottom: 1px solid #e5e5e5;">
-        <div class="container mx-auto px-4 flex justify-between items-center">
-            <div id="desktop-nav-links-container" class="flex space-x-6">
-                <div class="relative group">
-                    <a href="#" class="flex items-center bg-mudalali-green text-white px-4 py-2.5 rounded-t-md font-bold">
-                        <i class="fa fa-bars mr-2"></i>
-                        Categories
-                        <i class="fa fa-chevron-down text-xs ml-2"></i>
+                <div class="flex items-center space-x-6">
+                    <div class="text-right">
+                        <div class="text-sm font-semibold">Support Hotline</div>
+                        <div id="header-hotline" class="text-lg font-bold text-mudalali-green-dark">...</div>
+                    </div>
+                    <a href="account.html" id="desktop-account-btn" class="flex flex-col items-center text-gray-600 hover:text-mudalali-green">
+                        <i class="fa fa-user text-xl"></i>
+                        <span class="text-xs">Account</span>
                     </a>
-                    
-                    <div class="dropdown-menu absolute left-0 top-full w-56 bg-white shadow-lg rounded-b-md z-40">
+                    <a href="wishlist.html" class="relative flex flex-col items-center text-gray-600 hover:text-mudalali-green">
+                        <i class="fa fa-heart text-xl"></i>
+                        <span id="wishlist-count-badge" class="absolute -top-2 -right-2 bg-mudalali-red text-white text-xs rounded-full px-1.5 py-0.5">0</span>
+                        <span class="text-xs">Wishlist</span>
+                    </a>
+                    <button id="desktop-cart-btn" class="flex flex-col items-center text-gray-600 hover:text-mudalali-green relative">
+                        <i class="fa fa-shopping-cart text-xl"></i>
+                        <span id="cart-count-badge" class="absolute -top-2 -right-2 bg-mudalali-red text-white text-xs rounded-full px-1.5 py-0.5">0</span>
+                        <span class="text-xs">Cart</span>
+                    </button>
+                </div>
+            </div>
+        </header>
+
+        <nav class="bg-mudalali-bg shadow-sm border-b border-gray-200">
+            <div class="container mx-auto px-4 flex justify-between items-center">
+                <div id="desktop-nav-links-container" class="flex space-x-6">
+                    <div class="relative group">
+                        <a href="#" class="flex items-center bg-mudalali-green text-white px-4 py-2.5 rounded-t-md font-bold">
+                            <i class="fa fa-bars mr-2"></i>
+                            Categories
+                            <i class="fa fa-chevron-down text-xs ml-2"></i>
+                        </a>
+                        <div class="dropdown-menu absolute left-0 top-full w-56 bg-white shadow-lg rounded-b-md z-40">
+                        </div>
                     </div>
                 </div>
+                <a href="#" class="bg-mudalali-green-dark text-white px-4 py-2 rounded-md text-sm font-semibold hover:bg-mudalali-green">
+                    Order Status
+                </a>
             </div>
-            <a href="#" class="bg-mudalali-green-dark text-white px-4 py-2 rounded-md text-sm font-semibold hover:bg-mudalali-green">
-                Order Status
-            </a>
-        </div>
-    </nav>
+        </nav>
+    </div>
 
-    <header class="bg-white shadow-md sticky top-0 z-40 flex md:hidden items-center justify-between p-4">
+    <header class="bg-white shadow-md sticky top-0 z-50 flex md:hidden items-center justify-between p-4">
         <button id="mobile-menu-btn" class="text-2xl text-gray-700">
             <i class="fa fa-bars"></i>
         </button>
-      <a href="index.html" id="mobile-logo-link" class="text-2xl font-bold text-mudalali-green-dark">
-        <img id="mobile-logo-img" src="https://i.ibb.co/1tCywvyP/logo.png" class="h-8" alt="Mudalali Mama Logo">
+        <a href="index.html" id="mobile-logo-link" class="block">
+             <img src="https://i.ibb.co/1tCywvyP/logo.png" class="h-10 object-contain" alt="Mudalali Mama Logo">
+        </a>
+        <a href="account.html" id="mobile-account-btn" class="text-2xl text-gray-700 w-8 text-right">
+            <i class="fa fa-user"></i>
+        </a>
+    </header>
+
+    <a href="#" class="fixed bottom-24 right-4 md:bottom-8 md:right-8 bg-mudalali-green hover:bg-mudalali-green-dark text-white w-14 h-14 rounded-full shadow-2xl z-[60] transition-all duration-300 hover:scale-110 flex items-center justify-center group chat-btn-pulse">
+        <i class="fa-solid fa-comments text-2xl"></i>
+        <span class="absolute right-full mr-3 bg-gray-800 text-white text-xs font-bold px-3 py-1.5 rounded opacity-0 group-hover:opacity-100 transition-opacity whitespace-nowrap shadow-lg pointer-events-none">
+            Chat with Us
+        </span>
     </a>
-    <a href="account.html" id="mobile-account-btn" class="text-2xl text-gray-700 w-8 text-right">
-        <i class="fa fa-user"></i>
-    </a>
-</header>
 
     <main id="homepage-container" class="container mx-auto px-4 py-8">
         <div class="w-full text-center py-10">
@@ -200,94 +152,11 @@
         </div>
     </main>
 
-    <footer class="bg-gray-800 text-gray-300 pt-16 pb-8 hidden md:block">
-        <div id="footer-container" class="container mx-auto px-4">
-            
-            <div class="bg-gray-700 p-8 rounded-lg -mt-28 mb-16 relative z-10 shadow-xl flex items-center justify-between">
-                <div>
-                    <h3 class="text-2xl font-bold text-white mb-2">SUBSCRIBE TO US</h3>
-                    <p class="text-gray-300">Get the first look at exclusive offers, promotions, and more.</p>
-                </div>
-                <form class="flex w-full max-w-md">
-                    <input type="email" placeholder="Email Address" class="w-full px-4 py-3 rounded-l-md text-gray-800 focus:outline-none focus:ring-2 focus:ring-mudalali-green">
-                    <button type="submit" class="bg-mudalali-green text-white px-6 py-3 rounded-r-md font-bold hover:bg-mudalali-green-dark">
-                        SUBSCRIBE
-                    </button>
-                </form>
-            </div>
-
-            <div class="grid grid-cols-2 md:grid-cols-5 gap-8 mb-8">
-                <div>
-                    <h4 class="font-bold text-white mb-4">මුදලාලි මාමා</h4>
-                    <ul id="footer-col-tsmgroup" class="space-y-2"><li>Loading...</li></ul>
-                </div>
-                <div>
-                    <h4 class="font-bold text-white mb-4">INFO</h4>
-                    <ul id="footer-col-info" class="space-y-2"><li>Loading...</li></ul>
-                </div>
-                <div>
-                    <h4 class="font-bold text-white mb-4">QUICK LINKS</h4>
-                    <ul id="footer-col-quicklinks" class="space-y-2"><li>Loading...</li></ul>
-                </div>
-                <div class="col-span-2 md:col-span-1">
-                    <h4 class="font-bold text-white mb-4">COLOMBO HEAD OFFICE</h4>
-                    <address id="footer-address" class="not-italic">Loading...</address>
-                    <p class="mt-2">Email: <a id="footer-email" href="#" class="hover:text-white">...</a></p>
-                    <p>Hotline: <a id="footer-hotline" href="#" class="hover:text-white">...</a></p>
-                </div>
-                <div class="col-span-2 md:col-span-1">
-                    <h4 class="font-bold text-white mb-4">KEEP IN TOUCH</h4>
-                    <div id="footer-socials" class="flex space-x-4 mb-4">
-                    </div>
-                    <h4 class="font-bold text-white mb-4 mt-6">PAYMENTS</h4>
-                    <div class="flex space-x-2">
-                        <img src="https://i.ibb.co/fDYrL3g/visa.png" alt="Visa" class="h-6">
-                        <img src="https://i.ibb.co/7rmXz4F/mastercard.png" alt="Mastercard" class="h-6">
-                        <img src="https://i.ibb.co/C0W2LFr/amex.png" alt="Amex" class="h-6">
-                    </div>
-                </div>
-            </div>
-
-            <div class="border-t border-gray-700 pt-6 text-sm text-center md:flex justify-between">
-                <p>&copy; 2025 Mudalali Mama. All Rights reserved.</p>
-                <div class="space-x-4 mt-4 md:mt-0">
-                    <a href="#" class="hover:text-white">TERMS & CONDITIONS</a>
-                    <span>|</span>
-                    <a href="#" class="hover:text-white">PRIVACY POLICY</a>
-                </div>
-            </div>
-        </div>
-    </footer>
-
-    <nav class="fixed bottom-0 left-0 right-0 h-16 bg-white border-t border-gray-200 shadow-lg flex justify-around items-center z-40 md:hidden">
-        <a href="index.html" class="mobile-nav-link active flex-1 flex flex-col items-center justify-center text-gray-600 hover:text-mudalali-green text-xs">
-            <i class="fa fa-store text-xl"></i>
-            <span class="mt-1">Shop</span>
-        </a>
-        <a href="stories.html" class="mobile-nav-link flex-1 flex flex-col items-center justify-center text-gray-600 hover:text-mudalali-green text-xs">
-            <i class="fa fa-book-open text-xl"></i>
-            <span class="mt-1">Stories</span>
-        </a>
-        <a href="wishlist.html" class="mobile-nav-link flex-1 flex flex-col items-center justify-center text-gray-600 hover:text-mudalali-green text-xs relative">
-            <div class="relative">
-                <i class="fa fa-heart text-xl"></i>
-                <span id="mobile-wishlist-badge" class="absolute -top-1 -right-2.5 bg-mudalali-red text-white text-xs font-semibold rounded-full h-4 w-4 flex items-center justify-center">0</span>
-            </div>
-            <span class="mt-1">Wishlist</span>
-        </a>
-        <button id="mobile-cart-btn" class="mobile-nav-link flex-1 flex flex-col items-center justify-center text-gray-600 hover:text-mudalali-green text-xs relative">
-            <div class="relative">
-                <i class="fa fa-shopping-bag text-xl"></i>
-                <span id="mobile-cart-badge" class="absolute -top-1 -right-2.5 bg-mudalali-red text-white text-xs font-semibold rounded-full h-4 w-4 flex items-center justify-center">0</span>
-            </div>
-            <span class="mt-1">Cart</span>
-        </button>
-    </nav>
+    <div id="footer-container-wrapper"></div>
 
     <div id="account-drawer-modal" class="drawer drawer-modal fixed inset-0 z-50 hidden">
         <div id="account-drawer-bg" class="drawer-bg fixed inset-0 bg-black bg-opacity-50 opacity-0 transition-opacity"></div>
         <div id="account-drawer" class="drawer-content fixed top-0 right-0 h-full bg-white shadow-xl w-full max-w-md flex flex-col">
-            
             <div id="account-drawer-logged-in" class="hidden flex flex-col h-full">
                 <div class="p-4 flex justify-between items-center border-b flex-shrink-0">
                     <h2 class="text-xl font-semibold text-gray-800">My Account</h2>
@@ -300,7 +169,6 @@
                     <button id="drawer-logout-btn" class="w-full text-center bg-gray-100 text-gray-700 p-3 rounded-lg hover:bg-gray-200 font-bold text-base mt-4">Logout</button>
                 </div>
             </div>
-            
             <div id="account-drawer-logged-out" class="hidden flex flex-col h-full">
                 <div class="p-4 border-b">
                     <div class="flex justify-between items-center">
@@ -335,7 +203,6 @@
         </div>
     </div>
 
-
     <div id="menu-drawer" class="drawer">
         <div class="drawer-overlay" id="menu-drawer-overlay"></div>
         <div class="drawer-content left flex flex-col">
@@ -363,11 +230,9 @@
                 <a href="#" class="block p-4 border-b text-gray-700">CONTACT US</a>
                 <div class="p-4 bg-gray-100 font-bold text-gray-600">MY ACCOUNT</div>
                 <a href="wishlist.html" class="block p-4 border-b text-gray-700"><i class="fa fa-heart w-6 mr-1"></i> WISHLIST</a>
-            
                 <a href="account.html" id="drawer-my-account-btn" class="block w-full text-left p-4 border-b text-gray-700"><i class="fa fa-user w-6 mr-1"></i> MY ACCOUNT</a>
             </div>
-            <div id="menu-tab-categories-content" class="hidden flex-col flex-grow overflow-y-auto">
-            </div>
+            <div id="menu-tab-categories-content" class="hidden flex-col flex-grow overflow-y-auto"></div>
         </div>
     </div>
 
@@ -388,12 +253,8 @@
                 </div>
                 <p class="text-sm text-center text-gray-500 mb-4">Shipping & taxes calculated at checkout.</p>
                 <div class="flex flex-col gap-3">
-                    <a href="cart.html" class="w-full text-center bg-white border-2 border-mudalali-green text-mudalali-green p-3 rounded-lg hover:bg-gray-50 font-bold text-base">
-                        VIEW CART
-                    </a>
-                    <a href="checkout.html" class="w-full text-center bg-mudalali-green text-white p-3 rounded-lg hover:bg-mudalali-green-dark font-bold text-base">
-                        CHECKOUT
-                    </a>
+                    <a href="cart.html" class="w-full text-center bg-white border-2 border-mudalali-green text-mudalali-green p-3 rounded-lg hover:bg-gray-50 font-bold text-base">VIEW CART</a>
+                    <a href="checkout.html" class="w-full text-center bg-mudalali-green text-white p-3 rounded-lg hover:bg-mudalali-green-dark font-bold text-base">CHECKOUT</a>
                 </div>
             </div>
         </div>
@@ -420,67 +281,14 @@
             </div>
         </div>
     </div>
-
-    <div id="currency-modal" class="hidden fixed inset-0 bg-black bg-opacity-70 z-[60] flex items-center justify-center p-4">
-        <div class="bg-white rounded-lg shadow-xl w-full max-w-sm text-center p-6"> 
-            <h2 class="text-2xl font-bold text-gray-800 mb-4">Select Currency</h2> 
-            <p class="text-gray-600 mb-6">Please select your preferred currency for browsing.</p> 
-            <div class="flex flex-col gap-3"> 
-                <button id="select-lkr" class="w-full bg-mudalali-green text-white p-3 rounded-md hover:bg-mudalali-green-dark font-bold">LKR (Sri Lankan Rupee)</button> 
-                <button id="select-usdt" class="w-full bg-gray-700 text-white p-3 rounded-md hover:bg-gray-800 font-bold">USDT (Crypto)</button> 
-            </div> 
-            <p class="text-xs text-gray-400 mt-4">You can change this later in your account settings.</p>
-        </div>
-    </div>
     
     <script type="module">
-        
-        import { initializeApp } from "https://www.gstatic.com/firebasejs/11.6.1/firebase-app.js";
-        import { 
-            getAuth, 
-            createUserWithEmailAndPassword, 
-            signInWithEmailAndPassword, 
-            onAuthStateChanged, 
-            signOut 
-        } from "https://www.gstatic.com/firebasejs/11.6.1/firebase-auth.js";
-        import { 
-            getFirestore, 
-            doc, 
-            getDoc, 
-            getDocs,
-            collection, 
-            onSnapshot,
-            query,
-            where,
-            orderBy,
-            limit,
-            setDoc,
-            addDoc,
-            updateDoc, 
-            deleteDoc, 
-            increment, 
-            serverTimestamp,
-            runTransaction,
-            setLogLevel
-        } from "https://www.gstatic.com/firebasejs/11.6.1/firebase-firestore.js";
+        // Imports
+        import { db, auth, publicDataPath, usersPath } from "./js/config/firebase.js";
+        import { getFooterHTML, loadFooterData } from "./js/components/footer.js";
 
-        const firebaseConfig = {
-            apiKey: "AIzaSyDIbu2qT53iGPqMCx5UdU6XY8wvXkb3ZF4",
-            authDomain: "mudalali-mama.firebaseapp.com",
-            projectId: "mudalali-mama",
-            storageBucket: "mudalali-mama.firebasestorage.app",
-            messagingSenderId: "296597428969",
-            appId: "1:296597428969:web:684668be9c0eaeecb4ae78",
-            measurementId: "G-GC1CP1LRFD"
-        };
-
-        const app = initializeApp(firebaseConfig);
-        const db = getFirestore(app);
-        const auth = getAuth(app); 
-        
-        const appId = typeof __app_id !== 'undefined' ? __app_id : 'default-app-id';
-        const publicDataPath = `/artifacts/${appId}/public/data`;
-        const usersPath = `/users`; 
+        import { createUserWithEmailAndPassword, signInWithEmailAndPassword, onAuthStateChanged, signOut } from "https://www.gstatic.com/firebasejs/11.6.1/firebase-auth.js";
+        import { doc, getDoc, getDocs, collection, onSnapshot, query, where, orderBy, limit, setDoc, addDoc, updateDoc, deleteDoc, increment, serverTimestamp, runTransaction } from "https://www.gstatic.com/firebasejs/11.6.1/firebase-firestore.js";
 
         let currentUser = null;
         let currentUserData = null;
@@ -488,7 +296,14 @@
         let unsubscribeCommentsListener = null;
         const pageLoader = document.getElementById('page-loader');
 
-    function setupAutoScroll(containerElement) {
+        // Helper for Fallback Image
+        window.imgError = function(image) {
+            image.onerror = "";
+            image.src = "https://placehold.co/400x400/e5e5e5/a0a0a0?text=No+Image";
+            return true;
+        };
+
+        function setupAutoScroll(containerElement) {
             if (!containerElement) return;
             let scrollInterval;
             const startScroll = () => {
@@ -506,28 +321,28 @@
                     }
                 }, 3000); 
             };
-            
-            // Mobile touch eka handle karanna
             containerElement.addEventListener('touchstart', () => clearInterval(scrollInterval), { passive: true });
             containerElement.addEventListener('touchend', startScroll);
             containerElement.addEventListener('touchcancel', startScroll);
-            
-            // --- ALUTH KOTASA MEKA ---
-            // PC eke mouse hover eka handle karanna
             containerElement.addEventListener('mouseenter', () => clearInterval(scrollInterval));
             containerElement.addEventListener('mouseleave', startScroll);
-            // --- ALUTH KOTASA IWARAI ---
-
             startScroll(); 
         }
-
-
 
         document.addEventListener('DOMContentLoaded', () => {
             console.log("Mudalali Mama App Initialized");
             
+            const mobileMenuBtn = document.getElementById('mobile-menu-btn');
+            const menuDrawer = document.getElementById('menu-drawer');
+            const desktopCartBtn = document.getElementById('desktop-cart-btn');
+            const cartDrawer = document.getElementById('cart-drawer');
+
+            if (mobileMenuBtn) mobileMenuBtn.addEventListener('click', () => { if(menuDrawer) menuDrawer.classList.add('open'); });
+            if (desktopCartBtn) desktopCartBtn.addEventListener('click', () => { if(cartDrawer) cartDrawer.classList.add('open'); });
+
+            document.getElementById('footer-container-wrapper').innerHTML = getFooterHTML();
+
             if (pageLoader) pageLoader.style.width = '30%';
-            
             localStorage.setItem('selectedCurrency', 'LKR');
 
             loadSiteConfig();
@@ -535,15 +350,13 @@
             buildHomepage();
            
             loadDesktopNavCategories();
-            loadFooter();
+            loadFooterData(db);
             setupMobileDrawers(); 
             updateWishlistCountBadge();
             setupCommentDrawer();
         });
 
-        function getSelectedCurrency() {
-            return localStorage.getItem('selectedCurrency') || 'LKR';
-        }
+        function getSelectedCurrency() { return localStorage.getItem('selectedCurrency') || 'LKR'; }
 
         function formatPrice(product) {
             const currency = getSelectedCurrency();
@@ -552,33 +365,21 @@
                 originalPrice: product.originalPrice ? `Rs. ${parseFloat(product.originalPrice).toFixed(2)}` : null,
                 priceClass: 'text-mudalali-green-dark'
             };
-
             if (currency === 'USDT') {
                 if (product.priceUSDT) {
                     prices.price = `$${parseFloat(product.priceUSDT).toFixed(2)}`;
-                    if (product.originalPriceUSDT) {
-                        prices.originalPrice = `$${parseFloat(product.originalPriceUSDT).toFixed(2)}`;
-                    }
-                } else {
-                    prices.price = 'USDT N/A';
-                }
+                    if (product.originalPriceUSDT) prices.originalPrice = `$${parseFloat(product.originalPriceUSDT).toFixed(2)}`;
+                } else { prices.price = 'USDT N/A'; }
             }
-
-            if (prices.originalPrice) {
-                prices.priceClass = 'text-red-600';
-            }
-            
-            const priceHtml = `
+            if (prices.originalPrice) prices.priceClass = 'text-red-600';
+            return `
                 <p class="text-sm font-bold ${prices.priceClass} md:hidden">${prices.price}</p>
                 <div class="hidden md:flex justify-center items-baseline gap-2">
                     <p class="text-lg font-bold ${prices.priceClass}">${prices.price}</p>
                     ${prices.originalPrice ? `<p class="text-sm text-gray-400 line-through">${prices.originalPrice}</p>` : ''}
                 </div>
             `;
-            
-            return priceHtml;
         }
-
 
         async function loadSiteConfig() {
             const docRef = doc(db, publicDataPath, 'siteContent', 'config');
@@ -586,114 +387,34 @@
                 const docSnap = await getDoc(docRef);
                 let config = {};
                 if (docSnap.exists()) config = docSnap.data();
-                
-                const logoText = config.logoText || 'මුදලාලි මාමා';
-                const logoImg = document.getElementById('logo-img');
-                const mobileLogoImg = document.getElementById('mobile-logo-img');
-                const logoLink = document.getElementById('logo-link');
-                const mobileLogoLink = document.getElementById('mobile-logo-link');
-
-                if (config.logoImageUrl && logoImg && mobileLogoImg) {
-                    logoImg.src = config.logoImageUrl;
-                    mobileLogoImg.src = config.logoImageUrl;
-                } else {
-                    const logoImgHasSrc = logoImg && (logoImg.getAttribute('src') && logoImg.getAttribute('src') !== '');
-                    const mobileLogoImgHasSrc = mobileLogoImg && (mobileLogoImg.getAttribute('src') && mobileLogoImg.getAttribute('src') !== '');
-
-                    if (!logoImgHasSrc && logoLink) {
-                        logoImg?.remove();
-                        logoLink.textContent = logoText;
-                    }
-                    if (!mobileLogoImgHasSrc && mobileLogoLink) {
-                        mobileLogoImg?.remove();
-                        mobileLogoLink.textContent = logoText;
-                    }
-                }
-                
-                document.getElementById('header-hotline').textContent = config.headerHotline || '...';
-                
-            } catch (e) {
-                console.error("Error loading site config: ", e);
-                const logoImg = document.getElementById('logo-img');
-                const mobileLogoImg = document.getElementById('mobile-logo-img');
-                const logoLink = document.getElementById('logo-link');
-                const mobileLogoLink = document.getElementById('mobile-logo-link');
-
-                if ((!logoImg || !logoImg.getAttribute('src') || logoImg.getAttribute('src') === '') && logoLink) {
-                    logoImg?.remove();
-                    logoLink.textContent = 'මුදලාලි මාමා';
-                }
-                if ((!mobileLogoImg || !mobileLogoImg.getAttribute('src') || mobileLogoImg.getAttribute('src') === '') && mobileLogoLink) {
-                    mobileLogoImg?.remove();
-                    mobileLogoLink.textContent = 'මුදලාලි මාමා';
-                }
-            }
+                if(document.getElementById('header-hotline')) document.getElementById('header-hotline').textContent = config.headerHotline || '...';
+            } catch (e) { console.error("Error loading site config: ", e); }
         }
 
         async function loadSiteTheme() {
             const docRef = doc(db, publicDataPath, 'siteContent', 'theme');
             try {
                 const docSnap = await getDoc(docRef);
-                let bgColor = '#f5f5f4'; 
-                
-                if (docSnap.exists() && docSnap.data().backgroundColor) {
-                    bgColor = docSnap.data().backgroundColor;
-                }
-                
-                document.body.style.backgroundColor = bgColor;
-                
-            } catch (e) {
-                console.error("Error loading theme, using default.", e);
-                document.body.style.backgroundColor = '#f5f5f4';
-            }
+                if (docSnap.exists() && docSnap.data().backgroundColor) document.body.style.backgroundColor = docSnap.data().backgroundColor;
+            } catch (e) { document.body.style.backgroundColor = '#f5f5f4'; }
         }
         
         const addToCart = async (product, quantity = 1) => {
-            if (!currentUser) {
-                document.getElementById('account-drawer-modal')?.classList.remove('hidden');
-                return; 
-            }
+            if (!currentUser) { document.getElementById('account-drawer-modal')?.classList.remove('hidden'); return; }
             const userId = currentUser.uid;
             const cartItemRef = doc(db, usersPath, userId, 'cart', product.id); 
-            
             try {
                 const docSnap = await getDoc(cartItemRef);
-                
-                if (docSnap.exists()) {
-                    await updateDoc(cartItemRef, { 
-                        quantity: increment(quantity) 
-                    });
-                } else {
-                    await setDoc(cartItemRef, {
-                        productId: product.id, 
-                        name: product.name,
-                        price: product.price,
-                        priceUSDT: product.priceUSDT || null,
-                        imageUrl: product.imageUrl,
-                        quantity: quantity,
-                        addedAt: serverTimestamp()
-                    });
-                }
-                
+                if (docSnap.exists()) await updateDoc(cartItemRef, { quantity: increment(quantity) });
+                else await setDoc(cartItemRef, { productId: product.id, name: product.name, price: product.price, priceUSDT: product.priceUSDT || null, imageUrl: product.imageUrl, quantity: quantity, addedAt: serverTimestamp() });
                 document.getElementById('cart-drawer').classList.add('open');
-
-            } catch (error) {
-                console.error("Error adding to cart: ", error);
-            }
+            } catch (error) { console.error("Error adding to cart: ", error); }
         };
 
         function updateCartCounters(count) {
             const countStr = String(count);
-            const badges = [
-                document.getElementById('cart-count-badge'),
-                document.getElementById('mobile-cart-badge')
-            ];
-            badges.forEach(badge => {
-                if(badge) {
-                    badge.textContent = countStr;
-                    badge.classList.add('pop');
-                    setTimeout(() => badge.classList.remove('pop'), 200);
-                }
+            [document.getElementById('cart-count-badge'), document.getElementById('mobile-cart-badge')].forEach(badge => {
+                if(badge) { badge.textContent = countStr; badge.classList.add('pop'); setTimeout(() => badge.classList.remove('pop'), 200); }
             });
         }
 
@@ -701,106 +422,65 @@
             const container = document.getElementById('cart-drawer-items-container');
             const totalEl = document.getElementById('cart-drawer-total');
             if (!container || !totalEl) return;
-            
             if (!userId) {
-                container.innerHTML = '<p class="text-gray-500">Please log in to see your cart.</p>';
-                totalEl.textContent = 'Rs. 0.00';
-                updateCartCounters(0);
-                return;
+                container.innerHTML = '<p class="text-gray-500">Please log in to see your cart.</p>'; totalEl.textContent = 'Rs. 0.00'; updateCartCounters(0); return;
             }
-
             const cartRef = collection(db, usersPath, userId, 'cart');
-            
             onSnapshot(cartRef, (snapshot) => {
                 updateCartCounters(snapshot.size); 
-                
-                let subtotalLKR = 0;
-                let subtotalUSDT = 0;
-                let cartHasUSDT = false;
-                
-                if (snapshot.empty) {
-                    container.innerHTML = '<p class="text-gray-500">Your cart is empty.</p>';
-                } else {
+                let subtotalLKR = 0, subtotalUSDT = 0, cartHasUSDT = false;
+                if (snapshot.empty) { container.innerHTML = '<p class="text-gray-500">Your cart is empty.</p>'; } else {
                     container.innerHTML = ''; 
                     snapshot.forEach(doc => {
                         const item = { id: doc.id, ...doc.data() };
                         const quantity = parseInt(item.quantity) || 1;
-                        
                         const priceLKR = parseFloat(item.price) || 0;
                         const itemTotalLKR = priceLKR * quantity;
                         subtotalLKR += itemTotalLKR;
-                        
                         let priceString = `Rs. ${itemTotalLKR.toFixed(2)}`;
-                        
                         if (item.priceUSDT) {
                             cartHasUSDT = true;
                             const priceUSDT = parseFloat(item.priceUSDT) || 0;
                             const itemTotalUSDT = priceUSDT * quantity;
                             subtotalUSDT += itemTotalUSDT;
-                            
                             priceString = `Rs. ${itemTotalLKR.toFixed(2)} / $${itemTotalUSDT.toFixed(2)}`;
                         }
-                        
                         container.innerHTML += `
                         <div class="flex items-center gap-4 py-4 border-b">
-                            <img src="${item.imageUrl || 'https://placehold.co/64'}" alt="${item.name}" class="w-16 h-16 rounded object-contain border p-1">
-                            <div class="flex-grow text-left">
-                                <h4 class="font-semibold text-sm text-slate-800">${item.name}</h4>
+                            <img src="${item.imageUrl || 'https://placehold.co/64'}" onerror="window.imgError(this)" class="w-16 h-16 rounded object-contain border p-1">
+                            <div class="flex-grow text-left"><h4 class="font-semibold text-sm text-slate-800">${item.name}</h4>
                                 <div class="flex items-center gap-2 my-1">
-                                    <button data-id="${item.id}" class="cart-qty-decrease w-6 h-6 font-bold rounded bg-slate-100 hover:bg-slate-200 flex items-center justify-center">-</button>
-                                    <span class="w-6 text-center font-bold text-sm text-slate-700">${quantity}</span>
-                                    <button data-id="${item.id}" class="cart-qty-increase w-6 h-6 font-bold rounded bg-slate-100 hover:bg-slate-200 flex items-center justify-center">+</button>
+                                    <button data-id="${item.id}" class="cart-qty-decrease w-6 h-6 font-bold rounded bg-slate-100">-</button>
+                                    <span class="w-6 text-center font-bold text-sm">${quantity}</span>
+                                    <button data-id="${item.id}" class="cart-qty-increase w-6 h-6 font-bold rounded bg-slate-100">+</button>
                                 </div>
                                 <p class="text-sm text-mudalali-green-dark font-bold">${priceString}</p>
                             </div>
-                            <button data-id="${item.id}" class="cart-remove-item text-slate-400 hover:text-red-500" title="Remove Item">
-                                <i class="fas fa-times text-lg"></i>
-                            </button>
+                            <button data-id="${item.id}" class="cart-remove-item text-slate-400 hover:text-red-500"><i class="fas fa-times"></i></button>
                         </div>`;
                     });
                 }
-                
                 let totalString = `Rs. ${subtotalLKR.toFixed(2)}`;
-                if (cartHasUSDT) {
-                    totalString += ` / $${subtotalUSDT.toFixed(2)}`;
-                }
+                if (cartHasUSDT) totalString += ` / $${subtotalUSDT.toFixed(2)}`;
                 totalEl.textContent = totalString;
-                
                 addCartDrawerButtonListeners(userId);
-                
-            }, (error) => {
-                console.error("Error in cart drawer listener: ", error);
-                container.innerHTML = '<p class="text-red-500">Error loading cart.</p>';
             });
         }
 
         function addCartDrawerButtonListeners(userId) {
             const container = document.getElementById('cart-drawer-items-container');
             if (!container) return;
-            
             container.querySelectorAll('.cart-qty-decrease, .cart-qty-increase, .cart-remove-item').forEach(button => {
                 const newButton = button.cloneNode(true);
                 button.parentNode.replaceChild(newButton, button);
-                
                 newButton.addEventListener('click', async (e) => {
-                    const itemId = newButton.dataset.id;
-                    const itemRef = doc(db, usersPath, userId, 'cart', itemId);
-
-                    try {
-                        if (newButton.classList.contains('cart-remove-item')) {
-                            await deleteDoc(itemRef);
-                        } else if (newButton.classList.contains('cart-qty-increase')) {
-                            await updateDoc(itemRef, { quantity: increment(1) });
-                        } else if (newButton.classList.contains('cart-qty-decrease')) {
-                            const docSnap = await getDoc(itemRef);
-                            if (docSnap.exists() && docSnap.data().quantity > 1) {
-                                await updateDoc(itemRef, { quantity: increment(-1) });
-                            } else {
-                                await deleteDoc(itemRef);
-                            }
-                        }
-                    } catch (error) {
-                        console.error("Error updating cart item: ", error);
+                    const itemRef = doc(db, usersPath, userId, 'cart', newButton.dataset.id);
+                    if (newButton.classList.contains('cart-remove-item')) await deleteDoc(itemRef);
+                    else if (newButton.classList.contains('cart-qty-increase')) await updateDoc(itemRef, { quantity: increment(1) });
+                    else if (newButton.classList.contains('cart-qty-decrease')) {
+                        const docSnap = await getDoc(itemRef);
+                        if (docSnap.exists() && docSnap.data().quantity > 1) await updateDoc(itemRef, { quantity: increment(-1) });
+                        else await deleteDoc(itemRef);
                     }
                 });
             });
@@ -809,7 +489,6 @@
         const updateWishlistCountBadge = () => {
             const desktopBadge = document.getElementById('wishlist-count-badge');
             const mobileBadge = document.getElementById('mobile-wishlist-badge');
-
             if (desktopBadge) desktopBadge.textContent = '0';
             if (mobileBadge) mobileBadge.textContent = '0';
         };
@@ -818,55 +497,40 @@
             currentUser = user;
             const loggedInView = document.getElementById('account-drawer-logged-in');
             const loggedOutView = document.getElementById('account-drawer-logged-out');
-            
             const desktopAccountBtn = document.getElementById('desktop-account-btn');
             const mobileAccountBtn = document.getElementById('mobile-account-btn');
             const drawerMyAccountBtn = document.getElementById('drawer-my-account-btn');
 
             if (user) {
-                const userDocRef = doc(db, usersPath, user.uid);
-                const userDocSnap = await getDoc(userDocRef);
-                if (userDocSnap.exists()) {
-                    currentUserData = userDocSnap.data();
-                }
-
-                loggedInView.classList.remove('hidden');
-                loggedInView.classList.add('flex');
-                loggedOutView.classList.add('hidden');
-                loggedOutView.classList.remove('flex');
+                const userDocSnap = await getDoc(doc(db, usersPath, user.uid));
+                if (userDocSnap.exists()) currentUserData = userDocSnap.data();
+                loggedInView.classList.remove('hidden'); loggedInView.classList.add('flex');
+                loggedOutView.classList.add('hidden'); loggedOutView.classList.remove('flex');
                 document.getElementById('account-drawer-user-email').textContent = user.email;
                 attachCartDrawerListener(user.uid);
 
-          desktopAccountBtn.href = "account.html";
-                    desktopAccountBtn.addEventListener('click', (e) => { // <-- MEKA
-                        e.preventDefault();
-                        document.getElementById('account-drawer-modal')?.classList.remove('hidden');
-                    });
-                    drawerMyAccountBtn.href = "#";
-
-                    if (currentUserData && currentUserData.isSeller) {
-                    mobileAccountBtn.href = 'seller-profile.html';
-                } else {
-                    mobileAccountBtn.href = 'customer-account.html';
+                if(desktopAccountBtn) {
+                    desktopAccountBtn.href = "account.html";
+                    desktopAccountBtn.addEventListener('click', (e) => { e.preventDefault(); document.getElementById('account-drawer-modal')?.classList.remove('hidden'); });
                 }
+                if(drawerMyAccountBtn) drawerMyAccountBtn.href = "#";
+                if(mobileAccountBtn) mobileAccountBtn.href = (currentUserData && currentUserData.isSeller) ? 'seller-profile.html' : 'customer-account.html';
                 
                 document.getElementById('new-comment-input').disabled = false;
                 document.getElementById('submit-comment-btn').disabled = false;
                 document.getElementById('comment-login-prompt').classList.add('hidden');
-
             } else {
                 currentUserData = null;
-                loggedInView.classList.add('hidden');
-                loggedInView.classList.remove('flex');
-                loggedOutView.classList.remove('hidden');
-                loggedOutView.classList.add('flex');
+                loggedInView.classList.add('hidden'); loggedInView.classList.remove('flex');
+                loggedOutView.classList.remove('hidden'); loggedOutView.classList.add('flex');
                 attachCartDrawerListener(null); 
                 
-                desktopAccountBtn.href = "account.html";
-              
-                mobileAccountBtn.href = "account.html";
-                drawerMyAccountBtn.href = "account.html";
-                desktopAccountBtn.replaceWith(desktopAccountBtn.cloneNode(true)); 
+                if(desktopAccountBtn) {
+                    desktopAccountBtn.href = "account.html";
+                    desktopAccountBtn.replaceWith(desktopAccountBtn.cloneNode(true)); 
+                }
+                if(mobileAccountBtn) mobileAccountBtn.href = "account.html";
+                if(drawerMyAccountBtn) drawerMyAccountBtn.href = "account.html";
 
                 document.getElementById('new-comment-input').disabled = true;
                 document.getElementById('submit-comment-btn').disabled = true;
@@ -874,15 +538,12 @@
             }
         });
 
-
         async function buildHomepage() {
             const mainContainer = document.getElementById('homepage-container');
             if (pageLoader) pageLoader.style.width = '60%';
-            
             mainContainer.innerHTML = ''; 
             
             const layoutRef = doc(db, publicDataPath, 'siteContent', 'homepageLayout');
-            
             const defaultLayout = [
                 { id: 'hero', type: 'hero', visible: true },
                 { id: 'popularCategories', type: 'popularCategories', visible: true },
@@ -893,55 +554,29 @@
                 { id: 'shopByCategory', type: 'shopByCategory', visible: true },
                 { id: 'promo_2', type: 'productPromoArea', visible: true },
             ];
-
             let layout = [];
-            
             try {
                 const layoutSnap = await getDoc(layoutRef);
-                
-                if (layoutSnap.exists() && layoutSnap.data().layout) {
-                    layout = layoutSnap.data().layout;
-                } else {
-                    console.warn("Homepage layout not found in Firestore, using default layout.");
-                    layout = defaultLayout;
-                }
+                if (layoutSnap.exists() && layoutSnap.data().layout) layout = layoutSnap.data().layout;
+                else layout = defaultLayout;
 
                 for (const item of layout) {
                     if (!item.visible) continue; 
-                    
                     switch (item.type) {
-                        case 'hero':
-                            await buildHeroSlider(mainContainer, item);
-                            break;
-                        case 'popularCategories':
-                            await buildPopularCategories(mainContainer, item);
-                            break;
-                        case 'smallBanners':
-                            await buildSmallBanners(mainContainer, item);
-                            break;
-                        case 'newArrivals':
-                            await buildNewArrivals(mainContainer, item);
-                            break;
-                        case 'shopByCategory':
-                            await buildShopByCategory(mainContainer, item);
-                            break;
-                        case 'productPromoArea':
-                            await buildProductPromoArea(mainContainer, item);
-                            break;
-                        case 'sellerStories':
-                            await buildSellerStories(mainContainer, item);
-                            break;
+                        case 'hero': await buildHeroSlider(mainContainer, item); break;
+                        case 'popularCategories': await buildPopularCategories(mainContainer, item); break;
+                        case 'smallBanners': await buildSmallBanners(mainContainer, item); break;
+                        case 'newArrivals': await buildNewArrivals(mainContainer, item); break;
+                        case 'shopByCategory': await buildShopByCategory(mainContainer, item); break;
+                        case 'productPromoArea': await buildProductPromoArea(mainContainer, item); break;
+                        case 'sellerStories': await buildSellerStories(mainContainer, item); break;
                     }
                 }
-                
             } catch (error) {
                 console.error("Error building homepage layout:", error);
-                mainContainer.innerHTML = '<p class="text-center text-red-500">Error loading homepage. Please try again later.</p>';
+                mainContainer.innerHTML = '<p class="text-center text-red-500">Error loading homepage.</p>';
             } finally {
-                if (pageLoader) {
-                    pageLoader.style.width = '100%';
-                    setTimeout(() => { pageLoader.classList.add('hidden'); }, 500);
-                }
+                if (pageLoader) { pageLoader.style.width = '100%'; setTimeout(() => { pageLoader.classList.add('hidden'); }, 500); }
             }
         }
 
@@ -949,97 +584,43 @@
             const section = document.createElement('section');
             section.id = 'hero-slider';
             section.className = 'mb-8 relative rounded-lg shadow-lg overflow-hidden aspect-[3/4] sm:aspect-[4/3] md:aspect-[16/9] lg:aspect-[3/1]';
-            
-            section.innerHTML = `
-                <div id="slider-container" class="w-full h-full">
-                    <div class="w-full h-full bg-gray-200 flex items-center justify-center">
-                        <p class="text-gray-500">Loading Banners...</p>
-                    </div>
-                </div>
-                <button id="slider-prev" class="absolute top-1/2 left-2 md:left-4 -translate-y-1/2 bg-white/50 hover:bg-white rounded-full p-2 w-10 h-10 shadow-md z-20 transition-colors">
-                    <i class="fa fa-chevron-left text-gray-800"></i>
-                </button>
-                <button id="slider-next" class="absolute top-1/2 right-2 md:right-4 -translate-y-1/2 bg-white/50 hover:bg-white rounded-full p-2 w-10 h-10 shadow-md z-20 transition-colors">
-                    <i class="fa fa-chevron-right text-gray-800"></i>
-                </button>
-                <div id="slider-dots" class="absolute bottom-4 left-1/2 -translate-x-1/2 flex gap-2 z-20"></div>
-            `;
+            section.innerHTML = `<div id="slider-container" class="w-full h-full"><div class="w-full h-full bg-gray-200 flex items-center justify-center"><p class="text-gray-500">Loading Banners...</p></div></div><button id="slider-prev" class="absolute top-1/2 left-2 md:left-4 -translate-y-1/2 bg-white/50 hover:bg-white rounded-full p-2 w-10 h-10 shadow-md z-20 transition-colors"><i class="fa fa-chevron-left text-gray-800"></i></button><button id="slider-next" class="absolute top-1/2 right-2 md:right-4 -translate-y-1/2 bg-white/50 hover:bg-white rounded-full p-2 w-10 h-10 shadow-md z-20 transition-colors"><i class="fa fa-chevron-right text-gray-800"></i></button><div id="slider-dots" class="absolute bottom-4 left-1/2 -translate-x-1/2 flex gap-2 z-20"></div>`;
             mainContainer.appendChild(section);
 
             const sliderContainer = section.querySelector('#slider-container');
             const dotsContainer = section.querySelector('#slider-dots');
             const nextBtn = section.querySelector('#slider-next');
             const prevBtn = section.querySelector('#slider-prev');
-
-            const bannerNames = ['heroBanner1', 'heroBanner2', 'heroBanner3'];
             const banners = [];
-
-            for (const name of bannerNames) {
+            for (const name of ['heroBanner1', 'heroBanner2', 'heroBanner3']) {
                 const docRef = doc(db, publicDataPath, 'siteContent', name);
-                try {
-                    const docSnap = await getDoc(docRef);
-                    if (docSnap.exists()) {
-                        banners.push(docSnap.data());
-                    }
-                } catch (e) { console.error(`Error loading ${name}: `, e); }
+                try { const docSnap = await getDoc(docRef); if (docSnap.exists()) banners.push(docSnap.data()); } catch (e) {}
             }
-
-            sliderContainer.innerHTML = ''; 
-            dotsContainer.innerHTML = '';
-            
-            if (banners.length === 0) {
-                sliderContainer.innerHTML = '<div class="w-full h-full bg-gray-200 flex items-center justify-center"><p class="text-gray-500">No banners found.</p></div>';
-                nextBtn.classList.add('hidden');
-                prevBtn.classList.add('hidden');
-                return;
-            }
+            sliderContainer.innerHTML = ''; dotsContainer.innerHTML = '';
+            if (banners.length === 0) { sliderContainer.innerHTML = '<div class="w-full h-full bg-gray-200 flex items-center justify-center"><p class="text-gray-500">No banners found.</p></div>'; nextBtn.classList.add('hidden'); prevBtn.classList.add('hidden'); return; }
 
             banners.forEach((banner, index) => {
                 const defaultImg = banner.imageUrl || 'https://placehold.co/1200x400/cccccc/969696?text=Fallback+Image';
                 const pcImg = banner.imageUrl_pc || banner.imageUrl_tab || banner.imageUrl_mob || defaultImg;
                 const tabImg = banner.imageUrl_tab || banner.imageUrl_pc || banner.imageUrl_mob || defaultImg;
                 const mobImg = banner.imageUrl_mob || banner.imageUrl_tab || banner.imageUrl_pc || defaultImg;
-
-                const pictureHtml = `
-                    <picture>
-                        <source media="(min-width: 1024px)" srcset="${pcImg}">
-                        <source media="(min-width: 768px)" srcset="${tabImg}">
-                        <img src="${mobImg}" alt="Hero Banner ${index + 1}" class="w-full h-full object-cover object-center">
-                    </picture>
-                `;
-                
+                const pictureHtml = `<picture><source media="(min-width: 1024px)" srcset="${pcImg}"><source media="(min-width: 768px)" srcset="${tabImg}"><img src="${mobImg}" alt="Hero Banner ${index + 1}" class="w-full h-full object-cover object-center" onerror="window.imgError(this)"></picture>`;
                 sliderContainer.innerHTML += `<a href="${banner.linkUrl || '#'}" class="hero-slide ${index === 0 ? 'active' : ''}">${pictureHtml}</a>`;
-                
                 dotsContainer.innerHTML += `<button class="slider-dot ${index === 0 ? 'active' : ''}" data-index="${index}"></button>`;
             });
-
             const slides = sliderContainer.querySelectorAll('.hero-slide');
             const dots = dotsContainer.querySelectorAll('.slider-dot');
-            let currentIndex = 0;
-            let slideInterval;
-
+            let currentIndex = 0; let slideInterval;
             const showSlide = (index) => {
                 if (slides.length === 0 || !slides[currentIndex] || !dots[currentIndex]) return;
-                slides[currentIndex].classList.remove('active');
-                dots[currentIndex].classList.remove('active');
+                slides[currentIndex].classList.remove('active'); dots[currentIndex].classList.remove('active');
                 currentIndex = index;
-                slides[currentIndex].classList.add('active');
-                dots[currentIndex].classList.add('active');
+                slides[currentIndex].classList.add('active'); dots[currentIndex].classList.add('active');
             };
-            const nextSlide = () => showSlide((currentIndex + 1) % slides.length);
-            const prevSlide = () => showSlide((currentIndex - 1 + slides.length) % slides.length);
-
-            nextBtn.onclick = nextSlide;
-            prevBtn.onclick = prevSlide;
-            dots.forEach(dot => {
-                dot.onclick = () => showSlide(parseInt(dot.dataset.index));
-            });
-
-            const startAutoplay = () => {
-                clearInterval(slideInterval); 
-                slideInterval = setInterval(nextSlide, 5000); 
-            };
-            
+            nextBtn.onclick = () => showSlide((currentIndex + 1) % slides.length);
+            prevBtn.onclick = () => showSlide((currentIndex - 1 + slides.length) % slides.length);
+            dots.forEach(dot => { dot.onclick = () => showSlide(parseInt(dot.dataset.index)); });
+            const startAutoplay = () => { clearInterval(slideInterval); slideInterval = setInterval(() => showSlide((currentIndex + 1) % slides.length), 5000); };
             sliderContainer.onmouseenter = () => clearInterval(slideInterval);
             sliderContainer.onmouseleave = startAutoplay;
             startAutoplay(); 
@@ -1049,114 +630,59 @@
             const section = document.createElement('section');
             section.id = 'dynamic-ad-banners';
             section.className = 'flex gap-4 overflow-x-auto md:grid md:grid-cols-3 md:gap-6 mb-8 scroll-snap-type-x-mandatory no-scrollbar';
-            
             const bannerIds = ['smallBanner1', 'smallBanner2', 'smallBanner3'];
             for (let i = 0; i < bannerIds.length; i++) {
                 const id = bannerIds[i];
                 const docRef = doc(db, publicDataPath, 'siteContent', id);
-                let link = '#';
-                let img = `https://placehold.co/400x200/e2e8f0/94a3b8?text=Banner+${i+1}`;
-                
-                try {
-                    const docSnap = await getDoc(docRef);
-                    if (docSnap.exists()) {
-                        link = docSnap.data().linkUrl || '#';
-                        img = docSnap.data().imageUrl || img;
-                    }
-                } catch (e) { console.error(`Error loading ${id}: `, e); }
-                
-                section.innerHTML += `
-                <a href="${link}" class="block rounded-lg shadow-lg overflow-hidden hover:opacity-90 w-[80vw] flex-shrink-0 md:w-auto scroll-snap-align-start">
-                    <img src="${img}" alt="Banner ${i+1}" class="w-full object-cover">
-                </a>`;
+                let link = '#'; let img = `https://placehold.co/400x200/e2e8f0/94a3b8?text=Banner+${i+1}`;
+                try { const docSnap = await getDoc(docRef); if (docSnap.exists()) { link = docSnap.data().linkUrl || '#'; img = docSnap.data().imageUrl || img; } } catch (e) {}
+                section.innerHTML += `<a href="${link}" class="block rounded-lg shadow-lg overflow-hidden hover:opacity-90 w-[80vw] flex-shrink-0 md:w-auto scroll-snap-align-start"><img src="${img}" alt="Banner ${i+1}" class="w-full object-cover" onerror="window.imgError(this)"></a>`;
             }
             mainContainer.appendChild(section);
-
-            if (window.innerWidth < 768) {
-                setupAutoScroll(section);
-            }
+            if (window.innerWidth < 768) setupAutoScroll(section);
         }
 
-async function buildPopularCategories(mainContainer, layoutItem) {
+        async function buildPopularCategories(mainContainer, layoutItem) {
             const section = document.createElement('section');
-            section.id = 'popular-categories';
-            section.className = 'mb-8';
-            
+            section.id = 'popular-categories'; section.className = 'mb-8';
             const grid = document.createElement('div');
-            
             grid.className = 'flex gap-4 overflow-x-auto text-center no-scrollbar scroll-snap-type-x-mandatory';
-            
             grid.innerHTML = '<p class="col-span-full text-gray-500 text-center">Loading categories...</p>';
-            section.appendChild(grid);
-            mainContainer.appendChild(section);
-
+            section.appendChild(grid); mainContainer.appendChild(section);
             const collRef = collection(db, publicDataPath, 'categories');
             onSnapshot(collRef, (querySnapshot) => {
                 grid.innerHTML = ''; 
-                if (querySnapshot.empty) {
-                    grid.innerHTML = '<p class="col-span-full text-gray-500 text-center">No categories found.</p>';
-                    return;
-                }
+                if (querySnapshot.empty) { grid.innerHTML = '<p class="col-span-full text-gray-500 text-center">No categories found.</p>'; return; }
                 querySnapshot.forEach((doc) => {
                     const category = doc.data();
-                    const bgColor = category.color || '#FFFFFF'; 
-                    
-                    // ===== WENAS KALE MEKA =====
-                    // href="#" eka wenas kara shop.html ekata link wenna
-                    grid.innerHTML += `
-                    <a href="shop.html?category=${encodeURIComponent(category.name)}" class="group w-[22vw] md:w-[14vw] lg:w-[10vw] flex-shrink-0">
-                        <div class="rounded-full p-4 shadow-md group-hover:shadow-lg transform group-hover:scale-105 transition-all" 
-                             style="background-color: ${bgColor};">
-                            
-                            <img src="${category.imageUrl}" alt="${category.name}" class="w-full h-auto object-contain aspect-square">
-                        </div>
-                        <span class="mt-2 block font-semibold text-sm text-gray-700 group-hover:text-mudalali-green">${category.name}</span>
-                    </a>`;
-                    // ===== WENAS KAMA IWARAI =====
+                    grid.innerHTML += `<a href="shop.html?category=${encodeURIComponent(category.name)}" class="group w-[22vw] md:w-[14vw] lg:w-[10vw] flex-shrink-0"><div class="rounded-full p-4 shadow-md group-hover:shadow-lg transform group-hover:scale-105 transition-all" style="background-color: ${category.color || '#FFFFFF'};"><img src="${category.imageUrl}" alt="${category.name}" class="w-full h-auto object-contain aspect-square" onerror="window.imgError(this)"></div><span class="mt-2 block font-semibold text-sm text-gray-700 group-hover:text-mudalali-green">${category.name}</span></a>`;
                 });
-
                 setupAutoScroll(grid);
-
-            }, (error) => {
-                console.error("Error loading categories: ", error);
-                grid.innerHTML = '<p class="col-span-full text-red-500 text-center">Error loading categories.</p>';
             });
         }
         
-      async function loadDesktopNavCategories() {
+        async function loadDesktopNavCategories() {
             const container = document.getElementById('desktop-nav-links-container');
             if (!container) return;
-            
             const collRef = collection(db, publicDataPath, 'categories');
             onSnapshot(collRef, (querySnapshot) => {
-                
                 const dropdownContainer = container.querySelector('.dropdown-menu');
                 if (dropdownContainer) dropdownContainer.innerHTML = '';
-                
                 const existingLinks = container.querySelectorAll('a:not(.group > a)');
                 existingLinks.forEach(link => link.remove());
-
                 if (querySnapshot.empty) return;
-                
                 let count = 0;
                 querySnapshot.forEach((doc) => {
                     const category = doc.data();
-                    
                     if (count < 6) { 
-                        // ===== WENAS KALE MEKA =====
                         const linkHtml = `<a href="shop.html?category=${encodeURIComponent(category.name)}" class="font-semibold text-gray-700 hover:text-mudalali-green-dark px-3 py-2.5 hidden md:block">${category.name}</a>`;
-                        container.insertAdjacentHTML('beforeend', linkHtml);
-                        count++;
+                        container.insertAdjacentHTML('beforeend', linkHtml); count++;
                     }
-                    
                     if (dropdownContainer) {
-                         // ===== WENAS KALE MEKA =====
                          const dropdownLink = `<a href="shop.html?category=${encodeURIComponent(category.name)}" class="font-semibold text-gray-700 hover:text-mudalali-green-dark px-4 py-3 block border-b">${category.name}</a>`;
                          dropdownContainer.innerHTML += dropdownLink;
                     }
                 });
-            }, (error) => {
-                console.error("Error loading nav categories: ", error);
             });
         }
 
@@ -1164,937 +690,286 @@ async function buildPopularCategories(mainContainer, layoutItem) {
             const section = document.createElement('div');
             section.id = `product-carousel-${carouselId}`;
             section.className = 'product-carousel-container';
-            
             const titleEl = document.createElement('h2');
-            if(showTitle) {
-                titleEl.className = 'text-2xl font-bold text-gray-800 mb-4';
-                titleEl.textContent = 'Loading...';
-                section.appendChild(titleEl);
-            }
+            if(showTitle) { titleEl.className = 'text-2xl font-bold text-gray-800 mb-4'; titleEl.textContent = 'Loading...'; section.appendChild(titleEl); }
             
             const gridEl = document.createElement('div');
-            gridEl.className = 'flex gap-4 overflow-x-auto md:grid md:grid-cols-4 lg:grid-cols-6 md:gap-6 scroll-snap-type-x-mandatory md:overflow-x-visible no-scrollbar';
+            gridEl.className = 'grid grid-cols-2 gap-3 md:grid-cols-4 lg:grid-cols-6 md:gap-6';
+            
             gridEl.innerHTML = '<p class="col-span-full text-gray-500 text-center">Loading products...</p>';
             section.appendChild(gridEl);
-
             const mobileViewAllBtn = document.createElement('a');
-mobileViewAllBtn.href = 'stories.html';
-mobileViewAllBtn.className = 'block sm:hidden text-center w-full mt-6 px-5 py-3 rounded-lg text-md font-medium text-mudalali-green border-2 border-mudalali-green hover:bg-mudalali-green hover:text-white transition-colors duration-200';
-mobileViewAllBtn.textContent = 'View All Stories';
-section.appendChild(mobileViewAllBtn);
-            
+            mobileViewAllBtn.href = 'stories.html';
+            mobileViewAllBtn.className = 'block sm:hidden text-center w-full mt-6 px-5 py-3 rounded-lg text-md font-medium text-mudalali-green border-2 border-mudalali-green hover:bg-mudalali-green hover:text-white transition-colors duration-200';
+            mobileViewAllBtn.textContent = 'View All Stories';
+            section.appendChild(mobileViewAllBtn);
             mainContainer.appendChild(section);
-
             try {
                 if(showTitle) {
                     const carouselDocRef = doc(db, publicDataPath, 'productCarousels', carouselId);
                     const carouselSnap = await getDoc(carouselDocRef);
-                    if (carouselSnap.exists()) {
-                        titleEl.textContent = carouselSnap.data().title || 'Products';
-                    } else {
-                        titleEl.textContent = 'Products';
-                    }
+                    if (carouselSnap.exists()) titleEl.textContent = carouselSnap.data().title || 'Products'; else titleEl.textContent = 'Products';
                 }
-
                 const productsRef = collection(db, publicDataPath, 'products');
                 const q = query(productsRef, where("carousels", "array-contains", carouselId), limit(60));
-                
                 onSnapshot(q, (querySnapshot) => {
                     gridEl.innerHTML = '';
-                    if (querySnapshot.empty) {
-                        gridEl.innerHTML = '<p class="col-span-full text-gray-500 text-center">No products found in this category.</p>';
-                        return;
-                    }
-                    
+                    if (querySnapshot.empty) { gridEl.innerHTML = '<p class="col-span-full text-gray-500 text-center">No products found in this category.</p>'; return; }
                     querySnapshot.forEach((doc) => {
-                        const product = doc.data();
-                        const productId = doc.id;
+                        const product = doc.data(); const productId = doc.id;
+                        let badgeHtml = product.saleTag ? `<div class="absolute top-4 left-4 z-10 rounded-full bg-red-600 px-3 py-1 text-xs font-bold text-white">${product.saleTag}</div>` : `<div class="absolute top-4 left-4 z-10 rounded-full bg-mudalali-green px-3 py-1 text-xs font-bold text-white">NEW</div>`;
                         
-                        let badgeHtml = product.saleTag 
-                            ? `<div class="absolute top-4 left-4 z-10 rounded-full bg-red-600 px-3 py-1 text-xs font-bold text-white">${product.saleTag}</div>`
-                            : `<div class="absolute top-4 left-4 z-10 rounded-full bg-mudalali-green px-3 py-1 text-xs font-bold text-white">NEW</div>`;
-                        
-                        let priceHtml = formatPrice(product); 
-                        const imageUrl = product.imageUrl || 'https://placehold.co/400x400';
-                        const imageHtml = `
-                            <img src="${imageUrl}" alt="${product.name}" class="absolute h-full w-full object-cover transition-opacity duration-500 ease-in-out opacity-100 group-hover:opacity-0" />
-                            <img src="${imageUrl}" alt="${product.name} hover" class="absolute h-full w-full object-cover transition-opacity duration-500 ease-in-out opacity-0 group-hover:opacity-100" />
-                        `;
+                        let sellerBadgeHtml = '';
+                        if (product.isTopSeller || product.sellerBadge === 'top-rated') {
+                             sellerBadgeHtml = `<div class="seller-badge"><i class="fa fa-check-circle"></i> Top Seller</div>`;
+                        }
+
+                        let priceHtml = formatPrice(product); const imageUrl = product.imageUrl || 'https://placehold.co/400x400';
+                        const imageHtml = `<img src="${imageUrl}" alt="${product.name}" class="absolute h-full w-full object-cover transition-opacity duration-500 ease-in-out opacity-100 group-hover:opacity-0" onerror="window.imgError(this)" /><img src="${imageUrl}" alt="${product.name} hover" class="absolute h-full w-full object-cover transition-opacity duration-500 ease-in-out opacity-0 group-hover:opacity-100" onerror="window.imgError(this)" />`;
                         
                         const productEl = document.createElement('div');
-                        productEl.className = "group relative overflow-hidden rounded-lg bg-white shadow-md transition-all duration-300 ease-in-out hover:shadow-xl w-[38vw] flex-shrink-0 md:w-auto scroll-snap-align-start";
+                        productEl.className = "group relative overflow-hidden rounded-lg bg-white shadow-md transition-all duration-300 ease-in-out hover:shadow-xl";
                         
                         productEl.innerHTML = `
-                            <a href="product.html?id=${productId}" class="block product-link">
-                                <div class="relative h-48 md:h-64 overflow-hidden">
-                                    ${imageHtml} ${badgeHtml}
-                                    <div class="absolute top-4 right-4 z-10 flex flex-col gap-2 opacity-0 transition-all duration-300 ease-in-out group-hover:opacity-100">
-                                        <button class="quick-view-btn flex h-10 w-10 items-center justify-center rounded-full bg-white shadow-md transition-all hover:bg-gray-100" title="Quick View">
-                                            <svg xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" stroke-width="1.5" stroke="currentColor" class="h-5 w-5 text-gray-700"><path stroke-linecap="round" stroke-linejoin="round" d="m21 21-5.197-5.197m0 0A7.5 7.5 0 1 0 5.196 5.196a7.5 7.5 0 0 0 10.607 10.607Z" /></svg>
-                                        </button>
-                                        <button class="flex h-10 w-10 items-center justify-center rounded-full bg-white shadow-md transition-all hover:bg-gray-100" title="Compare">
-                                            <svg xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" stroke-width="1.5" stroke="currentColor" class="h-5 w-5 text-gray-700"><path stroke-linecap="round" stroke-linejoin="round" d="M7.5 21 3 16.5m0 0L7.5 12M3 16.5h18m-7.5-3L21 9m0 0L16.5 4.5M21 9H3" /></svg>
-                                        </button>
-                                    </div>
-                                </div>
-                            </a>
-                            <div class="p-4 text-center">
-                                <p class="text-sm text-gray-500 truncate hidden md:block">${product.categories || 'Mudalali Mama'}</p>
-                                <a href="product.html?id=${productId}" class="block product-link">
-                                    <h3 class="my-1 text-sm font-semibold text-gray-800 hover:text-mudalali-green md:text-lg line-clamp-2">${product.name}</h3>
-                                </a>
-                                ${priceHtml}
-                                
-                                <div class="max-h-0 overflow-hidden transition-all duration-500 ease-in-out group-hover:max-h-screen">
-                                    <p class="mt-2 text-sm text-gray-600 truncate">${product.description || 'View product for more details...'}</p>
-                                    <button class="add-to-cart-btn mt-4 w-full rounded-full bg-mudalali-green py-2.5 text-sm font-bold uppercase text-white transition-all duration-300 hover:bg-mudalali-green-dark" data-product-id="${productId}">
-                                        Add to Cart
-                                    </button>
-                                    <div class="mt-4 flex justify-center gap-4">
-                                        <button class="text-gray-400 transition-all hover:text-red-500" title="Add to Wishlist">
-                                            <svg xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" stroke-width="1.5" stroke="currentColor" class="h-6 w-6"><path stroke-linecap="round" stroke-linejoin="round" d="M21 8.25c0-2.485-2.099-4.5-4.688-4.5-1.935 0-3.597 1.126-4.312 2.733-.715-1.607-2.377-2.733-4.313-2.733C5.1 3.75 3 5.765 3 8.25c0 7.22 9 12 9 12s9-4.78 9-12Z" /></svg>
-                                        </button>
-                                        <a href="product.html?id=${productId}" class="text-gray-400 transition-all hover:text-blue-500 product-link" title="Quick View">
-                                            <svg xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" stroke-width="1.5" stroke="currentColor" class="h-6 w-6"><path stroke-linecap="round" stroke-linejoin="round" d="m21 21-5.197-5.197m0 0A7.5 7.5 0 1 0 5.196 5.196a7.5 7.5 0 0 0 10.607 10.607Z" /></svg>
-                                        </a>
-                                    </div>
+                        <a href="product.html?id=${productId}" class="block product-link">
+                            <div class="relative h-48 md:h-64 overflow-hidden">
+                                ${imageHtml} ${badgeHtml} ${sellerBadgeHtml}
+                                <div class="absolute top-4 right-4 z-10 flex flex-col gap-2 opacity-0 transition-all duration-300 ease-in-out group-hover:opacity-100">
+                                    <button class="quick-view-btn flex h-10 w-10 items-center justify-center rounded-full bg-white shadow-md transition-all hover:bg-gray-100"><svg xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" stroke-width="1.5" stroke="currentColor" class="h-5 w-5 text-gray-700"><path stroke-linecap="round" stroke-linejoin="round" d="m21 21-5.197-5.197m0 0A7.5 7.5 0 1 0 5.196 5.196a7.5 7.5 0 0 0 10.607 10.607Z" /></svg></button>
                                 </div>
                             </div>
-                        `;
+                        </a>
+                        <div class="p-4 text-center">
+                            <p class="text-sm text-gray-500 truncate hidden md:block">${product.categories || 'Mudalali Mama'}</p>
+                            <a href="product.html?id=${productId}" class="block product-link"><h3 class="my-1 text-sm font-semibold text-gray-800 hover:text-mudalali-green md:text-lg line-clamp-2">${product.name}</h3></a>
+                            ${priceHtml}
+                        </div>`;
                         
-                        const productDataForCart = { 
-                            id: productId, 
-                            name: product.name, 
-                            price: product.price, 
-                            priceUSDT: product.priceUSDT || null,
-                            imageUrl: product.imageUrl 
-                        };
-                        
-                        productEl.querySelector('.add-to-cart-btn').addEventListener('click', (e) => {
-                            e.preventDefault(); e.stopPropagation(); 
-                            addToCart(productDataForCart, 1); 
-                        });
-                        
-                   productEl.querySelectorAll('.quick-view-btn').forEach(link => { // <-- HADAPU WIDIHA
-                            link.addEventListener('click', (e) => {
-                                if (!currentUser) {
-                                    e.preventDefault();
-                                    e.stopPropagation();
-                                    document.getElementById('account-drawer-modal')?.classList.remove('hidden');
-                                }
-                            });
-                        });
-                        
+                        productEl.querySelectorAll('.quick-view-btn').forEach(link => { link.addEventListener('click', (e) => { if (!currentUser) { e.preventDefault(); e.stopPropagation(); document.getElementById('account-drawer-modal')?.classList.remove('hidden'); } }); });
                         gridEl.appendChild(productEl);
                     });
-
-                    if (querySnapshot.size === 60) {
-                        if (!section.querySelector('.show-more-btn')) {
-                            const showMoreBtn = document.createElement('a');
-                            showMoreBtn.href = 'shop.html'; 
-                            showMoreBtn.className = 'show-more-btn col-span-full text-center bg-white shadow-md rounded-lg p-4 font-semibold text-mudalali-green hover:bg-gray-50 block mt-6';
-                            showMoreBtn.textContent = 'Show More Products...';
-                            section.appendChild(showMoreBtn); 
-                        }
-                    }
                 });
-            } catch (error) {
-                console.error(`Error loading carousel ${carouselId}: `, error);
-                if(showTitle) titleEl.textContent = 'Error';
-                gridEl.innerHTML = '<p class="col-span-full text-red-500 text-center">Error loading products.</p>';
-            }
+            } catch (error) { console.error(`Error loading carousel ${carouselId}: `, error); if(showTitle) titleEl.textContent = 'Error'; gridEl.innerHTML = '<p class="col-span-full text-red-500 text-center">Error loading products.</p>'; }
         }
 
- async function buildShopByCategory(mainContainer, layoutItem) {
-            const section = document.createElement('section');
-            section.id = 'shop-by-category';
-            section.className = 'mb-8';
-            
-            // H2 Title eka hadanawa
-            const titleEl = document.createElement('h2');
-            titleEl.className = 'text-2xl font-bold text-gray-800 mb-4';
-            titleEl.textContent = 'SHOP BY CATEGORY';
-            section.appendChild(titleEl);
-
-            // Banners walata container eka hadanawa
-            const gridEl = document.createElement('div');
-            gridEl.className = 'flex gap-4 overflow-x-auto md:grid md:grid-cols-3 md:gap-6 scroll-snap-type-x-mandatory no-scrollbar';
-            gridEl.innerHTML = '<p class="text-gray-500 text-center w-full">Loading banners...</p>'; // Loader
-            section.appendChild(gridEl);
-            
+        async function buildShopByCategory(mainContainer, layoutItem) {
+            const section = document.createElement('section'); section.id = 'shop-by-category'; section.className = 'mb-8';
+            const titleEl = document.createElement('h2'); titleEl.className = 'text-2xl font-bold text-gray-800 mb-4'; titleEl.textContent = 'SHOP BY CATEGORY'; section.appendChild(titleEl);
+            const gridEl = document.createElement('div'); gridEl.className = 'flex gap-4 overflow-x-auto md:grid md:grid-cols-3 md:gap-6 scroll-snap-type-x-mandatory no-scrollbar'; gridEl.innerHTML = '<p class="text-gray-500 text-center w-full">Loading banners...</p>'; section.appendChild(gridEl);
             mainContainer.appendChild(section);
-
-            // --- Aluth JavaScript Logic eka ---
             const collRef = collection(db, publicDataPath, 'shopByCategoryBanners');
-            
-            // 'shopByCategoryBanners' collection eken banners 3k gannawa
             const q = query(collRef, limit(3)); 
-
             onSnapshot(q, (querySnapshot) => {
-                gridEl.innerHTML = ''; // Loader eka ain karanawa
-
-                if (querySnapshot.empty) {
-                    gridEl.innerHTML = '<p class="text-gray-500 text-center w-full">No banners found.</p>';
-                    return;
-                }
-                
+                gridEl.innerHTML = ''; if (querySnapshot.empty) { gridEl.innerHTML = '<p class="text-gray-500 text-center w-full">No banners found.</p>'; return; }
                 querySnapshot.forEach((doc) => {
-                    const banner = doc.data();
-                    const link = banner.linkUrl || '#';
-                    const img = banner.imageUrl || 'https://placehold.co/400x200/e2e8f0/94a3b8?text=Banner';
-
-                    gridEl.innerHTML += `
-                    <a href="${link}" class="block rounded-lg shadow-lg overflow-hidden hover:opacity-90 w-[80vw] flex-shrink-0 md:w-auto scroll-snap-align-start">
-                        <img src="${img}" alt="Shop by category banner" class="w-full h-full object-cover">
-                    </a>`;
+                    const banner = doc.data(); const link = banner.linkUrl || '#'; const img = banner.imageUrl || 'https://placehold.co/400x200/e2e8f0/94a3b8?text=Banner';
+                    gridEl.innerHTML += `<a href="${link}" class="block rounded-lg shadow-lg overflow-hidden hover:opacity-90 w-[80vw] flex-shrink-0 md:w-auto scroll-snap-align-start"><img src="${img}" alt="Shop by category banner" class="w-full h-full object-cover" onerror="window.imgError(this)"></a>`;
                 });
-
-                // ===== WENAS KALE MEKA =====
-                // if check eka ain kara. Dan hemotama auto-scroll wenawa.
                 setupAutoScroll(gridEl);
-                // ===== WENAS KAMA IWARAI =====
-
-            }, (error) => {
-                console.error("Error loading shop by category banners: ", error);
-                gridEl.innerHTML = '<p class="text-red-500 text-center w-full">Error loading banners.</p>';
-            });
+            }, (error) => { console.error("Error loading shop by category banners: ", error); gridEl.innerHTML = '<p class="text-red-500 text-center w-full">Error loading banners.</p>'; });
         }
+
         async function buildProductPromoArea(mainContainer, layoutItem) {
-            const section = document.createElement('section');
-            section.id = `promo-area-${layoutItem.id}`;
-            section.className = 'mb-8 product-promo-area';
-            
-            const titleEl = document.createElement('h2');
-            titleEl.className = 'text-2xl font-bold text-gray-800 mb-4';
-            titleEl.textContent = 'Loading...';
-            section.appendChild(titleEl);
-
-            const bannerEl = document.createElement('a');
-            bannerEl.href = '#';
-            bannerEl.className = 'block rounded-lg shadow-lg overflow-hidden hover:opacity-90 mb-6';
-            bannerEl.innerHTML = `<img src="https://placehold.co/1200x250/e2e8f0/94a3b8?text=Loading+Promo+Banner..." alt="Promo Banner" class="w-full object-cover">`;
-            section.appendChild(bannerEl);
-
+            const section = document.createElement('section'); section.id = `promo-area-${layoutItem.id}`; section.className = 'mb-8 product-promo-area';
+            const titleEl = document.createElement('h2'); titleEl.className = 'text-2xl font-bold text-gray-800 mb-4'; titleEl.textContent = 'Loading...'; section.appendChild(titleEl);
+            const bannerEl = document.createElement('a'); bannerEl.href = '#'; bannerEl.className = 'block rounded-lg shadow-lg overflow-hidden hover:opacity-90 mb-6'; bannerEl.innerHTML = `<img src="https://placehold.co/1200x250/e2e8f0/94a3b8?text=Loading+Promo+Banner..." alt="Promo Banner" class="w-full object-cover" onerror="window.imgError(this)">`; section.appendChild(bannerEl);
             mainContainer.appendChild(section);
-
             try {
-                const docRef = doc(db, publicDataPath, 'productPromoAreas', layoutItem.id);
-                const docSnap = await getDoc(docRef);
-
+                const docRef = doc(db, publicDataPath, 'productPromoAreas', layoutItem.id); const docSnap = await getDoc(docRef);
                 if (docSnap.exists()) {
-                    const data = docSnap.data();
-                    titleEl.textContent = data.title || 'Featured Products';
-                    bannerEl.href = data.bannerLink || '#';
-                    bannerEl.querySelector('img').src = data.bannerImageUrl || 'https://placehold.co/1200x250/e2e8f0/94a3b8?text=Promo+Banner';
-
-                    if (data.productCarouselId) {
-                        await buildProductCarousel(section, data.productCarouselId, false);
-                    }
-                } else {
-                    titleEl.textContent = 'Area Not Found';
-                }
-            } catch (e) {
-                console.error(`Error loading promo area ${layoutItem.id}: `, e);
-                titleEl.textContent = 'Error Loading Area';
-            }
+                    const data = docSnap.data(); titleEl.textContent = data.title || 'Featured Products'; bannerEl.href = data.bannerLink || '#'; bannerEl.querySelector('img').src = data.bannerImageUrl || 'https://placehold.co/1200x250/e2e8f0/94a3b8?text=Promo+Banner';
+                    if (data.productCarouselId) await buildProductCarousel(section, data.productCarouselId, false);
+                } else { titleEl.textContent = 'Area Not Found'; }
+            } catch (e) { console.error(`Error loading promo area ${layoutItem.id}: `, e); titleEl.textContent = 'Error Loading Area'; }
         }
 
         async function buildNewArrivals(mainContainer, layoutItem) {
-            const section = document.createElement('section'); 
-            section.id = 'product-carousel-new-arrivals';
-            section.className = 'product-carousel-container mb-8'; 
+            const section = document.createElement('section'); section.id = 'product-carousel-new-arrivals'; section.className = 'product-carousel-container mb-8'; 
+            const titleEl = document.createElement('h2'); titleEl.className = 'text-2xl font-bold text-gray-800 mb-4'; titleEl.textContent = 'New Arrivals'; section.appendChild(titleEl);
             
-            const titleEl = document.createElement('h2');
-            titleEl.className = 'text-2xl font-bold text-gray-800 mb-4';
-            titleEl.textContent = 'New Arrivals'; 
-            section.appendChild(titleEl);
+            const gridEl = document.createElement('div'); 
+            gridEl.className = 'grid grid-cols-2 gap-3 md:grid-cols-4 lg:grid-cols-6 md:gap-6';
             
-            const gridEl = document.createElement('div');
-            gridEl.className = 'flex gap-4 overflow-x-auto md:grid md:grid-cols-4 lg:grid-cols-6 md:gap-6 scroll-snap-type-x-mandatory md:overflow-x-visible no-scrollbar';
-            gridEl.innerHTML = '<p class="col-span-full text-gray-500 text-center">Loading products...</p>';
-            section.appendChild(gridEl);
-            
+            gridEl.innerHTML = '<p class="col-span-full text-gray-500 text-center">Loading products...</p>'; section.appendChild(gridEl);
             mainContainer.appendChild(section);
-
             try {
-                const productsRef = collection(db, publicDataPath, 'products');
-                const q = query(productsRef, orderBy("createdAt", "desc"), limit(60)); 
-                
+                const productsRef = collection(db, publicDataPath, 'products'); const q = query(productsRef, orderBy("createdAt", "desc"), limit(60)); 
                 onSnapshot(q, (querySnapshot) => {
-                    gridEl.innerHTML = '';
-                    if (querySnapshot.empty) {
-                        gridEl.innerHTML = '<p class="col-span-full text-gray-500 text-center">No products found yet.</p>';
-                        return;
-                    }
-                    
+                    gridEl.innerHTML = ''; if (querySnapshot.empty) { gridEl.innerHTML = '<p class="col-span-full text-gray-500 text-center">No products found yet.</p>'; return; }
                     querySnapshot.forEach((doc) => {
-                        const product = doc.data();
-                        const productId = doc.id;
+                        const product = doc.data(); const productId = doc.id;
+                        let badgeHtml = product.saleTag ? `<div class="absolute top-4 left-4 z-10 rounded-full bg-red-600 px-3 py-1 text-xs font-bold text-white">${product.saleTag}</div>` : `<div class="absolute top-4 left-4 z-10 rounded-full bg-mudalali-green px-3 py-1 text-xs font-bold text-white">NEW</div>`;
                         
-                        let badgeHtml = product.saleTag 
-                            ? `<div class="absolute top-4 left-4 z-10 rounded-full bg-red-600 px-3 py-1 text-xs font-bold text-white">${product.saleTag}</div>`
-                            : `<div class="absolute top-4 left-4 z-10 rounded-full bg-mudalali-green px-3 py-1 text-xs font-bold text-white">NEW</div>`;
+                        let sellerBadgeHtml = '';
+                        if (product.isTopSeller || product.sellerBadge === 'top-rated') {
+                             sellerBadgeHtml = `<div class="seller-badge"><i class="fa fa-check-circle"></i> Top Seller</div>`;
+                        }
+
+                        let priceHtml = formatPrice(product); const imageUrl = product.imageUrl || 'https://placehold.co/400x400';
+                        const imageHtml = `<img src="${imageUrl}" alt="${product.name}" class="absolute h-full w-full object-cover transition-opacity duration-500 ease-in-out opacity-100 group-hover:opacity-0" onerror="window.imgError(this)" /><img src="${imageUrl}" alt="${product.name} hover" class="absolute h-full w-full object-cover transition-opacity duration-500 ease-in-out opacity-0 group-hover:opacity-100" onerror="window.imgError(this)" />`;
                         
-                        let priceHtml = formatPrice(product); 
-                        const imageUrl = product.imageUrl || 'https://placehold.co/400x400';
-                        const imageHtml = `
-                            <img src="${imageUrl}" alt="${product.name}" class="absolute h-full w-full object-cover transition-opacity duration-500 ease-in-out opacity-100 group-hover:opacity-0" />
-                            <img src="${imageUrl}" alt="${product.name} hover" class="absolute h-full w-full object-cover transition-opacity duration-500 ease-in-out opacity-0 group-hover:opacity-100" />
-                        `;
-                        
-                        const productEl = document.createElement('div');
-                        productEl.className = "group relative overflow-hidden rounded-lg bg-white shadow-md transition-all duration-300 ease-in-out hover:shadow-xl w-[38vw] flex-shrink-0 md:w-auto scroll-snap-align-start";
+                        const productEl = document.createElement('div'); productEl.className = "group relative overflow-hidden rounded-lg bg-white shadow-md transition-all duration-300 ease-in-out hover:shadow-xl";
                         
                         productEl.innerHTML = `
-                            <a href="product.html?id=${productId}" class="block product-link">
-                                <div class="relative h-48 md:h-64 overflow-hidden">
-                                    ${imageHtml} ${badgeHtml}
-                                    <div class="absolute top-4 right-4 z-10 flex flex-col gap-2 opacity-0 transition-all duration-300 ease-in-out group-hover:opacity-100">
-                                        <button class="quick-view-btn flex h-10 w-10 items-center justify-center rounded-full bg-white shadow-md transition-all hover:bg-gray-100" title="Quick View">
-                                            <svg xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" stroke-width="1.5" stroke="currentColor" class="h-5 w-5 text-gray-700"><path stroke-linecap="round" stroke-linejoin="round" d="m21 21-5.197-5.197m0 0A7.5 7.5 0 1 0 5.196 5.196a7.5 7.5 0 0 0 10.607 10.607Z" /></svg>
-                                        </button>
-                                        <button class="flex h-10 w-10 items-center justify-center rounded-full bg-white shadow-md transition-all hover:bg-gray-100" title="Compare">
-                                            <svg xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" stroke-width="1.5" stroke="currentColor" class="h-5 w-5 text-gray-700"><path stroke-linecap="round" stroke-linejoin="round" d="M7.5 21 3 16.5m0 0L7.5 12M3 16.5h18m-7.5-3L21 9m0 0L16.5 4.5M21 9H3" /></svg>
-                                        </button>
-                                    </div>
-                                </div>
-                            </a>
-                            <div class="p-4 text-center">
-                                <p class="text-sm text-gray-500 truncate hidden md:block">${product.categories || 'Mudalali Mama'}</p>
-                                <a href="product.html?id=${productId}" class="block product-link">
-                                    <h3 class="my-1 text-sm font-semibold text-gray-800 hover:text-mudalali-green md:text-lg line-clamp-2">${product.name}</h3>
-                                </a>
-                                ${priceHtml}
-                                
-                                <div class="max-h-0 overflow-hidden transition-all duration-500 ease-in-out group-hover:max-h-screen">
-                                    <p class="mt-2 text-sm text-gray-600 truncate">${product.description || 'View product for more details...'}</p>
-                                    <button class="add-to-cart-btn mt-4 w-full rounded-full bg-mudalali-green py-2.5 text-sm font-bold uppercase text-white transition-all duration-300 hover:bg-mudalali-green-dark" data-product-id="${productId}">
-                                        Add to Cart
-                                    </button>
-                                    <div class="mt-4 flex justify-center gap-4">
-                                        <button class="text-gray-400 transition-all hover:text-red-500" title="Add to Wishlist">
-                                            <svg xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" stroke-width="1.5" stroke="currentColor" class="h-6 w-6"><path stroke-linecap="round" stroke-linejoin="round" d="M21 8.25c0-2.485-2.099-4.5-4.688-4.5-1.935 0-3.597 1.126-4.312 2.733-.715-1.607-2.377-2.733-4.313-2.733C5.1 3.75 3 5.765 3 8.25c0 7.22 9 12 9 12s9-4.78 9-12Z" /></svg>
-                                        </button>
-                                        <a href="product.html?id=${productId}" class="text-gray-400 transition-all hover:text-blue-500 product-link" title="Quick View">
-                                            <svg xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" stroke-width="1.5" stroke="currentColor" class="h-6 w-6"><path stroke-linecap="round" stroke-linejoin="round" d="m21 21-5.197-5.197m0 0A7.5 7.5 0 1 0 5.196 5.196a7.5 7.5 0 0 0 10.607 10.607Z" /></svg>
-                                        </a>
-                                    </div>
-                                </div>
+                        <a href="product.html?id=${productId}" class="block product-link">
+                            <div class="relative h-48 md:h-64 overflow-hidden">
+                                ${imageHtml} ${badgeHtml} ${sellerBadgeHtml}
                             </div>
-                        `;
-                        
-                        const productDataForCart = { 
-                            id: productId, 
-                            name: product.name, 
-                            price: product.price, 
-                            priceUSDT: product.priceUSDT || null,
-                            imageUrl: product.imageUrl 
-                        };
-                        
-                        productEl.querySelector('.add-to-cart-btn').addEventListener('click', (e) => {
-                            e.preventDefault(); e.stopPropagation(); 
-                            addToCart(productDataForCart, 1); 
-                        });
-                        
-                        productEl.querySelectorAll('.product-link, .quick-view-btn').forEach(link => {
-                            link.addEventListener('click', (e) => {
-                                if (!currentUser) {
-                                    e.preventDefault();
-                                    e.stopPropagation();
-                                    document.getElementById('account-drawer-modal')?.classList.remove('hidden');
-                                }
-                            });
-                        });
+                        </a>
+                        <div class="p-4 text-center">
+                            <a href="product.html?id=${productId}" class="block product-link">
+                                <h3 class="my-1 text-sm font-semibold text-gray-800 hover:text-mudalali-green md:text-lg line-clamp-2">${product.name}</h3>
+                            </a>
+                            ${priceHtml}
+                        </div>`;
                         
                         gridEl.appendChild(productEl);
                     });
-
-                    if (querySnapshot.size === 60) {
-                        if (!section.querySelector('.show-more-btn')) {
-                            const showMoreBtn = document.createElement('a');
-                            showMoreBtn.href = 'shop.html'; 
-                            showMoreBtn.className = 'show-more-btn col-span-full text-center bg-white shadow-md rounded-lg p-4 font-semibold text-mudalali-green hover:bg-gray-50 block mt-6';
-                            showMoreBtn.textContent = 'Show More Products...';
-                            section.appendChild(showMoreBtn); 
-                        }
-                    }
                 });
-            } catch (error) {
-                console.error(`Error loading new arrivals: `, error);
-                titleEl.textContent = 'Error';
-                gridEl.innerHTML = '<p class="col-span-full text-red-500 text-center">Error loading products.</p>';
-            }
+            } catch (error) { console.error(`Error loading new arrivals: `, error); }
         }
 
-
         async function buildSellerStories(mainContainer, layoutItem) {
-            const section = document.createElement('section');
-            section.id = 'seller-stories';
-            section.className = 'mb-8 seller-stories-container';
-            
-            section.innerHTML = `
-                <div class="flex flex-col sm:flex-row sm:justify-between sm:items-center mb-4">
-                    <div>
-                        <h2 class="text-2xl font-bold text-gray-800 mb-2">Seller Stories</h2>
-                        <p class="text-md text-gray-600">Get to know the entrepreneurs behind the products.</p>
-                    </div>
-                 <a href="stories.html" class="hidden sm:block mt-4 sm:mt-0 px-5 py-2 rounded-md text-sm font-medium text-mudalali-green border border-mudalali-green hover:bg-mudalali-green hover:text-white transition-colors duration-200 self-start sm:self-center">
-    View All Stories
-</a>
-                </div>
-            `;
-            
-        const gridEl = document.createElement('div');
-            gridEl.className = 'flex gap-4 overflow-x-auto scroll-snap-type-x-mandatory no-scrollbar pb-4';
-            gridEl.innerHTML = '<p class="col-span-full text-gray-500 text-center">Loading stories...</p>';
-            section.appendChild(gridEl);
-            mainContainer.appendChild(section);
-
+            const section = document.createElement('section'); section.id = 'seller-stories'; section.className = 'mb-8 seller-stories-container';
+            section.innerHTML = `<div class="flex flex-col sm:flex-row sm:justify-between sm:items-center mb-4"><div><h2 class="text-2xl font-bold text-gray-800 mb-2">Seller Stories</h2><p class="text-md text-gray-600">Get to know the entrepreneurs behind the products.</p></div><a href="stories.html" class="hidden sm:block mt-4 sm:mt-0 px-5 py-2 rounded-md text-sm font-medium text-mudalali-green border border-mudalali-green hover:bg-mudalali-green hover:text-white transition-colors duration-200 self-start sm:self-center">View All Stories</a></div>`;
+            const gridEl = document.createElement('div'); gridEl.className = 'flex gap-4 overflow-x-auto scroll-snap-type-x-mandatory no-scrollbar pb-4'; gridEl.innerHTML = '<p class="col-span-full text-gray-500 text-center">Loading stories...</p>';
+            section.appendChild(gridEl); mainContainer.appendChild(section);
             try {
-                const storiesRef = collection(db, publicDataPath, 'stories'); 
-                const q = query(storiesRef, orderBy("createdAt", "desc"));
-                
+                const storiesRef = collection(db, publicDataPath, 'stories'); const q = query(storiesRef, orderBy("createdAt", "desc"));
                 onSnapshot(q, async (querySnapshot) => {
-                    gridEl.innerHTML = '';
-                    if (querySnapshot.empty) {
-                        gridEl.innerHTML = '<p class="col-span-full text-gray-500 text-center">No seller stories found yet.</p>';
-                        return;
-                    }
-                    
+                    gridEl.innerHTML = ''; if (querySnapshot.empty) { gridEl.innerHTML = '<p class="col-span-full text-gray-500 text-center">No seller stories found yet.</p>'; return; }
                     for (const storyDoc of querySnapshot.docs) {
-                        const story = storyDoc.data();
-                        const storyId = storyDoc.id;
-                        const sellerUid = story.sellerUid;
-                        let sellerName = 'Mudalali Mama';
-                        let sellerProfilePic = 'https://placehold.co/40x40/3a6a4a/f5f5f4?text=MM';
-
-                        if (sellerUid) {
-                            try {
-                                const storeRef = doc(db, publicDataPath, 'stores', sellerUid);
-                                const storeSnap = await getDoc(storeRef);
-                                if(storeSnap.exists()) {
-                                    sellerName = storeSnap.data().storeName || sellerName;
-                                    sellerProfilePic = storeSnap.data().profileUrl || sellerProfilePic;
-                                }
-                            } catch (e) { console.error("Error fetching store data: ", e); }
-                        }
-                        
-                        const likeCount = story.likeCount || 0;
-                        const commentCount = story.commentCount || 0;
-
+                        const story = storyDoc.data(); const storyId = storyDoc.id; const sellerUid = story.sellerUid; let sellerName = 'Mudalali Mama'; let sellerProfilePic = 'https://placehold.co/40x40/3a6a4a/f5f5f4?text=MM';
+                        if (sellerUid) { try { const storeRef = doc(db, publicDataPath, 'stores', sellerUid); const storeSnap = await getDoc(storeRef); if(storeSnap.exists()) { sellerName = storeSnap.data().storeName || sellerName; sellerProfilePic = storeSnap.data().profileUrl || sellerProfilePic; } } catch (e) {} }
+                        const likeCount = story.likeCount || 0; const commentCount = story.commentCount || 0;
                         let likeBtnClass = "like-button flex-1 py-2 text-gray-600 font-semibold hover:bg-gray-100 rounded";
-                        if (currentUser) {
-                            try {
-                                const likeRef = doc(db, publicDataPath, 'storyInteractions', `${storyId}_${currentUser.uid}`);
-                                const likeSnap = await getDoc(likeRef);
-                                if (likeSnap.exists() && likeSnap.data().type === 'like') {
-                                    likeBtnClass += " liked";
-                                }
-                            } catch (e) { console.error("Error checking like status: ", e); }
-                        }
-
-                    const storyCard = document.createElement('div');
-               storyCard.className = "bg-white rounded-lg shadow-lg overflow-hidden transform transition-all duration-300 hover:shadow-xl hover:-translate-y-1 flex flex-col w-[75vw] flex-shrink-0 scroll-snap-align-start md:w-[30vw] lg:w-[24vw]";
-                  
-               let taggedProductHtml = '';
-                        if (story.taggedProductId && story.taggedProductName) {
-                            taggedProductHtml = `
-                                <a href="product.html?id=${story.taggedProductId}" class="block p-3 bg-gray-50 hover:bg-gray-100 transition-colors border-t">
-                                    <div class="flex items-center gap-3">
-                                        <img src="${story.taggedProductImageUrl || 'https://placehold.co/60x60'}" class="w-12 h-12 object-cover rounded-md border flex-shrink-0">
-                                        <div class="flex-grow min-w-0">
-                                            <p class="text-xs text-gray-500">TAGGED PRODUCT</p>
-                                            <p class="text-sm font-semibold text-gray-800 truncate">${story.taggedProductName}</p>
-                                            <p class="text-sm font-bold text-mudalali-red">Rs. ${story.taggedProductPrice ? story.taggedProductPrice.toFixed(2) : '0.00'}</p>
-                                        </div>
-                                        <button class="buy-now-tag-btn flex-shrink-0 bg-mudalali-green text-white text-xs font-bold px-3 py-2 rounded-md hover:bg-mudalali-green-dark">
-                                            Buy Now
-                                        </button>
-                                    </div>
-                                </a>
-                            `;
-                        }
-
-                  storyCard.innerHTML = `
-                            <div class="p-5">
-                                <div class="flex items-center mb-3">
-                                    <img class="h-10 w-10 rounded-full object-cover" src="${sellerProfilePic}" alt="${sellerName}">
-                                    <div class="ml-3">
-                                        <h4 class="text-sm font-semibold text-gray-800">${sellerName}</h4>
-                                        <p class="text-xs text-gray-500">From our community</p>
-                                    </div>
-                                </div>
-                                <p class="text-gray-600 text-sm leading-relaxed line-clamp-3 mb-3">
-                                    ${story.content ? story.content : '...'}
-                                </p>
-                            </div>
-
-                 <a href="story-detail.html?id=${storyId}" class="block relative w-full bg-gray-100">
-                <img class="w-full h-auto" src="${story.imageUrl || 'https://placehold.co/400x300'}" alt="Story Image">
-            </a>
-
-            ${taggedProductHtml}
-            <div class="p-2 flex justify-around items-center border-t bg-gray-50">
-                
-                <button class="${likeBtnClass} flex items-center justify-center gap-2" data-story-id="${storyId}">
-                    <i class="fa fa-heart text-xl"></i> 
-                    <span class="like-count-text text-sm font-semibold text-gray-600">${likeCount}</span>
-                </button>
-                
-                <button class="comment-btn flex-1 py-2 text-gray-600 font-semibold hover:bg-gray-100 rounded flex items-center justify-center gap-2" data-story-id="${storyId}" data-seller-id="${sellerUid}">
-                    <i class="fa fa-comment text-xl"></i>
-                    <span class="text-sm font-semibold text-gray-600">${commentCount}</span>
-                </button>
-                
-                <button class="share-story-btn flex-1 py-2 text-gray-600 font-semibold hover:bg-gray-100 rounded" data-story-id="${storyId}" data-content="${story.content ? story.content.replace(/"/g, '&quot;') : ''}">
-                    <i class="fa fa-share text-xl"></i>
-                </button>
-            </div>            `;
+                        if (currentUser) { try { const likeRef = doc(db, publicDataPath, 'storyInteractions', `${storyId}_${currentUser.uid}`); const likeSnap = await getDoc(likeRef); if (likeSnap.exists() && likeSnap.data().type === 'like') likeBtnClass += " liked"; } catch (e) {} }
+                        const storyCard = document.createElement('div'); storyCard.className = "bg-white rounded-lg shadow-lg overflow-hidden transform transition-all duration-300 hover:shadow-xl hover:-translate-y-1 flex flex-col w-[75vw] flex-shrink-0 scroll-snap-align-start md:w-[30vw] lg:w-[24vw]";
+                        let taggedProductHtml = '';
+                        if (story.taggedProductId && story.taggedProductName) { taggedProductHtml = `<a href="product.html?id=${story.taggedProductId}" class="block p-3 bg-gray-50 hover:bg-gray-100 transition-colors border-t"><div class="flex items-center gap-3"><img src="${story.taggedProductImageUrl || 'https://placehold.co/60x60'}" class="w-12 h-12 object-cover rounded-md border flex-shrink-0" onerror="window.imgError(this)"><div class="flex-grow min-w-0"><p class="text-xs text-gray-500">TAGGED PRODUCT</p><p class="text-sm font-semibold text-gray-800 truncate">${story.taggedProductName}</p><p class="text-sm font-bold text-mudalali-red">Rs. ${story.taggedProductPrice ? story.taggedProductPrice.toFixed(2) : '0.00'}</p></div><button class="buy-now-tag-btn flex-shrink-0 bg-mudalali-green text-white text-xs font-bold px-3 py-2 rounded-md hover:bg-mudalali-green-dark">Buy Now</button></div></a>`; }
+                        storyCard.innerHTML = `<div class="p-5"><div class="flex items-center mb-3"><img class="h-10 w-10 rounded-full object-cover" src="${sellerProfilePic}" alt="${sellerName}" onerror="window.imgError(this)"><div class="ml-3"><h4 class="text-sm font-semibold text-gray-800">${sellerName}</h4><p class="text-xs text-gray-500">From our community</p></div></div><p class="text-gray-600 text-sm leading-relaxed line-clamp-3 mb-3">${story.content ? story.content : '...'}</p></div><a href="story-detail.html?id=${storyId}" class="block relative w-full bg-gray-100"><img class="w-full h-auto" src="${story.imageUrl || 'https://placehold.co/400x300'}" alt="Story Image" onerror="window.imgError(this)"></a>${taggedProductHtml}<div class="p-2 flex justify-around items-center border-t bg-gray-50"><button class="${likeBtnClass} flex items-center justify-center gap-2" data-story-id="${storyId}"><i class="fa fa-heart text-xl"></i><span class="like-count-text text-sm font-semibold text-gray-600">${likeCount}</span></button><button class="comment-btn flex-1 py-2 text-gray-600 font-semibold hover:bg-gray-100 rounded flex items-center justify-center gap-2" data-story-id="${storyId}" data-seller-id="${sellerUid}"><i class="fa fa-comment text-xl"></i><span class="text-sm font-semibold text-gray-600">${commentCount}</span></button><button class="share-story-btn flex-1 py-2 text-gray-600 font-semibold hover:bg-gray-100 rounded" data-story-id="${storyId}" data-content="${story.content ? story.content.replace(/"/g, '&quot;') : ''}"><i class="fa fa-share text-xl"></i></button></div>`;
                         gridEl.appendChild(storyCard);
-
                         storyCard.querySelector('.like-button').addEventListener('click', (e) => toggleLike(storyId, e.currentTarget));
                         storyCard.querySelector('.comment-btn').addEventListener('click', (e) => openCommentsDrawer(e.currentTarget.dataset.storyId, e.currentTarget.dataset.sellerId));
                         storyCard.querySelector('.share-story-btn').addEventListener('click', (e) => shareStory(e.currentTarget.dataset.storyId, e.currentTarget, e.currentTarget.dataset.content));
                     }
                 });
-            } catch (error) {
-                console.error("Error loading seller stories: ", error);
-                gridEl.innerHTML = '<p class="col-span-full text-red-500 text-center">Error loading stories.</p>';
-            }
+            } catch (error) { console.error("Error loading seller stories: ", error); gridEl.innerHTML = '<p class="col-span-full text-red-500 text-center">Error loading stories.</p>'; }
         }
 
         async function toggleLike(storyId, buttonEl) {
-            if (!currentUser) {
-                document.getElementById('account-drawer-modal').classList.remove('hidden');
-                return;
-            }
-
+            if (!currentUser) { document.getElementById('account-drawer-modal').classList.remove('hidden'); return; }
             buttonEl.disabled = true;
-            const storyRef = doc(db, publicDataPath, 'stories', storyId);
-            const likeRef = doc(db, publicDataPath, 'storyInteractions', `${storyId}_${currentUser.uid}`);
-            let newLikeCount = 0;
-
+            const storyRef = doc(db, publicDataPath, 'stories', storyId); const likeRef = doc(db, publicDataPath, 'storyInteractions', `${storyId}_${currentUser.uid}`);
             try {
                 await runTransaction(db, async (transaction) => {
-                    const likeSnap = await transaction.get(likeRef);
-                    const storySnap = await transaction.get(storyRef);
-                    
-                    if (!storySnap.exists()) {
-                        throw "Story does not exist!";
-                    }
-                    
-                    newLikeCount = storySnap.data().likeCount || 0;
-
-                    if (likeSnap.exists()) {
-                        transaction.delete(likeRef);
-                        newLikeCount = Math.max(0, newLikeCount - 1);
-                    } else {
-                        transaction.set(likeRef, {
-                            storyId: storyId,
-                            userId: currentUser.uid,
-                            type: 'like',
-                            createdAt: serverTimestamp()
-                        });
-                        newLikeCount += 1;
-                    }
-                    
+                    const likeSnap = await transaction.get(likeRef); const storySnap = await transaction.get(storyRef);
+                    if (!storySnap.exists()) throw "Story does not exist!";
+                    let newLikeCount = storySnap.data().likeCount || 0;
+                    if (likeSnap.exists()) { transaction.delete(likeRef); newLikeCount = Math.max(0, newLikeCount - 1); } 
+                    else { transaction.set(likeRef, { storyId: storyId, userId: currentUser.uid, type: 'like', createdAt: serverTimestamp() }); newLikeCount += 1; }
                     transaction.update(storyRef, { likeCount: newLikeCount });
+                    const likeCountSpan = buttonEl.closest('.bg-white').querySelector('.like-count-text');
+                    if (likeCountSpan) likeCountSpan.innerHTML = `<i class="fa fa-heart mr-1 text-mudalali-red"></i> ${newLikeCount}`;
+                    buttonEl.classList.toggle('liked');
                 });
-                
-                const likeCountSpan = buttonEl.closest('.bg-white').querySelector('.like-count-text');
-                if (likeCountSpan) {
-                    likeCountSpan.innerHTML = `<i class="fa fa-heart mr-1 text-mudalali-red"></i> ${newLikeCount}`;
-                }
-                buttonEl.classList.toggle('liked');
-
-            } catch (e) {
-                console.error("Transaction failed: ", e);
-            } finally {
-                buttonEl.disabled = false;
-            }
+            } catch (e) { console.error("Transaction failed: ", e); } finally { buttonEl.disabled = false; }
         }
 
         async function shareStory(storyId, buttonEl, storyContent) {
-            const storyUrl = `${window.location.origin}/story-detail.html?id=${storyId}`; 
-            const shareData = {
-                title: `Story from Mudalali Mama`,
-                text: storyContent ? storyContent.substring(0, 100) + '...' : 'Check out this story on Mudalali Mama!',
-                url: storyUrl
-            };
-
-            try {
-                if (navigator.share) {
-                    await navigator.share(shareData);
-                } else {
-                    throw new Error('Web Share not supported');
-                }
-            } catch (err) {
-                try {
-                    await navigator.clipboard.writeText(storyUrl);
-                    const originalText = buttonEl.innerHTML;
-                    buttonEl.innerHTML = '<i class="fa fa-check mr-1"></i> Copied!';
-                    buttonEl.disabled = true;
-                    setTimeout(() => {
-                        buttonEl.innerHTML = '<i class="fa fa-share mr-1"></i> Share';
-                        buttonEl.disabled = false;
-                    }, 2000);
-                } catch (copyErr) {
-                    console.error('Failed to copy story link: ', copyErr);
-                    alert('Failed to copy link.');
-                }
-            }
+            const storyUrl = `${window.location.origin}/story-detail.html?id=${storyId}`; const shareData = { title: `Story from Mudalali Mama`, text: storyContent ? storyContent.substring(0, 100) + '...' : 'Check out this story!', url: storyUrl };
+            try { if (navigator.share) await navigator.share(shareData); else throw new Error('Web Share not supported'); } 
+            catch (err) { try { await navigator.clipboard.writeText(storyUrl); buttonEl.innerHTML = '<i class="fa fa-check mr-1"></i> Copied!'; buttonEl.disabled = true; setTimeout(() => { buttonEl.innerHTML = '<i class="fa fa-share mr-1"></i> Share'; buttonEl.disabled = false; }, 2000); } catch (copyErr) { alert('Failed to copy link.'); } }
         }
 
         function formatTimestamp(date) {
-            const now = new Date();
-            const seconds = Math.floor((now - date) / 1000);
-            
-            let interval = seconds / 31536000;
-            if (interval > 1) return Math.floor(interval) + "y ago";
-            interval = seconds / 2592000;
-            if (interval > 1) return Math.floor(interval) + "mo ago";
-            interval = seconds / 86400;
-            if (interval > 1) return Math.floor(interval) + "d ago";
-            interval = seconds / 3600;
-            if (interval > 1) return Math.floor(interval) + "h ago";
-            interval = seconds / 60;
-            if (interval > 1) return Math.floor(interval) + "m ago";
-            return Math.floor(seconds) + "s ago";
+            const now = new Date(); const seconds = Math.floor((now - date) / 1000);
+            let interval = seconds / 31536000; if (interval > 1) return Math.floor(interval) + "y ago"; interval = seconds / 2592000; if (interval > 1) return Math.floor(interval) + "mo ago"; interval = seconds / 86400; if (interval > 1) return Math.floor(interval) + "d ago"; interval = seconds / 3600; if (interval > 1) return Math.floor(interval) + "h ago"; interval = seconds / 60; if (interval > 1) return Math.floor(interval) + "m ago"; return Math.floor(seconds) + "s ago";
         }
 
         function setupCommentDrawer() {
-            const drawer = document.getElementById('comments-drawer');
-            const closeBtn = document.getElementById('comments-drawer-close');
-            const overlay = document.getElementById('comments-drawer-overlay');
-
-            const closeDrawer = () => {
-                drawer.classList.remove('open');
-                if (unsubscribeCommentsListener) {
-                    unsubscribeCommentsListener();
-                    unsubscribeCommentsListener = null;
-                }
-                currentStoryIdForComment = null;
-            };
-
-            closeBtn.addEventListener('click', closeDrawer);
-            overlay.addEventListener('click', closeDrawer);
-
+            const drawer = document.getElementById('comments-drawer'); const closeBtn = document.getElementById('comments-drawer-close'); const overlay = document.getElementById('comments-drawer-overlay');
+            const closeDrawer = () => { drawer.classList.remove('open'); if (unsubscribeCommentsListener) { unsubscribeCommentsListener(); unsubscribeCommentsListener = null; } currentStoryIdForComment = null; };
+            closeBtn.addEventListener('click', closeDrawer); overlay.addEventListener('click', closeDrawer);
             document.getElementById('submit-comment-btn').addEventListener('click', async () => {
                 if (!currentUser || !currentStoryIdForComment) return;
-
-                const input = document.getElementById('new-comment-input');
-                const commentText = input.value.trim();
-                if (!commentText) return;
-
-                const btn = document.getElementById('submit-comment-btn');
-                btn.disabled = true;
+                const input = document.getElementById('new-comment-input'); const commentText = input.value.trim(); if (!commentText) return;
                 input.disabled = true;
-
-                try {
-                    const storyRef = doc(db, publicDataPath, 'stories', currentStoryIdForComment);
-                    const interactionRef = collection(db, publicDataPath, 'storyInteractions');
-
-                    await addDoc(interactionRef, {
-                        storyId: currentStoryIdForComment,
-                        userId: currentUser.uid,
-                        type: 'comment',
-                        commentText: commentText,
-                        createdAt: serverTimestamp()
-                    });
-                    
-                    await updateDoc(storyRef, {
-                        commentCount: increment(1)
-                    });
-
-                    input.value = '';
-
-                } catch (e) {
-                    console.error("Error adding comment: ", e);
-                    alert('Could not post comment.');
-                } finally {
-                    btn.disabled = false;
-                    input.disabled = false;
-                }
+                try { await addDoc(collection(db, publicDataPath, 'storyInteractions'), { storyId: currentStoryIdForComment, userId: currentUser.uid, type: 'comment', commentText: commentText, createdAt: serverTimestamp() }); await updateDoc(doc(db, publicDataPath, 'stories', currentStoryIdForComment), { commentCount: increment(1) }); input.value = ''; } 
+                catch (e) { console.error("Error adding comment: ", e); } finally { input.disabled = false; }
             });
         }
 
         function openCommentsDrawer(storyId, sellerUid) {
-            if (unsubscribeCommentsListener) {
-                unsubscribeCommentsListener();
-            }
-            currentStoryIdForComment = storyId;
-            const drawer = document.getElementById('comments-drawer');
-            const container = document.getElementById('comments-list-container');
-            container.innerHTML = '<p class="text-gray-500 text-center">Loading comments...</p>';
-            drawer.classList.add('open');
-
-            const commentsRef = collection(db, publicDataPath, 'storyInteractions');
-            const q = query(commentsRef, 
-                where("storyId", "==", storyId), 
-                where("type", "==", "comment"), 
-                orderBy("createdAt", "asc")
-            );
-
+            if (unsubscribeCommentsListener) unsubscribeCommentsListener();
+            currentStoryIdForComment = storyId; const drawer = document.getElementById('comments-drawer'); const container = document.getElementById('comments-list-container'); container.innerHTML = '<p class="text-gray-500 text-center">Loading comments...</p>'; drawer.classList.add('open');
+            const q = query(collection(db, publicDataPath, 'storyInteractions'), where("storyId", "==", storyId), where("type", "==", "comment"), orderBy("createdAt", "asc"));
             unsubscribeCommentsListener = onSnapshot(q, async (snapshot) => {
-                container.innerHTML = '';
-                if (snapshot.empty) {
-                    container.innerHTML = '<p class="text-gray-500 text-center">No comments yet. Be the first!</p>';
-                    return;
-                }
-
-                for (const doc of snapshot.docs) {
-                    const comment = doc.data();
-                    let userName = 'User';
-                    let userPic = 'https://placehold.co/40x40/cccccc/969696?text=U';
-                    
-                    try {
-                        const userRef = doc(db, usersPath, comment.userId);
-                        const userSnap = await getDoc(userRef);
-                        if (userSnap.exists()) {
-                            userName = userSnap.data().name || 'User';
-                        }
-                    } catch (e) { console.error("Error getting user for comment", e); }
-                    
-                    const commentDate = comment.createdAt ? formatTimestamp(comment.createdAt.toDate()) : '';
-                    
-                    const isCreator = comment.userId === sellerUid;
-                    const creatorBadge = isCreator ? '<span class="ml-2 bg-mudalali-green text-white text-xs font-semibold px-2 py-0.5 rounded-full">Creator</span>' : '';
-
-                    container.innerHTML += `
-                    <div class="flex gap-3">
-                        <img src="${userPic}" class="h-10 w-10 rounded-full object-cover flex-shrink-0">
-                        <div class="bg-gray-100 rounded-lg p-3">
-                            <div class="flex items-center">
-                                <span class="font-semibold text-sm">${userName}</span>
-                                ${creatorBadge}
-                            </div>
-                            <p class="text-sm text-gray-700">${comment.commentText}</p>
-                            <p class="text-xs text-gray-400 mt-1">${commentDate}</p>
-                        </div>
-                    </div>
-                    `;
+                container.innerHTML = ''; if (snapshot.empty) { container.innerHTML = '<p class="text-gray-500 text-center">No comments yet.</p>'; return; }
+                for (const docSnap of snapshot.docs) {
+                    const comment = docSnap.data(); let userName = 'User'; let userPic = 'https://placehold.co/40x40/cccccc/969696?text=U';
+                    try { const userSnap = await getDoc(doc(db, usersPath, comment.userId)); if (userSnap.exists()) userName = userSnap.data().name || 'User'; } catch (e) {}
+                    const isCreator = comment.userId === sellerUid; const creatorBadge = isCreator ? '<span class="ml-2 bg-mudalali-green text-white text-xs font-semibold px-2 py-0.5 rounded-full">Creator</span>' : '';
+                    container.innerHTML += `<div class="flex gap-3"><img src="${userPic}" class="h-10 w-10 rounded-full object-cover flex-shrink-0"><div class="bg-gray-100 rounded-lg p-3"><div class="flex items-center"><span class="font-semibold text-sm">${userName}</span>${creatorBadge}</div><p class="text-sm text-gray-700">${comment.commentText}</p><p class="text-xs text-gray-400 mt-1">${comment.createdAt ? formatTimestamp(comment.createdAt.toDate()) : ''}</p></div></div>`;
                 }
             });
         }
 
-
-        async function loadFooter() {
-            try {
-                const contactRef = doc(db, publicDataPath, 'siteContent', 'footerContact');
-                const contactSnap = await getDoc(contactRef);
-                if (contactSnap.exists()) {
-                    const data = contactSnap.data();
-                    document.getElementById('footer-address').textContent = data.address || '...';
-                    const emailEl = document.getElementById('footer-email');
-                    emailEl.textContent = data.email || '...';
-                    emailEl.href = `mailto:${data.email}`;
-                    const hotlineEl = document.getElementById('footer-hotline');
-                    hotlineEl.textContent = data.hotline || '...';
-                    hotlineEl.href = `tel:${data.hotline}`;
-                    
-                    const socialsContainer = document.getElementById('footer-socials');
-                    socialsContainer.innerHTML = '';
-                    if (data.facebookUrl) socialsContainer.innerHTML += `<a href="${data.facebookUrl}" target="_blank" class="bg-gray-700 w-10 h-10 flex items-center justify-center rounded-full text-xl hover:bg-mudalali-green"><i class="fab fa-facebook-f"></i></a>`;
-                    if (data.youtubeUrl) socialsContainer.innerHTML += `<a href="${data.youtubeUrl}" target="_blank" class="bg-gray-700 w-10 h-10 flex items-center justify-center rounded-full text-xl hover:bg-mudalali-green"><i class="fab fa-youtube"></i></a>`;
-                    if (data.instagramUrl) socialsContainer.innerHTML += `<a href="${data.instagramUrl}" target="_blank" class="bg-gray-700 w-10 h-10 flex items-center justify-center rounded-full text-xl hover:bg-mudalali-green"><i class="fab fa-instagram"></i></a>`;
-                }
-            } catch(e) { console.error("Error loading footer contact", e); }
-            
-            const linksRef = collection(db, publicDataPath, 'footerLinks');
-            onSnapshot(linksRef, (querySnapshot) => {
-                const lists = {
-                    col_tsmgroup: document.getElementById('footer-col-tsmgroup'),
-                    col_info: document.getElementById('footer-col-info'),
-                    col_quicklinks: document.getElementById('footer-col-quicklinks')
-                };
-                Object.values(lists).forEach(list => { if(list) list.innerHTML = ''; }); 
-
-                querySnapshot.forEach((doc) => {
-                    const link = doc.data();
-                    if (lists[link.column]) {
-                        lists[link.column].innerHTML += `<li><a href="${link.url}" class="hover:text-white">${link.text}</a></li>`;
-                    }
-                });
-            });
-        }
-
-  function loadCategoriesIntoDrawer(container) {
-            const collRef = collection(db, publicDataPath, 'categories');
-            onSnapshot(collRef, (querySnapshot) => {
-                container.innerHTML = ''; 
-                if (querySnapshot.empty) {
-                    container.innerHTML = '<p class="p-4 text-gray-500">No categories found.</p>';
-                    return;
-                }
-                querySnapshot.forEach((doc) => {
-                    const category = doc.data();
-                    // ===== WENAS KALE MEKA =====
-                    container.innerHTML += `<a href="shop.html?category=${encodeURIComponent(category.name)}" class="block p-4 border-b text-gray-700">${category.name}</a>`;
-                });
-            }, (error) => {
-                container.innerHTML = '<p class="p-4 text-red-500">Error loading categories.</p>';
+        function loadCategoriesIntoDrawer(container) {
+            onSnapshot(collection(db, publicDataPath, 'categories'), (snap) => {
+                container.innerHTML = ''; if (snap.empty) { container.innerHTML = '<p class="p-4 text-gray-500">No categories.</p>'; return; }
+                snap.forEach(doc => container.innerHTML += `<a href="shop.html?category=${encodeURIComponent(doc.data().name)}" class="block p-4 border-b text-gray-700">${doc.data().name}</a>`);
             });
         }
 
         function setupMobileDrawers() {
             const menuDrawer = document.getElementById('menu-drawer');
-            const mobileMenuBtn = document.getElementById('mobile-menu-btn');
-            const menuDrawerClose = document.getElementById('menu-drawer-close');
-            const menuDrawerOverlay = document.getElementById('menu-drawer-overlay');
+            document.getElementById('menu-drawer-close')?.addEventListener('click', () => menuDrawer?.classList.remove('open'));
+            document.getElementById('menu-drawer-overlay')?.addEventListener('click', () => menuDrawer?.classList.remove('open'));
             
-            mobileMenuBtn?.addEventListener('click', () => menuDrawer?.classList.add('open'));
-            menuDrawerClose?.addEventListener('click', () => menuDrawer?.classList.remove('open'));
-            menuDrawerOverlay?.addEventListener('click', () => menuDrawer?.classList.remove('open'));
-
-            const menuTabMenu = document.getElementById('menu-tab-menu');
-            const menuTabCategories = document.getElementById('menu-tab-categories');
-            const menuContent = document.getElementById('menu-tab-menu-content');
-            const categoriesContent = document.getElementById('menu-tab-categories-content');
-
-            menuTabMenu?.addEventListener('click', () => {
-                menuContent?.classList.remove('hidden');
-                categoriesContent?.classList.add('hidden');
-                menuTabMenu.classList.add('active');
-                menuTabCategories.classList.remove('active');
-            });
-            menuTabCategories?.addEventListener('click', () => {
-                menuContent?.classList.add('hidden');
-                categoriesContent?.classList.remove('hidden');
-                menuTabCategories.classList.add('active');
-                menuTabMenu.classList.remove('active');
-                if (categoriesContent.children.length === 0) {
-                    loadCategoriesIntoDrawer(categoriesContent);
-                }
-            });
+            const menuTabMenu = document.getElementById('menu-tab-menu'); const menuTabCategories = document.getElementById('menu-tab-categories');
+            const menuContent = document.getElementById('menu-tab-menu-content'); const categoriesContent = document.getElementById('menu-tab-categories-content');
+            menuTabMenu?.addEventListener('click', () => { menuContent?.classList.remove('hidden'); categoriesContent?.classList.add('hidden'); menuTabMenu.classList.add('active'); menuTabCategories.classList.remove('active'); });
+            menuTabCategories?.addEventListener('click', () => { menuContent?.classList.add('hidden'); categoriesContent?.classList.remove('hidden'); menuTabCategories.classList.add('active'); menuTabMenu.classList.remove('active'); if (categoriesContent.children.length === 0) loadCategoriesIntoDrawer(categoriesContent); });
 
             const cartDrawer = document.getElementById('cart-drawer');
-            const mobileCartBtn = document.getElementById('mobile-cart-btn');
-            const desktopCartBtn = document.getElementById('desktop-cart-btn');
-            const cartDrawerClose = document.getElementById('cart-drawer-close');
-            const cartDrawerOverlay = document.getElementById('cart-drawer-overlay');
-
-            const openCart = () => cartDrawer?.classList.add('open');
             const closeCart = () => cartDrawer?.classList.remove('open');
+            document.getElementById('cart-drawer-close')?.addEventListener('click', closeCart);
+            document.getElementById('cart-drawer-overlay')?.addEventListener('click', closeCart);
 
-            mobileCartBtn?.addEventListener('click', openCart);
-            desktopCartBtn?.addEventListener('click', openCart);
-            cartDrawerClose?.addEventListener('click', closeCart);
-            cartDrawerOverlay?.addEventListener('click', closeCart);
-            
             const authDrawer = document.getElementById('account-drawer-modal');
-            const authDrawerBg = document.getElementById('account-drawer-bg');
-            const closeAuthBtn1 = document.getElementById('close-account-drawer-btn-logged-in');
-            const closeAuthBtn2 = document.getElementById('close-account-drawer-btn-logged-out');
-            
-            document.getElementById('drawer-my-account-btn')?.addEventListener('click', (e) => {
-                e.preventDefault();
-                document.getElementById('menu-drawer')?.classList.remove('open'); 
-                if (currentUser) {
-                    authDrawer?.classList.remove('hidden'); 
-                } else {
-                    window.location.href = 'account.html';
-                }
-            });
-            
-            const closeAuthDrawer = () => authDrawer?.classList.add('hidden');
-            authDrawerBg?.addEventListener('click', closeAuthDrawer);
-            closeAuthBtn1?.addEventListener('click', closeAuthDrawer);
-            closeAuthBtn2?.addEventListener('click', closeAuthDrawer);
+            const closeAuth = () => authDrawer?.classList.add('hidden');
+            document.getElementById('account-drawer-bg')?.addEventListener('click', closeAuth);
+            document.getElementById('close-account-drawer-btn-logged-in')?.addEventListener('click', closeAuth);
+            document.getElementById('close-account-drawer-btn-logged-out')?.addEventListener('click', closeAuth);
+            document.getElementById('drawer-my-account-btn')?.addEventListener('click', (e) => { e.preventDefault(); document.getElementById('menu-drawer')?.classList.remove('open'); if (currentUser) authDrawer?.classList.remove('hidden'); else window.location.href = 'account.html'; });
+            document.getElementById('comment-login-link')?.addEventListener('click', (e) => { e.preventDefault(); document.getElementById('comments-drawer')?.classList.remove('open'); authDrawer?.classList.remove('hidden'); });
 
-            document.getElementById('comment-login-link')?.addEventListener('click', (e) => { 
-                e.preventDefault(); 
-                document.getElementById('comments-drawer')?.classList.remove('open');
-                authDrawer?.classList.remove('hidden'); 
-            });
-
-            const loginTab = document.getElementById('drawer-login-tab-btn');
-            const signupTab = document.getElementById('drawer-signup-tab-btn');
-            const loginForm = document.getElementById('drawer-login-form');
-            const signupForm = document.getElementById('drawer-signup-form');
-
-            loginTab?.addEventListener('click', () => {
-                loginTab.classList.add('active');
-                signupTab.classList.remove('active');
-                loginForm.classList.remove('hidden');
-                signupForm.classList.add('hidden');
-            });
-            signupTab?.addEventListener('click', () => {
-                signupTab.classList.add('active');
-                loginTab.classList.remove('active');
-                signupForm.classList.remove('hidden');
-                loginForm.classList.add('hidden');
-            });
+            const loginTab = document.getElementById('drawer-login-tab-btn'); const signupTab = document.getElementById('drawer-signup-tab-btn');
+            const loginForm = document.getElementById('drawer-login-form'); const signupForm = document.getElementById('drawer-signup-form');
+            loginTab?.addEventListener('click', () => { loginTab.classList.add('active'); signupTab.classList.remove('active'); loginForm.classList.remove('hidden'); signupForm.classList.add('hidden'); });
+            signupTab?.addEventListener('click', () => { signupTab.classList.add('active'); loginTab.classList.remove('active'); signupForm.classList.remove('hidden'); loginForm.classList.add('hidden'); });
 
             loginForm?.addEventListener('submit', async (e) => {
-                e.preventDefault();
-                const email = document.getElementById('drawer-login-email').value;
-                const password = document.getElementById('drawer-login-password').value;
-                const errorP = document.getElementById('drawer-login-error');
-                errorP.textContent = 'Logging in...';
-                try {
-                    await signInWithEmailAndPassword(auth, email, password);
-                    errorP.textContent = '';
-                    closeAuthDrawer(); 
-                } catch (error) {
-                    console.error("Login Error:", error);
-                    errorP.textContent = error.message.replace('Firebase: ', '');
-                }
+                e.preventDefault(); const email = document.getElementById('drawer-login-email').value; const password = document.getElementById('drawer-login-password').value; const errorP = document.getElementById('drawer-login-error'); errorP.textContent = 'Logging in...';
+                try { await signInWithEmailAndPassword(auth, email, password); errorP.textContent = ''; closeAuth(); } catch (error) { errorP.textContent = error.message.replace('Firebase: ', ''); }
             });
 
             signupForm?.addEventListener('submit', async (e) => {
                 e.preventDefault();
-                const name = document.getElementById('drawer-signup-name').value;
-                const email = document.getElementById('drawer-signup-email').value;
-                const password = document.getElementById('drawer-signup-password').value;
-                const isSeller = document.getElementById('drawer-signup-is-seller').checked;
-                const errorP = document.getElementById('drawer-signup-error');
-                errorP.textContent = 'Creating account...';
-                
+                const name = document.getElementById('drawer-signup-name').value; const email = document.getElementById('drawer-signup-email').value;
+                const password = document.getElementById('drawer-signup-password').value; const isSeller = document.getElementById('drawer-signup-is-seller').checked;
+                const errorP = document.getElementById('drawer-signup-error'); errorP.textContent = 'Creating account...';
                 try {
-                    const userCredential = await createUserWithEmailAndPassword(auth, email, password);
-                    const user = userCredential.user;
-                    
-                    const userDocRef = doc(db, usersPath, user.uid);
-                    await setDoc(userDocRef, {
-                        name: name, 
-                        email: email,
-                        isSeller: isSeller, 
-                        role: isSeller ? "seller" : "customer",
-                        createdAt: serverTimestamp()
-                    });
+                    const userCredential = await createUserWithEmailAndPassword(auth, email, password); const user = userCredential.user;
+                    await setDoc(doc(db, usersPath, user.uid), { name: name, email: email, isSeller: isSeller, role: isSeller ? "seller" : "customer", createdAt: serverTimestamp() });
+                    if (isSeller) await setDoc(doc(db, publicDataPath, 'stores', user.uid), { storeName: name, ownerUid: user.uid, email: email, profileUrl: '', coverUrl: '', createdAt: serverTimestamp(), isApproved: false });
+                    errorP.textContent = ''; closeAuth();
+                } catch (error) { errorP.textContent = error.message.replace('Firebase: ', ''); }
+            });
 
-
-                 if (isSeller) {
-                    const storeDocRef = doc(db, publicDataPath, 'stores', user.uid);
-                    await setDoc(storeDocRef, {
-                        storeName: name,
-                        ownerUid: user.uid,
-                        email: email,
-                        profileUrl: '', // Default empty profile pic
-                        coverUrl: '', // Default empty cover
-                        createdAt: serverTimestamp(),
-                        isApproved: false // Default to not approved
-                    });
-                }
-                
-                errorP.textContent = '';
-                closeAuthDrawer();
-
-            } catch (error) {
-                console.error("Signup Error:", error);
-                errorP.textContent = error.message.replace('Firebase: ', '');
-            }
-        });
-
-        document.getElementById('drawer-logout-btn')?.addEventListener('click', async () => {
-            try {
-                await signOut(auth);
-                closeAuthDrawer();
-            } catch (error) {
-                console.error("Logout Error:", error);
-            }
-        });
-    }
-</script>
+            document.getElementById('drawer-logout-btn')?.addEventListener('click', async () => { try { await signOut(auth); closeAuth(); } catch (error) {} });
+        }
+    </script>
 </body>
 </html>
