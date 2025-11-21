@@ -55,6 +55,14 @@
         /* Voice Button Pulse */
         .recording { animation: pulse-red 1.5s infinite; @apply border-red-500 text-red-500 bg-red-50; }
         @keyframes pulse-red { 0% { box-shadow: 0 0 0 0 rgba(220, 38, 38, 0.7); } 70% { box-shadow: 0 0 0 10px rgba(220, 38, 38, 0); } 100% { box-shadow: 0 0 0 0 rgba(220, 38, 38, 0); } }
+
+        /* --- SELLER OFFER BUBBLE STYLES --- */
+        .seller-offer-bubble {
+            @apply bg-white border-2 border-mudalali-green text-gray-800 p-4 rounded-2xl rounded-br-none shadow-sm mb-2 max-w-[85%] self-end text-right;
+        }
+        .seller-offer-price {
+            @apply text-xl font-bold text-mudalali-green mt-1;
+        }
     </style>
 </head>
 <body class="pb-20 md:pb-0"> 
@@ -75,6 +83,7 @@
         <nav class="flex-grow p-4 space-y-2 overflow-y-auto">
             <a href="#products" id="nav-products" class="sidebar-link active"><i class="fa fa-box w-6"></i><span class="ml-3">My Products</span></a>
             <a href="#orders" id="nav-orders" class="sidebar-link"><i class="fa fa-receipt w-6"></i><span class="ml-3">My Orders</span></a>
+            <a href="#messages" id="nav-messages" class="sidebar-link"><i class="fa fa-comments w-6"></i><span class="ml-3">Messages</span></a>
             <a href="#stories" id="nav-stories" class="sidebar-link"><i class="fa fa-book-open w-6"></i><span class="ml-3">My Stories</span></a>
             <a href="#settings" id="nav-settings" class="sidebar-link"><i class="fa fa-cog w-6"></i><span class="ml-3">Store Settings</span></a>
         </nav>
@@ -109,6 +118,62 @@
             <div class="bg-white rounded-lg shadow-md overflow-hidden border border-gray-100">
                 <div id="order-list-container" class="divide-y divide-gray-200">
                     <div class="p-10 text-center text-gray-500"><i class="fa fa-spinner fa-spin text-3xl text-mudalali-green"></i><p class="mt-2">Loading your orders...</p></div>
+                </div>
+            </div>
+        </div>
+
+        <div id="view-messages" class="dashboard-view hidden">
+            <h1 class="text-3xl font-bold text-gray-800 mb-6">Customer Messages</h1>
+            
+            <div class="grid grid-cols-1 lg:grid-cols-3 gap-6 h-[calc(100vh-180px)]">
+                
+                <div class="lg:col-span-1 bg-white rounded-lg shadow-md border border-gray-100 flex flex-col overflow-hidden">
+                    <div class="p-4 border-b bg-gray-50">
+                        <h2 class="font-bold text-gray-700">Inbox</h2>
+                    </div>
+                    <div id="chat-list-container" class="flex-grow overflow-y-auto p-2 space-y-2">
+                        <p class="text-center text-gray-500 mt-10"><i class="fa fa-spinner fa-spin"></i> Loading...</p>
+                    </div>
+                </div>
+
+                <div class="hidden lg:flex lg:col-span-2 bg-white rounded-lg shadow-md border border-gray-100 flex-col overflow-hidden relative bg-[url('https://www.transparenttextures.com/patterns/subtle-white-feathers.png')]">
+                    
+                    <div id="chat-empty-state" class="absolute inset-0 flex flex-col items-center justify-center bg-white z-10">
+                        <img src="https://cdn-icons-png.flaticon.com/512/1041/1041916.png" class="w-24 opacity-50 mb-4">
+                        <p class="text-gray-400 font-medium">Select a conversation to start chatting</p>
+                    </div>
+
+                    <div id="chat-interface" class="flex flex-col h-full hidden">
+                        <div class="p-3 border-b bg-white shadow-sm flex justify-between items-center z-20">
+                            <div class="flex items-center gap-3">
+                                <img id="chat-product-img" src="" class="w-10 h-10 rounded object-cover border">
+                                <div>
+                                    <h3 id="chat-buyer-name" class="font-bold text-sm text-gray-800">Buyer Name</h3>
+                                    <p id="chat-product-name" class="text-xs text-gray-500">Product Name</p>
+                                </div>
+                            </div>
+                            <div class="flex gap-2" id="chat-action-buttons">
+                                <button onclick="updateChatStatus('approved')" class="bg-green-100 text-green-700 px-3 py-1 rounded-full text-xs font-bold hover:bg-green-200 transition"><i class="fa fa-check mr-1"></i> Approve</button>
+                                <button onclick="updateChatStatus('rejected')" class="bg-red-100 text-red-700 px-3 py-1 rounded-full text-xs font-bold hover:bg-red-200 transition"><i class="fa fa-times mr-1"></i> Reject</button>
+                            </div>
+                            <div id="chat-status-display" class="hidden px-3 py-1 rounded-full text-xs font-bold"></div>
+                        </div>
+
+                        <div id="chat-messages-area" class="flex-grow overflow-y-auto p-4 space-y-3 bg-gray-50/50"></div>
+
+                        <div class="p-3 bg-white border-t">
+                            <div class="flex gap-2">
+                                <button type="button" onclick="toggleOfferModal()" class="bg-yellow-100 text-yellow-700 px-3 rounded-lg hover:bg-yellow-200 font-bold text-xs flex flex-col items-center justify-center" title="Create Offer">
+                                    <i class="fa fa-tag text-sm"></i>
+                                    <span>Offer</span>
+                                </button>
+                                <form id="seller-chat-form" class="flex-grow flex gap-2">
+                                    <input type="text" id="seller-chat-input" class="flex-grow form-input !mt-0 !py-2" placeholder="Type your reply..." required>
+                                    <button type="submit" class="bg-mudalali-green text-white px-4 rounded-lg hover:bg-mudalali-green-dark transition"><i class="fa fa-paper-plane"></i></button>
+                                </form>
+                            </div>
+                        </div>
+                    </div>
                 </div>
             </div>
         </div>
@@ -181,11 +246,41 @@
         </div>
     </main>
 
+    <div id="mobile-chat-modal" class="fixed inset-0 z-[70] bg-white hidden flex flex-col lg:hidden">
+        <div class="p-3 border-b bg-white shadow-sm flex items-center gap-3">
+            <button onclick="closeMobileChat()" class="text-gray-600"><i class="fa fa-arrow-left text-xl"></i></button>
+            <div class="flex-grow">
+                <h3 id="mobile-chat-buyer" class="font-bold text-gray-800">Buyer</h3>
+                <p id="mobile-chat-product" class="text-xs text-gray-500">Product</p>
+            </div>
+            <div id="mobile-status-badge" class="text-[10px] font-bold px-2 py-1 rounded bg-gray-200">Pending</div>
+        </div>
+        
+        <div id="mobile-chat-actions" class="p-2 bg-gray-50 border-b flex justify-center gap-4">
+            <button onclick="updateChatStatus('approved')" class="text-green-600 text-xs font-bold bg-white border border-green-200 px-4 py-1 rounded-full shadow-sm">Approve</button>
+            <button onclick="updateChatStatus('rejected')" class="text-red-600 text-xs font-bold bg-white border border-red-200 px-4 py-1 rounded-full shadow-sm">Reject</button>
+        </div>
+
+        <div id="mobile-messages-area" class="flex-grow overflow-y-auto p-4 space-y-3 bg-gray-100"></div>
+
+        <div class="p-3 bg-white border-t pb-20 md:pb-3">
+            <div class="flex gap-2">
+                <button type="button" onclick="toggleOfferModal()" class="bg-yellow-100 text-yellow-700 w-10 h-10 rounded-full flex items-center justify-center hover:bg-yellow-200 shadow-sm">
+                    <i class="fa fa-tag"></i>
+                </button>
+                <form id="mobile-chat-form" class="flex-grow flex gap-2">
+                    <input type="text" id="mobile-chat-input" class="flex-grow border rounded-full px-4 py-2 focus:outline-none focus:border-mudalali-green" placeholder="Reply..." required>
+                    <button type="submit" class="bg-mudalali-green text-white w-10 h-10 rounded-full flex items-center justify-center"><i class="fa fa-paper-plane"></i></button>
+                </form>
+            </div>
+        </div>
+    </div>
+
     <nav class="fixed bottom-0 left-0 right-0 h-16 bg-white border-t border-gray-200 shadow-lg flex justify-around items-center z-40 md:hidden">
         <a href="index.html" class="mobile-nav-link"><i class="fa fa-home text-xl"></i><span class="mt-1">Home</span></a>
         <a href="#" id="mobile-public-store-link" class="mobile-nav-link"><i class="fa fa-store text-xl"></i><span class="mt-1">My Store</span></a>
         <button id="nav-btn-add" class="text-white relative"><div class="w-14 h-14 rounded-full bg-mudalali-green flex items-center justify-center -mt-8 shadow-xl border-4 border-white transition hover:scale-110"><i class="fa fa-plus text-2xl"></i></div></button>
-        <button id="nav-btn-orders" class="mobile-nav-link" data-hash="#orders"><i class="fa fa-receipt text-xl"></i><span class="mt-1">Orders</span></button>
+        <button id="nav-btn-messages" class="mobile-nav-link" data-hash="#messages"><i class="fa fa-comments text-xl"></i><span class="mt-1">Chat</span></button>
         <button id="nav-btn-dashboard" class="mobile-nav-link active" data-hash="#products"><i class="fa fa-user-circle text-xl"></i><span class="mt-1">Dashboard</span></button>
     </nav>
 
@@ -194,7 +289,7 @@
     </button>
     <div id="voice-listening-indicator" class="hidden fixed bottom-36 right-4 md:bottom-24 md:right-8 bg-white p-3 rounded-lg shadow-xl z-[60] border border-gray-200 animate-bounce">
         <p class="text-sm font-bold text-mudalali-green flex items-center gap-2"><span class="w-2 h-2 bg-red-500 rounded-full animate-ping"></span> Listening...</p>
-        <p class="text-[10px] text-gray-500">Say: "Orders", "Add New"</p>
+        <p class="text-[10px] text-gray-500">Say: "Orders", "Messages", "Add New"</p>
     </div>
 
     <div id="product-modal" class="hidden fixed inset-0 z-50 flex items-center justify-center p-4">
@@ -229,10 +324,17 @@
             <form id="product-form" class="space-y-4 border-t pt-4">
                 <input type="hidden" id="product-id">
                 <div><label class="form-label">Product Name</label><input type="text" id="product-name" class="form-input" required></div>
-                <div class="grid grid-cols-2 gap-4">
+                
+                <div class="grid grid-cols-1 md:grid-cols-3 gap-4">
                     <div><label class="form-label">Sale Price (LKR)</label><input type="number" id="product-sale-price" class="form-input" required></div>
                     <div><label class="form-label">Original Price</label><input type="number" id="product-original-price" class="form-input"></div>
+                    
+                    <div>
+                        <label class="form-label text-red-600 font-bold text-xs md:text-sm">Minimum Price (AI)</label>
+                        <input type="number" id="product-min-price" class="form-input border-red-300 text-red-700 focus:ring-red-500 focus:border-red-500 bg-red-50" placeholder="Lowest Allowable">
+                    </div>
                 </div>
+
                 <div>
                     <div class="flex justify-between items-center mb-1"><label class="form-label mb-0">Category</label><button type="button" onclick="autoSelectCategory()" class="text-xs text-blue-600 font-bold bg-blue-50 px-2 py-1 rounded">Auto Select</button></div>
                     <select id="product-category-select" class="form-input"><option value="">Loading Categories...</option></select>
@@ -315,6 +417,7 @@
             <nav class="flex-grow p-4 space-y-2 overflow-y-auto">
                 <a href="#products" id="mobile-nav-products" class="sidebar-link active"><i class="fa fa-box w-6"></i><span class="ml-3">My Products</span></a>
                 <a href="#orders" id="mobile-nav-orders" class="sidebar-link"><i class="fa fa-receipt w-6"></i><span class="ml-3">My Orders</span></a>
+                <a href="#messages" id="mobile-nav-messages" class="sidebar-link"><i class="fa fa-comments w-6"></i><span class="ml-3">Messages</span></a>
                 <a href="#stories" id="mobile-nav-stories" class="sidebar-link"><i class="fa fa-book-open w-6"></i><span class="ml-3">My Stories</span></a>
                 <a href="#settings" id="mobile-nav-settings" class="sidebar-link"><i class="fa fa-cog w-6"></i><span class="ml-3">Store Settings</span></a>
             </nav>
@@ -322,27 +425,95 @@
         </aside>
     </div>
 
+    <div id="create-offer-modal" class="hidden fixed inset-0 z-[80] flex items-center justify-center p-4">
+        <div class="modal-overlay absolute inset-0 bg-black/50 backdrop-blur-sm" onclick="toggleOfferModal()"></div>
+        <div class="modal-content relative bg-white rounded-xl shadow-2xl p-6 w-full max-w-sm z-10">
+            <h3 class="text-lg font-bold text-gray-800 mb-4"><i class="fa fa-tag mr-2 text-mudalali-green"></i>Send Custom Offer</h3>
+            
+            <div class="space-y-4">
+                <div>
+                    <label class="block text-xs font-bold text-gray-500 uppercase mb-1">Final Price (LKR)</label>
+                    <input type="number" id="offer-price-input" class="form-input text-xl font-bold text-center" placeholder="0.00">
+                </div>
+                <div>
+                    <label class="block text-xs font-bold text-gray-500 uppercase mb-1">Note to Customer</label>
+                    <textarea id="offer-note-input" class="form-input" rows="2" placeholder="e.g. Price including customization..."></textarea>
+                </div>
+                
+                <button onclick="sendCustomOffer()" class="w-full bg-mudalali-green text-white py-3 rounded-lg font-bold hover:bg-mudalali-green-dark shadow-lg transition transform hover:scale-105">
+                    Send Offer
+                </button>
+                <button onclick="toggleOfferModal()" class="w-full text-gray-500 py-2 text-sm hover:text-gray-700">Cancel</button>
+            </div>
+        </div>
+    </div>
+
 <script type="module">
-    import { db, auth, publicDataPath, usersPath } from "./firebase.js";
-    import { onAuthStateChanged, signOut } from "https://www.gstatic.com/firebasejs/11.6.1/firebase-auth.js";
-    import { doc, getDoc, getDocs, collection, query, where, orderBy, limit, setDoc, addDoc, updateDoc, deleteDoc, serverTimestamp, increment } from "https://www.gstatic.com/firebasejs/11.6.1/firebase-firestore.js";
+    import { initializeApp } from "https://www.gstatic.com/firebasejs/11.6.1/firebase-app.js";
+    import { 
+        getAuth, 
+        createUserWithEmailAndPassword, 
+        signInWithEmailAndPassword, 
+        onAuthStateChanged, 
+        signOut 
+    } from "https://www.gstatic.com/firebasejs/11.6.1/firebase-auth.js";
+    import { 
+        getFirestore, 
+        doc, 
+        getDoc, 
+        getDocs,
+        collection, 
+        onSnapshot,
+        query,
+        where,
+        orderBy,
+        limit,
+        setDoc,
+        addDoc,
+        updateDoc, 
+        deleteDoc, 
+        increment, 
+        serverTimestamp,
+        runTransaction,
+        arrayUnion // Make sure this is imported
+    } from "https://www.gstatic.com/firebasejs/11.6.1/firebase-firestore.js";
+
+    // --- Firebase Config (Standard for this project) ---
+    const firebaseConfig = {
+        apiKey: "AIzaSyDIbu2qT53iGPqMCx5UdU6XY8wvXkb3ZF4",
+        authDomain: "mudalali-mama.firebaseapp.com",
+        projectId: "mudalali-mama",
+        storageBucket: "mudalali-mama.firebasestorage.app",
+        messagingSenderId: "296597428969",
+        appId: "1:296597428969:web:684668be9c0eaeecb4ae78",
+        measurementId: "G-GC1CP1LRFD"
+    };
+
+    const app = initializeApp(firebaseConfig);
+    const db = getFirestore(app);
+    const auth = getAuth(app); 
+    
+    const appId = typeof __app_id !== 'undefined' ? __app_id : 'default-app-id';
+    const publicDataPath = `/artifacts/${appId}/public/data`;
+    const usersPath = `/users`; 
 
     const imgbbApiKey = 'f068295c19803c448665a0ea48bcc2fc';
     
-    // 🔴 Key එක හිස්ව තියන්නේ. අපි මේක Admin Database එකෙන් ගන්නවා.
     let GEMINI_API_KEY = ""; 
 
     // --- SMART MODEL LIST ---
     const GEMINI_MODELS = [
-        "gemini-2.0-flash",       
+        "gemini-2.0-flash",        
         "gemini-2.0-flash-lite", 
-        "gemini-1.5-flash",       
+        "gemini-1.5-flash",        
         "gemini-1.5-pro"          
     ];
 
     let currentUser = null;
     let currentUserData = null;
     let currentStoreData = {};
+    let activeChatId = null;
+    let chatUnsubscribe = null;
 
     onAuthStateChanged(auth, async (user) => {
         const authLoader = document.getElementById('auth-loader');
@@ -354,7 +525,6 @@
                 if (!userDocSnap.exists() || !userDocSnap.data().isSeller) { alert("Access Denied."); window.location.href = 'index.html'; return; }
                 currentUserData = userDocSnap.data();
                 
-                // 🔴 Admin Panel එකෙන් දාපු Key එක Load කරගන්නවා
                 await loadSystemApiKey(); 
                 
                 initializeDashboard();
@@ -362,10 +532,8 @@
         } else { window.location.href = 'account.html'; }
     });
 
-    // --- 🔴 LOAD ADMIN API KEY ---
     async function loadSystemApiKey() {
         try {
-            // Admin Panel එකෙන් save කළ key එක ගන්නවා
             const docRef = doc(db, 'config', 'ai_keys');
             const snap = await getDoc(docRef);
             
@@ -382,6 +550,7 @@
 
     function initializeDashboard() {
         loadSellerData(); loadMyProducts(); loadMyOrders(); loadMyStories(); loadCategoriesIntoModal();
+        loadSellerMessages(); // Load Messages
         setupDashboardNavigation(); setupProductModal(); setupStoryForm(); setupSettingsForm(); setupLogoutButtons();
         const storeLinkMobile = document.getElementById('mobile-public-store-link');
         const storeLinkDesk = document.getElementById('view-public-store-link');
@@ -406,7 +575,13 @@
     };
     function resetVoiceBtn() { document.getElementById('global-voice-btn').classList.remove('recording', 'bg-red-600'); document.getElementById('global-voice-btn').classList.add('bg-black'); document.getElementById('voice-listening-indicator').classList.add('hidden'); }
     function executeCommand(cmd) {
-        const views = { 'product': '#products', 'products': '#products', 'order': '#orders', 'orders': '#orders', 'story': '#stories', 'setting': '#settings' };
+        const views = { 
+            'product': '#products', 'products': '#products', 
+            'order': '#orders', 'orders': '#orders', 
+            'story': '#stories', 
+            'setting': '#settings',
+            'message': '#messages', 'chat': '#messages' 
+        };
         for (let key in views) { if (cmd.includes(key)) { document.querySelector(`[href="${views[key]}"]`).click(); return; } }
         if (cmd.includes('add') || cmd.includes('new')) document.getElementById('nav-btn-add').click();
         else if (cmd.includes('logout')) signOut(auth);
@@ -560,7 +735,6 @@
         generatedImageUrl = null;
     };
 
-    // 🔴 FIX: Image Assign Function
     window.saveVariationImage = () => {
         if (!generatedImageUrl) { alert("No image generated yet!"); return; }
         if (!activeVariationRow) { alert("Error: No variation row selected."); return; }
@@ -604,7 +778,6 @@
                 const visionPrompt = "Describe the clothing item in this image in extreme detail including material, neck style, sleeve length, and fit. Do NOT mention the color. Keep it under 40 words.";
                 const styleDescription = await callGeminiAPI(null, visionPrompt, base64Image);
                 if (styleDescription) {
-                    console.log("Detected Style:", styleDescription);
                     finalPrompt = `${styleDescription}, in ${userPrompt} color, realistic, 8k, product photography`;
                 }
             } else {
@@ -664,6 +837,10 @@
             const name = document.getElementById('product-name').value;
             const price = Number(document.getElementById('product-sale-price').value);
             const originalPrice = Number(document.getElementById('product-original-price').value) || null;
+            
+            // 🟢 NEW: Get Minimum Price
+            const minPrice = Number(document.getElementById('product-min-price').value) || null;
+
             const desc = document.getElementById('product-description').value;
             const custom = document.getElementById('product-customization-check').checked;
             const catSelect = document.getElementById('product-category-select');
@@ -685,7 +862,10 @@
                 const old = await getDoc(doc(db, publicDataPath, 'products', id));
                 if(old.exists()) { imageUrl = old.data().imageUrl; imageUrls = old.data().imageUrls || []; }
             }
-            const data = { sellerUid: currentUser.uid, storeName: currentStoreData.storeName||'Store', name, price, originalPrice, description: desc, category, categories: [category], customizationAvailable: custom, imageUrl, imageUrls, variations, updatedAt: serverTimestamp(), isApproved: true };
+            
+            // 🟢 NEW: Added minPrice to data object
+            const data = { sellerUid: currentUser.uid, storeName: currentStoreData.storeName||'Store', name, price, originalPrice, minPrice, description: desc, category, categories: [category], customizationAvailable: custom, imageUrl, imageUrls, variations, updatedAt: serverTimestamp(), isApproved: true };
+            
             if (id) await updateDoc(doc(db, publicDataPath, 'products', id), data);
             else { data.createdAt = serverTimestamp(); await addDoc(collection(db, publicDataPath, 'products'), data); }
             document.getElementById('product-modal').classList.add('hidden'); loadMyProducts(); alert('Saved!');
@@ -701,6 +881,10 @@
         const form = document.getElementById('product-form'); form.reset();
         document.getElementById('product-modal-title').textContent = id ? 'Edit' : 'Add';
         document.getElementById('product-id').value = id || '';
+        
+        // 🟢 NEW: Reset min price field
+        document.getElementById('product-min-price').value = '';
+
         document.getElementById('product-image-preview-container').innerHTML = '';
         document.getElementById('product-variations-container').innerHTML = '';
         if(id) {
@@ -710,6 +894,10 @@
                     document.getElementById('product-name').value = p.name;
                     document.getElementById('product-sale-price').value = p.price;
                     document.getElementById('product-original-price').value = p.originalPrice||'';
+                    
+                    // 🟢 NEW: Load min price
+                    document.getElementById('product-min-price').value = p.minPrice || '';
+
                     document.getElementById('product-description').value = p.description;
                     document.getElementById('product-customization-check').checked = p.customizationAvailable;
                     const sel = document.getElementById('product-category-select'); sel.value = p.category;
@@ -724,12 +912,188 @@
     document.getElementById('add-variation-btn').onclick = () => addVariationRow();
     function typeWriter(element, text) { element.value = ""; let i = 0; const interval = setInterval(() => { element.value += text.charAt(i); i++; if (i > text.length) clearInterval(interval); }, 10); }
 
-    // --- SMART API CALL ---
+    // --- SELLER CHAT SYSTEM ---
+    
+    window.loadSellerMessages = () => {
+        const container = document.getElementById('chat-list-container');
+        const q = query(
+            collection(db, publicDataPath, 'customizationRequests'), 
+            where("sellerId", "==", currentUser.uid),
+            orderBy("lastUpdated", "desc")
+        );
+
+        onSnapshot(q, (snapshot) => {
+            if (snapshot.empty) {
+                container.innerHTML = '<p class="text-center text-gray-400 text-sm mt-10">No messages yet.</p>';
+                return;
+            }
+
+            container.innerHTML = '';
+            snapshot.forEach(doc => {
+                const data = doc.data();
+                const isActive = activeChatId === doc.id ? 'bg-green-50 border-mudalali-green' : 'bg-white hover:bg-gray-50 border-transparent';
+                const lastMsg = data.messages[data.messages.length - 1];
+                const time = lastMsg ? new Date(lastMsg.time).toLocaleDateString() : '';
+                const statusColor = data.status === 'pending' ? 'text-yellow-600 bg-yellow-100' : (data.status === 'approved' ? 'text-green-600 bg-green-100' : 'text-red-600 bg-red-100');
+
+                const div = document.createElement('div');
+                div.className = `p-3 rounded-lg border cursor-pointer transition mb-2 shadow-sm ${isActive}`;
+                div.onclick = () => openSellerChat(doc.id, data);
+                div.innerHTML = `
+                    <div class="flex justify-between items-start mb-1">
+                        <h4 class="font-bold text-sm text-gray-800">${data.buyerName}</h4>
+                        <span class="text-[10px] text-gray-400">${time}</span>
+                    </div>
+                    <p class="text-xs text-gray-500 truncate mb-2">${lastMsg ? (lastMsg.sender === 'seller' ? 'You: ' : '') + lastMsg.text : 'No messages'}</p>
+                    <div class="flex justify-between items-center">
+                        <div class="flex items-center gap-1">
+                            <img src="${data.productImage}" class="w-5 h-5 rounded object-cover">
+                            <span class="text-[10px] text-gray-600 truncate w-20">${data.productName}</span>
+                        </div>
+                        <span class="text-[10px] px-2 py-0.5 rounded-full font-bold ${statusColor}">${data.status.toUpperCase()}</span>
+                    </div>
+                `;
+                container.appendChild(div);
+            });
+        });
+    };
+
+    window.openSellerChat = (chatId, data) => {
+        activeChatId = chatId;
+        loadSellerMessages(); // Refresh UI Selection
+
+        // Desktop UI
+        document.getElementById('chat-empty-state').classList.add('hidden');
+        document.getElementById('chat-interface').classList.remove('hidden');
+        document.getElementById('chat-buyer-name').textContent = data.buyerName;
+        document.getElementById('chat-product-name').textContent = data.productName;
+        document.getElementById('chat-product-img').src = data.productImage;
+
+        // Mobile UI
+        if(window.innerWidth < 1024) {
+            document.getElementById('mobile-chat-modal').classList.remove('hidden');
+            document.getElementById('mobile-chat-buyer').textContent = data.buyerName;
+            document.getElementById('mobile-chat-product').textContent = data.productName;
+            document.getElementById('mobile-status-badge').textContent = data.status.toUpperCase();
+        }
+
+        updateStatusUI(data.status);
+
+        if(chatUnsubscribe) chatUnsubscribe();
+        chatUnsubscribe = onSnapshot(doc(db, publicDataPath, 'customizationRequests', chatId), (docSnap) => {
+            if(docSnap.exists()) {
+                const newData = docSnap.data();
+                renderMessages(newData.messages);
+                updateStatusUI(newData.status);
+            }
+        });
+    };
+
+    function updateStatusUI(status) {
+        const buttons = document.getElementById('chat-action-buttons');
+        const display = document.getElementById('chat-status-display');
+        const mobileActions = document.getElementById('mobile-chat-actions');
+        const mobileBadge = document.getElementById('mobile-status-badge');
+        
+        if(status === 'pending') {
+            buttons.classList.remove('hidden');
+            display.classList.add('hidden');
+            if(mobileActions) mobileActions.classList.remove('hidden');
+        } else {
+            buttons.classList.add('hidden');
+            display.classList.remove('hidden');
+            display.textContent = status === 'approved' ? 'Approved' : 'Rejected';
+            display.className = status === 'approved' ? 'px-3 py-1 rounded-full text-xs font-bold bg-green-100 text-green-700 border border-green-200' : 'px-3 py-1 rounded-full text-xs font-bold bg-red-100 text-red-700 border border-red-200';
+            if(mobileActions) mobileActions.classList.add('hidden');
+        }
+        if(mobileBadge) {
+            mobileBadge.textContent = status.toUpperCase();
+            mobileBadge.className = `text-[10px] font-bold px-2 py-1 rounded ${status === 'pending' ? 'bg-yellow-100 text-yellow-700' : (status === 'approved' ? 'bg-green-100 text-green-700' : 'bg-red-100 text-red-700')}`;
+        }
+    }
+
+    // --- 🟢 UPDATE: renderMessages Function ---
+    function renderMessages(messages) {
+        const desktopArea = document.getElementById('chat-messages-area');
+        const mobileArea = document.getElementById('mobile-messages-area');
+        
+        const html = messages.map(msg => {
+            const isMe = msg.sender === 'seller';
+            
+            // 1. Offer එකක් නම් වෙනම Style එකක්
+            if (msg.type === 'offer') {
+                return `
+                    <div class="flex w-full justify-end">
+                        <div class="seller-offer-bubble">
+                            <p class="text-[10px] font-bold text-gray-400 uppercase mb-1">YOU SENT AN OFFER</p>
+                            <p class="text-sm">${msg.text}</p>
+                            <div class="seller-offer-price">Rs. ${parseFloat(msg.price).toFixed(2)}</div>
+                            <p class="text-[9px] mt-1 opacity-70">${new Date(msg.time).toLocaleTimeString([], {hour: '2-digit', minute:'2-digit'})}</p>
+                        </div>
+                    </div>
+                `;
+            } 
+            // 2. සාමාන්‍ය Message එකක් නම්
+            else {
+                return `
+                    <div class="flex w-full ${isMe ? 'justify-end' : 'justify-start'}">
+                        <div class="max-w-[80%] ${isMe ? 'bg-mudalali-green text-white rounded-br-none' : 'bg-white border text-gray-800 rounded-bl-none'} p-3 rounded-2xl shadow-sm text-sm">
+                            <p>${msg.text}</p>
+                            <p class="text-[9px] mt-1 opacity-70 text-right">${new Date(msg.time).toLocaleTimeString([], {hour: '2-digit', minute:'2-digit'})}</p>
+                        </div>
+                    </div>
+                `;
+            }
+        }).join('');
+
+        desktopArea.innerHTML = html;
+        mobileArea.innerHTML = html;
+        desktopArea.scrollTop = desktopArea.scrollHeight;
+        mobileArea.scrollTop = mobileArea.scrollHeight;
+    }
+
+    // --- 🟢 FIX: Normal Message යවන Function එක ---
+    async function handleSendMessage(text) {
+        if(!activeChatId || !text.trim()) return;
+        
+        try {
+            const chatRef = doc(db, publicDataPath, 'customizationRequests', activeChatId);
+            
+            // Normal text message එකක් විදියට යවනවා
+            await updateDoc(chatRef, {
+                messages: arrayUnion({ 
+                    sender: 'seller', 
+                    text: text.trim(), 
+                    time: Date.now() 
+                    // type: 'offer' කියලා දාන්නේ නෑ, එතකොට මේක normal message එකක්
+                }),
+                lastUpdated: serverTimestamp()
+            });
+        } catch(e) { 
+            console.error("Send Error:", e); 
+            alert("Failed to send message"); 
+        }
+    }
+
+    document.getElementById('seller-chat-form').onsubmit = (e) => { e.preventDefault(); const i = document.getElementById('seller-chat-input'); handleSendMessage(i.value); i.value = ''; };
+    document.getElementById('mobile-chat-form').onsubmit = (e) => { e.preventDefault(); const i = document.getElementById('mobile-chat-input'); handleSendMessage(i.value); i.value = ''; };
+
+    window.updateChatStatus = async (newStatus) => {
+        if(!activeChatId || !confirm(`Are you sure you want to ${newStatus} this request?`)) return;
+        try {
+            const chatRef = doc(db, publicDataPath, 'customizationRequests', activeChatId);
+            const msgText = newStatus === 'approved' ? "✅ Request Approved!" : "❌ Request Rejected.";
+            await updateDoc(chatRef, {
+                status: newStatus, lastUpdated: serverTimestamp(),
+                messages: arrayUnion({ sender: 'seller', text: msgText, time: Date.now() })
+            });
+        } catch(e) { console.error(e); alert("Error updating status"); }
+    };
+
     async function callGeminiAPI(ignoredModel, promptText, inlineImage) {
         if (!GEMINI_API_KEY) { console.error("Missing API Key"); return null; }
         const parts = [{ text: promptText }]; 
         if (inlineImage) parts.push(inlineImage);
-
         for (const modelName of GEMINI_MODELS) {
             try {
                 console.log(`🤖 Trying AI Model: ${modelName}...`); 
@@ -787,6 +1151,51 @@
     }
     async function loadCategoriesIntoModal() { const s = document.getElementById('product-category-select'); const snap = await getDocs(query(collection(db, publicDataPath, 'categories'), orderBy('name'))); s.innerHTML = '<option value="">Select</option>'; snap.forEach(d => { const o = document.createElement('option'); o.value = d.data().name; o.text = d.data().name; s.add(o); }); }
     function setupLogoutButtons() { document.getElementById('drawer-logout-btn').onclick = () => signOut(auth); document.getElementById('mobile-drawer-logout-btn').onclick = () => signOut(auth); }
+
+    // --- 🟢 NEW: Offer Modal Logic ---
+    window.toggleOfferModal = () => {
+        const modal = document.getElementById('create-offer-modal');
+        modal.classList.toggle('hidden');
+        document.getElementById('offer-price-input').value = '';
+        document.getElementById('offer-note-input').value = '';
+    };
+
+    window.sendCustomOffer = async () => {
+        const price = document.getElementById('offer-price-input').value;
+        const note = document.getElementById('offer-note-input').value;
+
+        if (!price || price <= 0) {
+            alert("Please enter a valid price.");
+            return;
+        }
+        if (!activeChatId) {
+            alert("No active chat selected.");
+            return;
+        }
+
+        try {
+            const chatRef = doc(db, publicDataPath, 'customizationRequests', activeChatId);
+            
+            // Offer එක Message එකක් විදියට යවනවා (type: 'offer' එක්ක)
+            await updateDoc(chatRef, {
+                messages: arrayUnion({
+                    sender: 'seller',
+                    text: note || `Custom offer created for Rs. ${price}`,
+                    price: Number(price), // මේක තමයි වැදගත්ම field එක
+                    type: 'offer',        // මේකෙන් තමයි product.html එකේදි button එක පෙන්නන්නේ
+                    time: Date.now()
+                }),
+                lastUpdated: serverTimestamp()
+            });
+
+            window.toggleOfferModal(); // Modal එක වහනවා
+            alert("Offer Sent Successfully!");
+
+        } catch (e) {
+            console.error("Error sending offer:", e);
+            alert("Failed to send offer.");
+        }
+    }; 
 
 </script>
 </body>
