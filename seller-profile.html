@@ -323,13 +323,22 @@
     </div>
 
 <script type="module">
-    import { db, auth, publicDataPath, usersPath } from "./js/config/firebase.js";
+    import { db, auth, publicDataPath, usersPath } from "./firebase.js";
     import { onAuthStateChanged, signOut } from "https://www.gstatic.com/firebasejs/11.6.1/firebase-auth.js";
     import { doc, getDoc, getDocs, collection, query, where, orderBy, limit, setDoc, addDoc, updateDoc, deleteDoc, serverTimestamp, increment } from "https://www.gstatic.com/firebasejs/11.6.1/firebase-firestore.js";
 
     const imgbbApiKey = 'f068295c19803c448665a0ea48bcc2fc';
-    const GEMINI_API_KEY = "AIzaSyCt84xbQ3QeE6G7dldg-6DBEgXsNkMRJGM".trim();
-    const MODEL_FLASH = "gemini-2.0-flash";
+    
+    // 🔴 Key එක හිස්ව තියන්නේ. අපි මේක Admin Database එකෙන් ගන්නවා.
+    let GEMINI_API_KEY = ""; 
+
+    // --- SMART MODEL LIST ---
+    const GEMINI_MODELS = [
+        "gemini-2.0-flash",       
+        "gemini-2.0-flash-lite", 
+        "gemini-1.5-flash",       
+        "gemini-1.5-pro"          
+    ];
 
     let currentUser = null;
     let currentUserData = null;
@@ -344,10 +353,32 @@
                 const userDocSnap = await getDoc(userDocRef);
                 if (!userDocSnap.exists() || !userDocSnap.data().isSeller) { alert("Access Denied."); window.location.href = 'index.html'; return; }
                 currentUserData = userDocSnap.data();
+                
+                // 🔴 Admin Panel එකෙන් දාපු Key එක Load කරගන්නවා
+                await loadSystemApiKey(); 
+                
                 initializeDashboard();
             } catch (e) { console.error(e); alert("Auth Error"); } finally { if(authLoader) authLoader.classList.add('hidden'); }
         } else { window.location.href = 'account.html'; }
     });
+
+    // --- 🔴 LOAD ADMIN API KEY ---
+    async function loadSystemApiKey() {
+        try {
+            // Admin Panel එකෙන් save කළ key එක ගන්නවා
+            const docRef = doc(db, 'config', 'ai_keys');
+            const snap = await getDoc(docRef);
+            
+            if (snap.exists() && snap.data().geminiKey) {
+                GEMINI_API_KEY = snap.data().geminiKey;
+                console.log("✅ AI System Ready (Key Loaded)");
+            } else {
+                console.warn("⚠️ System API Key not found. AI features will not work.");
+            }
+        } catch (e) {
+            console.error("Error loading System Key:", e);
+        }
+    }
 
     function initializeDashboard() {
         loadSellerData(); loadMyProducts(); loadMyOrders(); loadMyStories(); loadCategoriesIntoModal();
@@ -381,7 +412,7 @@
         else if (cmd.includes('logout')) signOut(auth);
     }
 
-    // --- PRODUCT VOICE (IMPROVED) ---
+    // --- PRODUCT VOICE ---
     let productRecognition; 
     window.startProductVoiceInput = () => {
         if (!('webkitSpeechRecognition' in window)) { alert("Browser not supported"); return; }
@@ -403,6 +434,8 @@
 
     // --- AUTO FILL ---
     window.hyperAutoFill = async () => {
+        if(!GEMINI_API_KEY) { alert("System Error: Admin has not configured AI Key yet."); return; }
+
         const fileInput = document.getElementById('product-image-files');
         const extraText = document.getElementById('magic-input-text').value;
         const catSelect = document.getElementById('product-category-select');
@@ -414,7 +447,7 @@
             const categories = Array.from(catSelect.options).map(o => o.value).filter(v => v).join(", ");
             const base64 = await fileToGenerativePart(fileInput.files[0]);
             const prompt = `Analyze product image & text: "${extraText}". Task: 1. Name (English). 2. Description (Persuasive). 3. Category (Context: ${categories}). 4. Price (Number). 5. Variations (Sizes/Colors). 6. Custom check (isCustom). Output JSON: {"name":"", "description":"", "category":"", "price":0, "isCustom":false, "variations":[{"name":"", "price":0}]}`;
-            const text = await callGeminiAPI(MODEL_FLASH, prompt, base64);
+            const text = await callGeminiAPI(null, prompt, base64);
             if (text) {
                 const res = JSON.parse(text.replace(/```json|```/g, '').trim());
                 typeWriter(document.getElementById('product-name'), res.name);
@@ -426,30 +459,33 @@
                 document.getElementById('product-variations-container').innerHTML = '';
                 if(res.variations) res.variations.forEach(v => addVariationRow({name: v.name, price: res.price}));
             }
-        } catch (e) { console.error(e); alert("AI Error"); } 
+        } catch (e) { console.error(e); alert("AI Error: " + e.message); } 
         finally { loader.classList.add('hidden'); btn.disabled = false; btn.classList.remove('opacity-50'); }
     };
 
     window.generateAIDescription = async () => {
+        if(!GEMINI_API_KEY) { alert("System Error: Admin has not configured AI Key."); return; }
         const name = document.getElementById('product-name').value;
         if(!name) { alert("Enter Name"); return; }
         const loader = document.getElementById('ai-loading-status'); loader.classList.remove('hidden');
-        try { const txt = await callGeminiAPI(MODEL_FLASH, `Write short persuasive description for: ${name}`); if(txt) typeWriter(document.getElementById('product-description'), txt); } catch(e){} finally { loader.classList.add('hidden'); }
+        try { const txt = await callGeminiAPI(null, `Write short persuasive description for: ${name}`); if(txt) typeWriter(document.getElementById('product-description'), txt); } catch(e){} finally { loader.classList.add('hidden'); }
     };
     window.generateStoreDesc = async () => {
+        if(!GEMINI_API_KEY) { alert("System Error: Admin has not configured AI Key."); return; }
         const name = document.getElementById('settings-store-name').value;
         const load = document.getElementById('store-ai-loading');
         if(!name) { alert("Enter Store Name"); return; }
         load.classList.remove('hidden');
-        try { const txt = await callGeminiAPI(MODEL_FLASH, `Write warm welcome note for Sri Lankan shop: ${name}`); if(txt) typeWriter(document.getElementById('settings-description'), txt); } catch(e){} finally { load.classList.add('hidden'); }
+        try { const txt = await callGeminiAPI(null, `Write warm welcome note for Sri Lankan shop: ${name}`); if(txt) typeWriter(document.getElementById('settings-description'), txt); } catch(e){} finally { load.classList.add('hidden'); }
     };
     window.autoSelectCategory = async () => { 
+        if(!GEMINI_API_KEY) { alert("System Error: Admin has not configured AI Key."); return; }
         const name = document.getElementById('product-name').value; const select = document.getElementById('product-category-select'); const loader = document.getElementById('cat-ai-loading');
         if (!name) { alert("Enter name first!"); return; }
         loader.classList.remove('hidden');
         const options = Array.from(select.options).map(o => o.value).filter(v => v);
         try {
-            const text = await callGeminiAPI(MODEL_FLASH, `Product: "${name}". Pick BEST category from: ${options.join(", ")}. OR suggest a new simple category name. Output ONLY the category name.`);
+            const text = await callGeminiAPI(null, `Product: "${name}". Pick BEST category from: ${options.join(", ")}. OR suggest a new simple category name. Output ONLY the category name.`);
             if(text) {
                 const bestCat = text.trim(); let found = false;
                 for (let i = 0; i < select.options.length; i++) { if (select.options[i].value.toLowerCase() === bestCat.toLowerCase()) { select.selectedIndex = i; found = true; break; } }
@@ -463,7 +499,6 @@
 
     window.addVariationRow = (d={}) => {
         const div = document.createElement('div'); div.className = 'variation-row flex flex-col gap-2 bg-gray-50 p-3 rounded-lg border border-gray-200 mb-2';
-        // HTML Structure for Variation Row
         div.innerHTML = `
             <div class="flex gap-2 items-center">
                 <input class="v-name form-input flex-grow !py-1 !text-sm" placeholder="Name (e.g. Red)" value="${d.name||''}">
@@ -491,7 +526,6 @@
         document.getElementById('product-variations-container').appendChild(div);
     };
 
-    // Manual Upload Handler
     window.handleVariationUpload = async (input) => {
         if(input.files && input.files[0]) {
             const row = input.closest('.variation-row');
@@ -500,22 +534,19 @@
             row.querySelector('.v-img-preview').src = url;
             row.querySelector('.v-img-preview').classList.remove('hidden');
             row.querySelector('.v-img-placeholder').classList.add('hidden');
-            
-            // Real Upload
             const realUrl = await uploadImageToImgBB(file);
             if(realUrl) row.querySelector('.v-img-url').value = realUrl;
         }
     };
 
-    // Magic Modal Logic
     let generatedImageUrl = null;
 
     window.openVariationMagicModal = (btn) => {
+        if(!GEMINI_API_KEY) { alert("System Error: Admin has not configured AI Key."); return; }
         activeVariationRow = btn.closest('.variation-row');
         const varName = activeVariationRow.querySelector('.v-name').value;
         const prodName = document.getElementById('product-name').value;
         
-        // Reset Modal
         document.getElementById('gen-image-preview').classList.add('hidden');
         document.getElementById('gen-placeholder').classList.remove('hidden');
         document.getElementById('gen-save-btn').disabled = true;
@@ -529,106 +560,74 @@
         generatedImageUrl = null;
     };
 
-    // --- FIXED GENERATION LOGIC WITH LOADING INDICATOR ---
-  // --- INTELLIGENT VARIATION GENERATOR (Preserves Style) ---
-    
+    // 🔴 FIX: Image Assign Function
+    window.saveVariationImage = () => {
+        if (!generatedImageUrl) { alert("No image generated yet!"); return; }
+        if (!activeVariationRow) { alert("Error: No variation row selected."); return; }
+        
+        const imgPreview = activeVariationRow.querySelector('.v-img-preview');
+        const imgPlaceholder = activeVariationRow.querySelector('.v-img-placeholder');
+        const imgUrlInput = activeVariationRow.querySelector('.v-img-url');
+        
+        imgPreview.src = generatedImageUrl;
+        imgPreview.classList.remove('hidden');
+        imgPlaceholder.classList.add('hidden');
+        imgUrlInput.value = generatedImageUrl;
+        
+        closeVariationMagicModal();
+    };
+
     window.generateVariationImage = async () => {
         const promptInput = document.getElementById('gen-prompt-input');
-        const userPrompt = promptInput.value; // e.g. "Red Color"
-        
-        // Main Product Image එක ගන්න (Reference එක විදියට)
+        const userPrompt = promptInput.value;
         const mainImageInput = document.getElementById('product-image-files');
         
         if(!userPrompt) { alert("Please enter a color or variation name!"); return; }
 
-        // UI Elements setup
         const loader = document.getElementById('gen-loader');
-        const loaderText = loader.querySelector('p'); // Loading text element
+        const loaderText = loader.querySelector('p');
         const preview = document.getElementById('gen-image-preview');
         const placeholder = document.getElementById('gen-placeholder');
         const saveBtn = document.getElementById('gen-save-btn');
         const genBtn = document.querySelector('button[onclick="generateVariationImage()"]');
         const originalBtnText = '<i class="fa fa-sync-alt"></i>';
 
-        // 1. Start Loading
-        loader.classList.remove('hidden');
-        placeholder.classList.add('hidden');
-        preview.classList.add('hidden');
-        saveBtn.disabled = true;
-        genBtn.disabled = true;
-        genBtn.innerHTML = '<i class="fa fa-spinner fa-spin"></i>';
+        loader.classList.remove('hidden'); placeholder.classList.add('hidden'); preview.classList.add('hidden');
+        saveBtn.disabled = true; genBtn.disabled = true; genBtn.innerHTML = '<i class="fa fa-spinner fa-spin"></i>';
 
         try {
             let finalPrompt = userPrompt;
-
-            // --- STEP 1: GEMINI VISION ANALYSIS (පරණ රූපේ style එක කියවගන්නවා) ---
             if (mainImageInput.files && mainImageInput.files[0]) {
                 loaderText.textContent = "👀 AI is looking at your original photo...";
-                
                 const imageFile = mainImageInput.files[0];
                 const base64Image = await fileToGenerativePart(imageFile);
-                
-                // Gemini ට කියනවා පාට ඇරෙන්න අනිත් දේවල් විස්තර කරන්න කියලා
                 const visionPrompt = "Describe the clothing item in this image in extreme detail including material, neck style, sleeve length, and fit. Do NOT mention the color. Keep it under 40 words.";
-                
-                const styleDescription = await callGeminiAPI(MODEL_FLASH, visionPrompt, base64Image);
-                
+                const styleDescription = await callGeminiAPI(null, visionPrompt, base64Image);
                 if (styleDescription) {
                     console.log("Detected Style:", styleDescription);
-                    // පරණ ඩිසයින් එකට අලුත් පාට එකතු කරනවා
                     finalPrompt = `${styleDescription}, in ${userPrompt} color, realistic, 8k, product photography`;
                 }
             } else {
-                // Photo එකක් නැත්නම් නිකන්ම නම පාවිච්චි කරනවා
                 const prodName = document.getElementById('product-name').value;
                 finalPrompt = `${prodName} in ${userPrompt}, high quality`;
             }
 
-            // --- STEP 2: IMAGE GENERATION ---
             loaderText.textContent = "🎨 Painting new variation...";
-            
             const encodedPrompt = encodeURIComponent(finalPrompt);
             const seed = Math.floor(Math.random() * 99999);
-            const width = 512;
-            const height = 512;
-            
-            // Flux Model එක පාවිච්චි කරමු (වඩා හොඳයි)
-            const url = `https://image.pollinations.ai/prompt/${encodedPrompt}?width=${width}&height=${height}&model=flux&nologo=true&seed=${seed}`;
+            const url = `https://image.pollinations.ai/prompt/${encodedPrompt}?width=512&height=512&model=flux&nologo=true&seed=${seed}`;
 
-            // Load the image
             const img = new Image();
             img.onload = () => {
-                preview.src = url;
-                preview.classList.remove('hidden');
-                loader.classList.add('hidden');
-                saveBtn.disabled = false;
-                saveBtn.textContent = "Use This Image";
-                
-                genBtn.disabled = false;
-                genBtn.innerHTML = originalBtnText;
-                generatedImageUrl = url;
-                loaderText.textContent = "Creating Magic..."; // Reset text
+                preview.src = url; preview.classList.remove('hidden'); loader.classList.add('hidden');
+                saveBtn.disabled = false; saveBtn.textContent = "Use This Image";
+                genBtn.disabled = false; genBtn.innerHTML = originalBtnText;
+                generatedImageUrl = url; loaderText.textContent = "Creating Magic...";
             };
-            
-            img.onerror = () => {
-                alert("Generation failed. Try again.");
-                loader.classList.add('hidden');
-                placeholder.classList.remove('hidden');
-                genBtn.disabled = false;
-                genBtn.innerHTML = originalBtnText;
-                loaderText.textContent = "Creating Magic...";
-            };
-            
+            img.onerror = () => { alert("Generation failed."); loader.classList.add('hidden'); placeholder.classList.remove('hidden'); genBtn.disabled = false; genBtn.innerHTML = originalBtnText; };
             img.src = url;
 
-        } catch(e) {
-            console.error("Variation Error:", e);
-            alert("Something went wrong. Check console.");
-            loader.classList.add('hidden');
-            placeholder.classList.remove('hidden');
-            genBtn.disabled = false;
-            genBtn.innerHTML = originalBtnText;
-        }
+        } catch(e) { console.error(e); alert("Something went wrong."); loader.classList.add('hidden'); placeholder.classList.remove('hidden'); genBtn.disabled = false; genBtn.innerHTML = originalBtnText; }
     };
 
     // --- CRUD ---
@@ -672,13 +671,11 @@
             if (catSelect.selectedOptions[0]?.text.includes("(AI New)") || catSelect.selectedOptions[0]?.text.includes("(New)")) {
                  try { await addDoc(collection(db, publicDataPath, 'categories'), { name: category, createdAt: serverTimestamp() }); } catch(e){}
             }
-
             const variations = [];
             document.querySelectorAll('.variation-row').forEach(r => {
                 const n = r.querySelector('.v-name').value; const p = r.querySelector('.v-price').value; const img = r.querySelector('.v-img-url').value;
                 if(n && p) variations.push({name: n, price: Number(p), imageUrl: img});
             });
-
             let imageUrl = null; let imageUrls = [];
             const files = document.getElementById('product-image-files').files;
             if (files.length > 0) {
@@ -688,7 +685,6 @@
                 const old = await getDoc(doc(db, publicDataPath, 'products', id));
                 if(old.exists()) { imageUrl = old.data().imageUrl; imageUrls = old.data().imageUrls || []; }
             }
-
             const data = { sellerUid: currentUser.uid, storeName: currentStoreData.storeName||'Store', name, price, originalPrice, description: desc, category, categories: [category], customizationAvailable: custom, imageUrl, imageUrls, variations, updatedAt: serverTimestamp(), isApproved: true };
             if (id) await updateDoc(doc(db, publicDataPath, 'products', id), data);
             else { data.createdAt = serverTimestamp(); await addDoc(collection(db, publicDataPath, 'products'), data); }
@@ -696,7 +692,6 @@
         } catch(e) { alert(e.message); } finally { btn.disabled = false; btn.textContent = 'Save Product'; }
     }
 
-    // --- OTHER LOADERS ---
     async function loadMyOrders() { /* Same as before */ }
     async function loadMyStories() { /* Same as before */ }
     function setupStoryForm() { /* Same as before */ }
@@ -728,13 +723,28 @@
     }
     document.getElementById('add-variation-btn').onclick = () => addVariationRow();
     function typeWriter(element, text) { element.value = ""; let i = 0; const interval = setInterval(() => { element.value += text.charAt(i); i++; if (i > text.length) clearInterval(interval); }, 10); }
-    async function callGeminiAPI(model, promptText, inlineImage) {
-        const parts = [{ text: promptText }]; if (inlineImage) parts.push(inlineImage);
-        try {
-            const res = await fetch(`https://generativelanguage.googleapis.com/v1beta/models/${model}:generateContent?key=${GEMINI_API_KEY}`, { method: 'POST', headers: {'Content-Type': 'application/json'}, body: JSON.stringify({ contents: [{ parts }] }) });
-            const data = await res.json(); return data.candidates[0].content.parts[0].text;
-        } catch (e) { return null; }
+
+    // --- SMART API CALL ---
+    async function callGeminiAPI(ignoredModel, promptText, inlineImage) {
+        if (!GEMINI_API_KEY) { console.error("Missing API Key"); return null; }
+        const parts = [{ text: promptText }]; 
+        if (inlineImage) parts.push(inlineImage);
+
+        for (const modelName of GEMINI_MODELS) {
+            try {
+                console.log(`🤖 Trying AI Model: ${modelName}...`); 
+                const res = await fetch(`https://generativelanguage.googleapis.com/v1beta/models/${modelName}:generateContent?key=${GEMINI_API_KEY}`, { 
+                    method: 'POST', headers: {'Content-Type': 'application/json'}, body: JSON.stringify({ contents: [{ parts }] }) 
+                });
+                if (!res.ok) { console.warn(`⚠️ Model ${modelName} failed. Next...`); continue; }
+                const data = await res.json(); 
+                if(data.candidates && data.candidates.length > 0) return data.candidates[0].content.parts[0].text;
+                else throw new Error("No candidates");
+            } catch (e) { console.warn(`⚠️ Error ${modelName}:`, e); continue; }
+        }
+        alert("System Busy: AI models are overloaded. Try again later."); return null;
     }
+
     async function fileToGenerativePart(file) { return new Promise((resolve) => { const r = new FileReader(); r.onloadend = () => resolve({ inlineData: { data: r.result.split(',')[1], mimeType: file.type } }); r.readAsDataURL(file); }); }
     async function uploadImageToImgBB(file) { const d = new FormData(); d.append('image', file); try { const r = await fetch(`https://api.imgbb.com/1/upload?key=${imgbbApiKey}`, { method: 'POST', body: d }); const j = await r.json(); return j.data.url; } catch(e) { return null; } }
     function setupDashboardNavigation() {
@@ -777,6 +787,7 @@
     }
     async function loadCategoriesIntoModal() { const s = document.getElementById('product-category-select'); const snap = await getDocs(query(collection(db, publicDataPath, 'categories'), orderBy('name'))); s.innerHTML = '<option value="">Select</option>'; snap.forEach(d => { const o = document.createElement('option'); o.value = d.data().name; o.text = d.data().name; s.add(o); }); }
     function setupLogoutButtons() { document.getElementById('drawer-logout-btn').onclick = () => signOut(auth); document.getElementById('mobile-drawer-logout-btn').onclick = () => signOut(auth); }
+
 </script>
 </body>
 </html>

@@ -228,7 +228,6 @@
 
             <div id="view-orders" class="dashboard-view hidden">
                 <h1 class="text-3xl font-bold text-gray-800 mb-6">Order Management</h1>
-                <p class="text-gray-500">Search/Filter controls go here...</p>
                 <div id="all-orders-list" class="bg-white rounded-lg shadow-md overflow-hidden mt-4">
                     <p class="text-gray-500 p-6">Loading all orders...</p>
                 </div>
@@ -356,32 +355,31 @@
             <div id="view-settings" class="dashboard-view hidden">
                 <h1 class="text-3xl font-bold text-gray-800 mb-6">Platform Settings</h1>
                 <div class="grid grid-cols-1 lg:grid-cols-2 gap-6">
-                    <div id="platform-settings-container" class="bg-white p-6 rounded-lg shadow-md space-y-4">
-                        <h3 class="text-xl font-bold text-gray-700">General Settings</h3>
-                        <p class="text-gray-500">Manage site-wide details.</p>
-                        <form id="general-settings-form" class="space-y-4 pt-4 border-t">
-                            <div>
-                                <label class="form-label">Site Name (Logo Text)</label>
-                                <input type="text" id="setting-logo-text" class="form-input" placeholder="මුදලාලි මාමා">
+                    <div>
+                        <div id="platform-settings-container" class="bg-white p-6 rounded-lg shadow-md space-y-4">
+                            <h3 class="text-xl font-bold text-gray-700">General Settings</h3>
                             </div>
-                            <div>
-                                <label class="form-label">Logo Image</label>
-                                <input type="file" id="setting-logo-file" class="form-input" data-preview="preview-logo-url" accept="image/*">
-                                <input type="hidden" id="setting-logo-url">
-                                <img id="preview-logo-url" src="" class="image-preview hidden">
-                            </div>
-                             <div>
-                                <label class="form-label">Header Hotline Number</label>
-                                <input type="text" id="setting-hotline" class="form-input" placeholder="011 123 4567">
-                            </div>
-                             <div>
-                                <label class="form-label">Global Commission Rate (%)</label>
-                                <input type="number" id="setting-commission" class="form-input" placeholder="5">
-                                <p class="text-xs text-gray-500 mt-1">This is the platform fee (e.g., 5 for 5%).</p>
-                            </div>
-                            <button type="submit" class="btn-primary !text-base !py-2 !w-auto !px-6">Save General Settings</button>
-                            <p id="settings-status" class="text-sm"></p>
-                        </form>
+
+                        <div id="ai-settings-container" class="bg-white p-6 rounded-lg shadow-md space-y-4 mt-6 border border-mudalali-green">
+                            <h3 class="text-xl font-bold text-gray-700 flex items-center gap-2">
+                                <i class="fa fa-robot text-mudalali-green"></i> AI Configuration
+                            </h3>
+                            <p class="text-gray-500 text-sm">Manage API keys for Gemini AI features (Magic Fill, Image Gen).</p>
+                            <form id="ai-settings-form" class="space-y-4 pt-4 border-t">
+                                <div>
+                                    <label class="form-label">Gemini API Key</label>
+                                    <div class="flex gap-2">
+                                        <input type="password" id="setting-ai-key" class="form-input font-mono text-gray-600" placeholder="Paste API Key here...">
+                                        <button type="button" id="toggle-key-visibility" class="p-3 border rounded-md hover:bg-gray-100" onclick="toggleKeyVisibility()">
+                                            <i class="fa fa-eye"></i>
+                                        </button>
+                                    </div>
+                                    <p class="text-xs text-gray-400 mt-1">Current Key Status: <span id="key-status-badge" class="font-bold text-orange-500">Checking...</span></p>
+                                </div>
+                                <button type="submit" class="btn-primary !text-base !py-2 !w-auto !px-6">Update API Key</button>
+                                <p id="ai-settings-status" class="text-sm"></p>
+                            </form>
+                        </div>
                     </div>
 
                     <div class="bg-white p-6 rounded-lg shadow-md space-y-4">
@@ -689,34 +687,16 @@
             setupDashboardNavigation();
             setupLogoutButtons();
             
-            // =====================================
-            // ======== JS WENAS KALE (Initialize) ========
-            // =====================================
-            
-            // Aluth: Image upload listener eka add kala
             setupImageUploadListeners(); 
             
-            // Load data for all views
+            // Load data
             loadDashboardStats();
             loadWidgetPendingProducts();
             loadWidgetRecentOrders();
-
-            // === AYIN KARAPU FUNCTIONS ===
-            // loadWidgetPendingSellers();
-            // loadWidgetPendingStories();
-            // loadSellersForApproval(); 
-            // loadAllApprovedSellers();
-            // loadStoryManagement();
-            // loadFinancials();
-            // ============================
-            
-            // === ALUTH FUNCTIONS ===
             loadAllCarouselsCache(); 
             setupProductEditModal(); 
             loadProductManagement(true); 
             setupProductSearch(); 
-            // =======================
-
             loadOrderManagement();
             
             loadLayoutManagement(); 
@@ -725,6 +705,9 @@
             loadCategoryManagement(); 
             loadPlatformSettings(); 
             loadFooterLinkManagement(); 
+            
+            // NEW: Load AI Settings
+            loadAISettings();
 
             document.getElementById('page-loader').style.width = '100%';
             setTimeout(() => document.getElementById('page-loader').style.display = 'none', 500);
@@ -786,31 +769,21 @@
             switchView(window.location.hash || '#dashboard');
         }
         
-        // =====================================
-        // ======== ALUTH JS FUNCTION (Image Upload) ========
-        // =====================================
-
+        // --- Image Upload Helpers ---
         function setupImageUploadListeners() {
             const mainContainer = document.getElementById('admin-panel-container');
-            
             mainContainer.addEventListener('change', (e) => {
-                // Check if it's a file input with a data-preview attribute
                 if (e.target.tagName === 'INPUT' && e.target.type === 'file' && e.target.dataset.preview) {
                     const file = e.target.files[0];
                     const previewEl = document.getElementById(e.target.dataset.preview);
-                    
-                    // Find the hidden input
                     const hiddenUrlInput = e.target.closest('div').querySelector('input[type="hidden"]');
                     
                     if (file && previewEl) {
                         previewEl.src = URL.createObjectURL(file);
                         previewEl.classList.remove('hidden');
-                        if (hiddenUrlInput) {
-                            hiddenUrlInput.value = ''; // Clear old URL
-                        }
-                        e.target.dataset.isDirty = 'true'; // Mark as new file
+                        if (hiddenUrlInput) hiddenUrlInput.value = ''; 
+                        e.target.dataset.isDirty = 'true'; 
                     } else if (previewEl) {
-                        // No file selected
                         if (!hiddenUrlInput || !hiddenUrlInput.value) {
                             previewEl.classList.add('hidden');
                             previewEl.src = '';
@@ -820,8 +793,74 @@
                 }
             });
         }
+        
+        // --- KEY FEATURE: AI API SETTINGS ---
+        
+        window.toggleKeyVisibility = () => {
+            const input = document.getElementById('setting-ai-key');
+            if(input.type === 'password') input.type = 'text';
+            else input.type = 'password';
+        }
 
-        // --- MODULE 1: DASHBOARD FUNCTIONS ---
+        async function loadAISettings() {
+            const input = document.getElementById('setting-ai-key');
+            const statusBadge = document.getElementById('key-status-badge');
+            
+            try {
+                // We use the 'config' collection for system secrets
+                const docRef = doc(db, 'config', 'ai_keys');
+                const snap = await getDoc(docRef);
+                
+                if (snap.exists() && snap.data().geminiKey) {
+                    input.value = snap.data().geminiKey;
+                    statusBadge.textContent = "Active";
+                    statusBadge.className = "font-bold text-green-600";
+                } else {
+                    statusBadge.textContent = "Not Set";
+                    statusBadge.className = "font-bold text-red-500";
+                }
+            } catch (e) {
+                console.error("Error loading AI Key:", e);
+                statusBadge.textContent = "Error";
+            }
+        }
+
+        document.getElementById('ai-settings-form').addEventListener('submit', async (e) => {
+            e.preventDefault();
+            const input = document.getElementById('setting-ai-key');
+            const statusEl = document.getElementById('ai-settings-status');
+            const btn = e.target.querySelector('button');
+            const newKey = input.value.trim();
+            
+            if(!newKey) return alert("Please enter a valid API Key");
+
+            btn.disabled = true;
+            btn.textContent = "Updating...";
+            statusEl.textContent = "";
+
+            try {
+                await setDoc(doc(db, 'config', 'ai_keys'), {
+                    geminiKey: newKey,
+                    updatedAt: serverTimestamp(),
+                    updatedBy: currentUser.email
+                });
+                
+                statusEl.textContent = "API Key Updated Successfully!";
+                statusEl.className = "text-sm text-green-600 font-bold";
+                document.getElementById('key-status-badge').textContent = "Active";
+                document.getElementById('key-status-badge').className = "font-bold text-green-600";
+            } catch (e) {
+                console.error(e);
+                statusEl.textContent = "Error updating key: " + e.message;
+                statusEl.className = "text-sm text-red-600";
+            } finally {
+                btn.disabled = false;
+                btn.textContent = "Update API Key";
+                setTimeout(() => statusEl.textContent = "", 3000);
+            }
+        });
+
+        // --- DASHBOARD FUNCTIONS ---
         async function loadDashboardStats() {
             const salesEl = document.getElementById('stat-total-sales');
             const commissionEl = document.getElementById('stat-total-commission');
@@ -904,14 +943,7 @@
             }
         }
 
-        // --- MODULE 2 (Sellers): HIDDEN ---
-        async function loadSellersForApproval() {}
-        async function loadAllApprovedSellers() {}
-        async function approveSeller(sellerId) {}
-        async function rejectSeller(sellerId, isRevoke = false) {}
-        
-        // --- MODULE 3: PRODUCT MANAGEMENT FUNCTIONS ---
-        
+        // --- PRODUCT MANAGEMENT ---
         function setupProductSearch() {
             const searchInput = document.getElementById('product-search-input');
             let debounceTimer;
@@ -1024,10 +1056,7 @@
                 snap.forEach(doc => {
                     allCarouselsCache.push({ id: doc.id, ...doc.data() });
                 });
-                console.log("Carousels cached:", allCarouselsCache);
-            } catch (e) {
-                console.error("Failed to cache carousels: ", e);
-            }
+            } catch (e) { console.error("Failed to cache carousels: ", e); }
         }
         
         function setupProductEditModal() {
@@ -1128,8 +1157,7 @@
             }
         }
 
-
-        // --- MODULE 4: ORDER MANAGEMENT FUNCTIONS ---
+        // --- ORDER MANAGEMENT ---
         async function loadOrderManagement() {
             const container = document.getElementById('all-orders-list');
             container.innerHTML = '<p class="text-gray-500 p-6">Loading all orders...</p>';
@@ -1143,9 +1171,9 @@
                 }
                 
                 container.innerHTML = snap.docs.map(doc => {
-                       const order = doc.data();
-                       const date = order.createdAt ? order.createdAt.toDate().toLocaleDateString() : 'N/A';
-                       return `
+                        const order = doc.data();
+                        const date = order.createdAt ? order.createdAt.toDate().toLocaleDateString() : 'N/A';
+                        return `
                             <div class="p-4 border-b">
                                 <div class="flex justify-between items-center">
                                     <div>
@@ -1159,7 +1187,7 @@
                                 </div>
                                 <p class="text-sm text-gray-500">Date: ${date}</p>
                             </div>
-                       `;
+                        `;
                 }).join('');
                 
             } catch (e) {
@@ -1168,19 +1196,7 @@
             }
         }
 
-        // --- MODULE 5 (Stories): HIDDEN ---
-        async function loadStoryManagement() {}
-        async function approveStory(storyId) {}
-        async function rejectStory(storyId) {}
-
-        // --- MODULE 6 (Financials): HIDDEN ---
-        async function loadFinancials() {}
-        
-        // =====================================
-        // ======== JS WENAS KALE (Marketing Module) ========
-        // =====================================
-
-        // --- MODULE 7: MARKETING ---
+        // --- MARKETING ---
         function loadMarketing() {
             loadMarketingBanners(); 
             loadShopByCategoryBanners(); 
@@ -1358,7 +1374,6 @@
             statusEl.textContent = '';
 
             try {
-                // Check for PC/Main file upload
                 const fileInputPC = form.querySelector('.banner-image-file-pc, .banner-image-file');
                 const hiddenInputPC = form.querySelector('.banner-image-url-pc, .banner-image-url');
                 
@@ -1373,7 +1388,6 @@
                     fileInputPC.dataset.isDirty = 'false';
                 }
                 
-                // Check for Mobile file upload
                 const fileInputMob = form.querySelector('.banner-image-file-mob');
                 const hiddenInputMob = form.querySelector('.banner-image-url-mob');
                 
@@ -1411,7 +1425,7 @@
                     try {
                         const docSnap = await getDoc(doc(db, publicDataPath, collectionName, docId));
                         if(docSnap.exists()) dataToSave.size = docSnap.data().size || 'small';
-                        else dataToSave.size = docId.includes('Large') ? 'large' : 'small'; // Fallback
+                        else dataToSave.size = docId.includes('Large') ? 'large' : 'small'; 
                     } catch(e) {}
                 }
 
@@ -1443,7 +1457,6 @@
             statusEl.textContent = '';
             
             try {
-                // Check for Banner file upload
                 const fileInput = form.querySelector('.banner-image-file');
                 const hiddenInput = form.querySelector('.banner-image-url');
                 
@@ -1483,7 +1496,7 @@
             }, 2000);
         }
 
-        // --- MODULE 8: CATEGORY MANAGEMENT ---
+        // --- CATEGORY MANAGEMENT ---
         function loadCategoryManagement() {
             const form = document.getElementById('category-form');
             form.addEventListener('submit', saveCategory);
@@ -1578,7 +1591,7 @@
             } catch (err) { console.error(err); alert('Error deleting category.'); }
         }
         
-        // --- MODULE 9: Product Carousels ---
+        // --- Product Carousels ---
         
         function loadCarouselManagement() {
             const form = document.getElementById('carousel-form');
@@ -1651,7 +1664,7 @@
             } catch (err) { console.error(err); alert('Error deleting carousel.'); }
         }
         
-        // --- MODULE 10: Homepage Layout ---
+        // --- Homepage Layout ---
         
         async function loadLayoutManagement() {
             const container = document.getElementById('layout-manager-container');
@@ -1740,7 +1753,6 @@
                 });
             });
             
-            // Ayin karapu items (stories wage) layout array ekata apahu add karanawa (hidden widiyata)
             homepageLayoutData.forEach(originalItem => {
                 if (originalItem.type === 'sellerStories') {
                     newLayoutArray.push({ ...originalItem, visible: false });
@@ -1773,11 +1785,7 @@
             setTimeout(() => statusEl.textContent = '', 3000);
         }
 
-        // =====================================
-        // ======== JS WENAS KALE (Settings) ========
-        // =====================================
-        
-        // --- MODULE 11: PLATFORM SETTINGS ---
+        // --- PLATFORM SETTINGS ---
         async function loadPlatformSettings() {
             const container = document.getElementById('platform-settings-container');
             container.innerHTML = `
@@ -1816,7 +1824,6 @@
                     document.getElementById('setting-hotline').value = config.headerHotline || ''; 
                     document.getElementById('setting-commission').value = config.globalCommissionRate || '5';
                     
-                    // Aluth: Logo load karanawa
                     const logoUrl = config.logoImageUrl || '';
                     document.getElementById('setting-logo-url').value = logoUrl;
                     const logoPreview = document.getElementById('preview-logo-url');
@@ -1833,7 +1840,6 @@
                 statusEl.textContent = 'Saving...';
                 
                 try {
-                    // Check for new logo upload
                     const fileInput = document.getElementById('setting-logo-file');
                     const hiddenInput = document.getElementById('setting-logo-url');
                     
@@ -1852,7 +1858,7 @@
 
                     const dataToSave = {
                         logoText: document.getElementById('setting-logo-text').value,
-                        logoImageUrl: hiddenInput.value, // Hidden input eken gannawa
+                        logoImageUrl: hiddenInput.value, 
                         headerHotline: document.getElementById('setting-hotline').value, 
                         globalCommissionRate: Number(document.getElementById('setting-commission').value)
                     };
@@ -1874,7 +1880,7 @@
             });
         }
         
-        // --- MODULE 12: Footer ---
+        // --- Footer ---
         function loadFooterLinkManagement() {
             const form = document.getElementById('footer-link-form');
             const cancelBtn = document.getElementById('cancel-footer-edit-btn');

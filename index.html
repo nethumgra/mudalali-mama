@@ -283,12 +283,17 @@
     </div>
     
     <script type="module">
-        // Imports
-        import { db, auth, publicDataPath, usersPath } from "./js/config/firebase.js";
-        import { getFooterHTML, loadFooterData } from "./js/components/footer.js";
+        // 🔴 IMPORTANT: Fixed Imports from root folder
+        import { db, auth } from "./firebase.js";
+        import { getFooterHTML, loadFooterData } from "./footer.js";
 
         import { createUserWithEmailAndPassword, signInWithEmailAndPassword, onAuthStateChanged, signOut } from "https://www.gstatic.com/firebasejs/11.6.1/firebase-auth.js";
         import { doc, getDoc, getDocs, collection, onSnapshot, query, where, orderBy, limit, setDoc, addDoc, updateDoc, deleteDoc, increment, serverTimestamp, runTransaction } from "https://www.gstatic.com/firebasejs/11.6.1/firebase-firestore.js";
+
+        // 🔴 DEFINING PATHS LOCALLY TO PREVENT LOADING ERRORS
+        const appId = 'default-app-id';
+        const publicDataPath = `/artifacts/${appId}/public/data`;
+        const usersPath = `/users`;
 
         let currentUser = null;
         let currentUserData = null;
@@ -296,7 +301,6 @@
         let unsubscribeCommentsListener = null;
         const pageLoader = document.getElementById('page-loader');
 
-        // Helper for Fallback Image
         window.imgError = function(image) {
             image.onerror = "";
             image.src = "https://placehold.co/400x400/e5e5e5/a0a0a0?text=No+Image";
@@ -348,7 +352,7 @@
             loadSiteConfig();
             loadSiteTheme();
             buildHomepage();
-           
+            
             loadDesktopNavCategories();
             loadFooterData(db);
             setupMobileDrawers(); 
