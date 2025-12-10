@@ -449,6 +449,7 @@
     </div>
 
 <script type="module">
+    import "./maintenance.js";
     import { initializeApp } from "https://www.gstatic.com/firebasejs/11.6.1/firebase-app.js";
     import { 
         getAuth, 
@@ -503,10 +504,28 @@
 
     // --- SMART MODEL LIST ---
     const GEMINI_MODELS = [
-        "gemini-2.0-flash",        
-        "gemini-2.0-flash-lite", 
-        "gemini-1.5-flash",        
-        "gemini-1.5-pro"          
+        // --- 1. Stable & Fast (Recommended) ---
+        "gemini-2.0-flash",
+        "gemini-2.0-flash-lite",
+        "gemini-1.5-flash",
+        "gemini-1.5-pro",
+        
+        // --- 2. Experimental / New Versions ---
+        "gemini-2.0-flash-exp",
+        "gemini-2.0-flash-001",
+        "gemini-2.0-flash-lite-preview-02-05",
+        "gemini-exp-1206",
+        
+        // --- 3. Future / Preview Models (From your screenshot) ---
+        "gemini-2.5-flash",
+        "gemini-2.5-pro",
+        "gemini-3-pro-preview",
+        "gemini-3-pro-image-preview",
+        
+        // --- 4. Other Variations ---
+        "gemini-2.0-flash-lite-preview",
+        "gemini-flash-latest",
+        "gemini-pro-latest"      
     ];
 
     let currentUser = null;
